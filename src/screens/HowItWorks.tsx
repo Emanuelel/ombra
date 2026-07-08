@@ -1,4 +1,5 @@
 import { btnBlock, C, display, mono } from '../ui/tokens'
+import GoogleG from '../ui/GoogleG'
 
 const STEPS: [string, string, string][] = [
   ['1', 'Find the shade', 'See which terraces are shaded right now — drag the clock to any hour.'],
@@ -85,7 +86,7 @@ export default function HowItWorks({
           whiteSpace: 'nowrap',
         }}
       >
-        <span style={display(17, { color: '#4285F4' })}>G</span>
+        <GoogleG size={20} />
         Continue with Google
       </button>
       <div style={mono(11, { textAlign: 'center', color: C.muted, marginTop: 12 })}>

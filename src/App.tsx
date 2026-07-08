@@ -5,6 +5,8 @@ import Welcome from './screens/Welcome'
 import HowItWorks from './screens/HowItWorks'
 import Handle from './screens/Handle'
 import Perms from './screens/Perms'
+import Install from './screens/Install'
+import { shouldOfferInstall } from './lib/platform'
 import MapScreen from './screens/MapScreen'
 import Terrace from './screens/Terrace'
 import Checking from './screens/Checking'
@@ -35,6 +37,7 @@ type Screen =
   | 'howto'
   | 'handle'
   | 'perms'
+  | 'install'
   | 'map'
   | 'terrace'
   | 'checking'
@@ -388,7 +391,13 @@ export default function App() {
       </Shell>
     )
   if (screen === 'perms')
-    return <Shell><Perms onBack={() => setScreen('handle')} onDone={() => setScreen('map')} /></Shell>
+    return (
+      <Shell>
+        <Perms onBack={() => setScreen('handle')} onDone={() => setScreen(shouldOfferInstall() ? 'install' : 'map')} />
+      </Shell>
+    )
+  if (screen === 'install')
+    return <Shell><Install onDone={() => setScreen('map')} /></Shell>
   if (screen === 'terrace' && selected)
     return (
       <Shell>
