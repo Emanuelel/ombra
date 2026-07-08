@@ -4,6 +4,8 @@ import Crown from '../ui/Crown'
 import Avatar from '../ui/Avatar'
 import { getUser, updateAvatar, type UserProfile } from '../lib/api'
 import { fileToDataUrl } from '../lib/image'
+import { shouldOfferInstall } from '../lib/platform'
+import Install from './Install'
 
 function sinceLabel(iso: string): string {
   return new Date(iso).toLocaleDateString('en', { month: 'short', year: '2-digit' }).replace(' ', " '")
@@ -31,6 +33,7 @@ export default function Profile({
   const [u, setU] = useState<UserProfile | null>(null)
   const [saving, setSaving] = useState(false)
   const [err, setErr] = useState<string | null>(null)
+  const [showInstall, setShowInstall] = useState(false)
   useEffect(() => {
     getUser(handle).then(setU)
   }, [handle])
@@ -152,10 +155,29 @@ export default function Profile({
         ))}
       </div>
 
+      {shouldOfferInstall() && (
+        <button
+          onClick={() => setShowInstall(true)}
+          style={{
+            marginTop: 22,
+            width: '100%',
+            background: C.sun,
+            border: `2.5px solid ${C.ink}`,
+            borderRadius: 14,
+            padding: 14,
+            ...display(15, { textTransform: 'uppercase' }),
+            boxShadow: `4px 4px 0 ${C.ink}`,
+            cursor: 'pointer',
+          }}
+        >
+          📲 Add to home screen
+        </button>
+      )}
+
       <button
         onClick={onLogout}
         style={{
-          marginTop: 22,
+          marginTop: 12,
           width: '100%',
           background: C.cream,
           border: `2px solid ${C.ink}`,
@@ -167,6 +189,12 @@ export default function Profile({
       >
         Log out
       </button>
+
+      {showInstall && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 3000 }}>
+          <Install onDone={() => setShowInstall(false)} />
+        </div>
+      )}
 
       <div style={mono(9.5, { color: C.muted, textAlign: 'center', marginTop: 16, lineHeight: 1.5 })}>
         Terrace & places data © OpenStreetMap contributors, Overture Maps.
