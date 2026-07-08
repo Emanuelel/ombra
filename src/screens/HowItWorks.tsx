@@ -80,10 +80,12 @@ export default function HowItWorks({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          gap: 10,
+          gap: 9,
+          fontSize: 15,
+          whiteSpace: 'nowrap',
         }}
       >
-        <span style={display(18, { color: '#4285F4' })}>G</span>
+        <span style={display(17, { color: '#4285F4' })}>G</span>
         Continue with Google
       </button>
       <div style={mono(11, { textAlign: 'center', color: C.muted, marginTop: 12 })}>
