@@ -342,11 +342,30 @@ function PickerSheet({
     return filtered.slice(0, 50)
   }, [q, items])
 
+  // Pin the sheet to the visible viewport so the results list stays above the on-screen
+  // keyboard (iOS doesn't shrink a fixed inset:0 element when the keyboard opens).
+  const [vp, setVp] = useState<{ top: number; height: number } | null>(null)
+  useEffect(() => {
+    const vv = window.visualViewport
+    if (!vv) return
+    const update = () => setVp({ top: vv.offsetTop, height: vv.height })
+    update()
+    vv.addEventListener('resize', update)
+    vv.addEventListener('scroll', update)
+    return () => {
+      vv.removeEventListener('resize', update)
+      vv.removeEventListener('scroll', update)
+    }
+  }, [])
+
   return (
     <div
       style={{
         position: 'fixed',
-        inset: 0,
+        left: 0,
+        right: 0,
+        top: vp ? vp.top : 0,
+        height: vp ? vp.height : '100%',
         background: C.cream,
         zIndex: 2000,
         display: 'flex',
@@ -378,7 +397,7 @@ function PickerSheet({
           boxShadow: `4px 4px 0 ${C.ink}`,
         }}
       />
-      <div className="ombra-scroll" style={{ overflowY: 'auto', marginTop: 14, display: 'flex', flexDirection: 'column', gap: 6 }}>
+      <div className="ombra-scroll" style={{ flex: 1, minHeight: 0, overflowY: 'auto', marginTop: 14, display: 'flex', flexDirection: 'column', gap: 6, paddingBottom: 8 }}>
         {list.length === 0 && <div style={mono(12, { color: C.muted })}>Nothing found.</div>}
         {list.map((it) => (
           <button
