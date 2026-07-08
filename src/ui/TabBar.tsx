@@ -32,13 +32,14 @@ export default function TabBar({
   return (
     <div
       style={{
-        height: 60,
         flexShrink: 0,
         background: C.ink,
         display: 'flex',
         alignItems: 'center',
-        padding: '0 10px',
-        paddingBottom: 'env(safe-area-inset-bottom)',
+        // Size to the icons/labels, then reserve the iPhone home-indicator area BELOW them
+        // (a fixed height would let the safe-area padding clip the labels on notched phones).
+        padding: '10px 10px',
+        paddingBottom: 'calc(10px + env(safe-area-inset-bottom))',
       }}
     >
       <button onClick={onMap} style={navStyle(active === 'map')}>
