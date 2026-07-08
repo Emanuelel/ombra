@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react'
 import { C, display, mono } from '../ui/tokens'
 import Crown from '../ui/Crown'
 import Avatar from '../ui/Avatar'
-import { BASE_POINTS } from '../lib/scoring'
+import { BASE_POINTS, PROXIMITY_M, ACCURACY_SLACK_M, MAX_ACCURACY_M } from '../lib/scoring'
+import { distM } from '../lib/sun'
 import { getFavorites, getLeaderboard, toggleFavorite, type LbRow } from '../lib/api'
 import type { Terrace as TerraceT } from '../types'
 
@@ -29,6 +30,10 @@ export default function Terrace({
 }) {
   const [board, setBoard] = useState<LbRow[] | null>(null)
   const [isFav, setIsFav] = useState(false)
+  // Proactive proximity gate: watch the user's location while this screen is open so the
+  // check-in CTA reflects whether they can actually check in — no tap-then-fail surprise.
+  const [gate, setGate] = useState<'locating' | 'denied' | 'poor' | 'far' | 'ok'>('locating')
+  const [dist, setDist] = useState<number | null>(null)
   useEffect(() => {
     let alive = true
     setBoard(null)
@@ -39,6 +44,32 @@ export default function Terrace({
     }
   }, [terrace.id, token])
 
+  useEffect(() => {
+    if (!('geolocation' in navigator)) {
+      setGate('denied')
+      return
+    }
+    let alive = true
+    const id = navigator.geolocation.watchPosition(
+      (pos) => {
+        if (!alive) return
+        const acc = pos.coords.accuracy
+        const d = distM(pos.coords.longitude, pos.coords.latitude, terrace.lon, terrace.lat)
+        setDist(d)
+        // Same rule the server enforces (api/check-in.ts): forgive up to the device's
+        // reported accuracy (capped) around the 25m gate; reject wildly imprecise fixes.
+        if (acc > MAX_ACCURACY_M) return setGate('poor')
+        setGate(d <= PROXIMITY_M + Math.min(acc, ACCURACY_SLACK_M) ? 'ok' : 'far')
+      },
+      () => alive && setGate('denied'),
+      { enableHighAccuracy: true, maximumAge: 5000, timeout: 20000 },
+    )
+    return () => {
+      alive = false
+      navigator.geolocation.clearWatch(id)
+    }
+  }, [terrace.id, terrace.lat, terrace.lon])
+
   async function toggleFav() {
     if (!token) return
     const on = !isFav
@@ -47,6 +78,18 @@ export default function Terrace({
   }
   const points = Math.max(1, Math.round(BASE_POINTS * bonus))
   const shaded = percent >= 50
+
+  const ready = gate === 'ok'
+  const ctaLabel =
+    gate === 'ok'
+      ? 'Check in · steal the crown'
+      : gate === 'locating'
+        ? 'Finding your location…'
+        : gate === 'denied'
+          ? 'Turn on location to check in'
+          : gate === 'poor'
+            ? 'Weak GPS — step into the open'
+            : `Too far — get within 25m${dist ? ` · ${Math.round(dist)}m away` : ''}`
   const meta = [terrace.barri || 'Barcelona', terrace.tables ? `${terrace.tables} tables outside` : null]
     .filter(Boolean)
     .join(' · ')
@@ -285,42 +328,23 @@ export default function Terrace({
               {error}
             </div>
           )}
-          <div
-            style={{
-              marginBottom: 12,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 8,
-              ...mono(12, { color: C.muted2 }),
-            }}
-          >
-            <span
-              style={{
-                width: 9,
-                height: 9,
-                borderRadius: '50%',
-                background: C.green,
-                boxShadow: '0 0 0 4px rgba(31,157,85,.2)',
-              }}
-            />
-            GPS-checked · you must be within 25m to check in
-          </div>
           <button
             onClick={onCheckIn}
+            disabled={!ready}
             style={{
               width: '100%',
-              background: C.tomato,
-              color: C.cream,
-              border: `2.5px solid ${C.ink}`,
+              background: ready ? C.tomato : '#e4d8c1',
+              color: ready ? C.cream : C.muted,
+              border: `2.5px solid ${ready ? C.ink : C.muted3}`,
               borderRadius: 16,
               padding: 18,
-              ...display(18, { textTransform: 'uppercase' }),
-              boxShadow: `5px 5px 0 ${C.ink}`,
-              cursor: 'pointer',
+              ...display(ready ? 18 : 14, { textTransform: 'uppercase' }),
+              lineHeight: 1.15,
+              boxShadow: ready ? `5px 5px 0 ${C.ink}` : 'none',
+              cursor: ready ? 'pointer' : 'not-allowed',
             }}
           >
-            Check in · steal the crown
+            {ctaLabel}
           </button>
         </div>
       </div>
