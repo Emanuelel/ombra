@@ -88,7 +88,7 @@ export default function HowItWorks({
         }}
       >
         <GoogleG size={20} />
-        Continue With Google
+        Continue with Google
       </button>
       <div style={mono(11, { textAlign: 'center', color: C.muted, marginTop: 12 })}>
         one account, one crown — sign in to play
