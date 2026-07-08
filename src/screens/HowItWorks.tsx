@@ -82,12 +82,13 @@ export default function HowItWorks({
           alignItems: 'center',
           justifyContent: 'center',
           gap: 9,
-          fontSize: 15,
+          fontSize: 16,
+          textTransform: 'none',
           whiteSpace: 'nowrap',
         }}
       >
         <GoogleG size={20} />
-        Continue with Google
+        Continue With Google
       </button>
       <div style={mono(11, { textAlign: 'center', color: C.muted, marginTop: 12 })}>
         one account, one crown — sign in to play
