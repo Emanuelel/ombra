@@ -181,7 +181,7 @@ export interface UserProfile {
   checkinsAll: number
   crowns: number
   topBarri: string | null
-  recent: { terrace: string; barri: string | null; points: number; createdAt: string }[]
+  recent: { id: string; terrace: string; barri: string | null; points: number; createdAt: string }[]
 }
 
 export async function getUser(handle: string): Promise<UserProfile | null> {

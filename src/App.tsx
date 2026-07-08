@@ -158,11 +158,6 @@ export default function App() {
     () => (selected ? shadedUntil(selected.id, todayAt(deferred)) : null),
     [selected, deferred],
   )
-  const featuredUntil = useMemo(
-    () => (featured ? shadedUntil(featured.id, todayAt(deferred)) : null),
-    [featured, deferred],
-  )
-
   useEffect(() => () => clearTimeout(timer.current), [])
 
   // Restore a persisted session on load; also handle returning from Google OAuth, where
@@ -441,7 +436,15 @@ export default function App() {
     )
 
   if (screen === 'user' && viewUser)
-    return <Shell><PublicProfile handle={viewUser} onBack={() => setScreen(userReturn)} /></Shell>
+    return (
+      <Shell>
+        <PublicProfile
+          handle={viewUser}
+          onBack={() => setScreen(userReturn)}
+          onOpenTerrace={(id) => openTerrace(id, 'user')}
+        />
+      </Shell>
+    )
 
   // --- Tabbed base layer (map / boards / profile) ---
   const activeTab = (TAB_SCREENS.includes(screen) ? screen : 'map') as 'map' | 'boards' | 'profile'
@@ -464,9 +467,6 @@ export default function App() {
               info={shade.info}
               minutes={minutes}
               setMinutes={(m) => setMinutes(m)}
-              featured={featured}
-              featuredPercent={featured ? (shade.info[featured.id]?.percent ?? 0) : 0}
-              featuredUntil={featuredUntil}
               onSelect={(id) => openTerrace(id)}
               onView={onView}
             />
@@ -486,6 +486,7 @@ export default function App() {
               avatar={avatar}
               token={token}
               onAvatarChange={setAvatar}
+              onOpenTerrace={(id) => openTerrace(id, 'profile')}
               onLogout={logout}
             />
           )}

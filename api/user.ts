@@ -46,6 +46,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const recent = await db
     .select({
+      id: terraces.id,
       terrace: terraces.name,
       barri: terraces.barri,
       points: checkIns.points,

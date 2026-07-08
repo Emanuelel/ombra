@@ -87,14 +87,14 @@ export default function Install({ onDone }: { onDone: () => void }) {
           padding: '18px 16px 14px',
         }}
       >
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 54px)', justifyContent: 'center', gap: 14 }}>
           {Array.from({ length: 8 }).map((_, i) =>
             i === 1 ? (
               <div key={i} style={{ display: 'flex', justifyContent: 'center' }}>
                 <AppIcon />
               </div>
             ) : (
-              <div key={i} style={{ aspectRatio: '1', borderRadius: 14, background: '#D9C89E' }} />
+              <div key={i} style={{ width: 54, height: 54, borderRadius: 14, background: '#D9C89E' }} />
             ),
           )}
         </div>

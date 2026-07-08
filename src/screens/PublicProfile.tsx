@@ -33,7 +33,15 @@ function Tile({ big, label, sun }: { big: string; label: string; sun?: boolean }
   )
 }
 
-export default function PublicProfile({ handle, onBack }: { handle: string; onBack: () => void }) {
+export default function PublicProfile({
+  handle,
+  onBack,
+  onOpenTerrace,
+}: {
+  handle: string
+  onBack: () => void
+  onOpenTerrace: (id: string) => void
+}) {
   const [u, setU] = useState<UserProfile | null | 'loading'>('loading')
 
   useEffect(() => {
@@ -89,16 +97,20 @@ export default function PublicProfile({ handle, onBack }: { handle: string; onBa
           <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', gap: 7 }}>
             {u.recent.length === 0 && <div style={mono(12, { color: C.muted })}>No check-ins yet.</div>}
             {u.recent.map((r, i) => (
-              <div
+              <button
                 key={i}
+                onClick={() => onOpenTerrace(r.id)}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
                   gap: 10,
+                  textAlign: 'left',
+                  width: '100%',
                   background: C.cream,
                   border: `2px solid ${C.ink}`,
                   borderRadius: 12,
                   padding: '10px 13px',
+                  cursor: 'pointer',
                 }}
               >
                 <Crown size={15} fill={C.sun} stroke={C.ink} />
@@ -109,7 +121,8 @@ export default function PublicProfile({ handle, onBack }: { handle: string; onBa
                   </span>
                 </span>
                 <span style={display(15, { color: C.greenText })}>+{r.points}</span>
-              </div>
+                <span style={{ color: C.muted, fontSize: 16, flexShrink: 0 }}>›</span>
+              </button>
             ))}
           </div>
         </div>

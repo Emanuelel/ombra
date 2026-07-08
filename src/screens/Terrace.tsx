@@ -132,7 +132,7 @@ export default function Terrace({
         </button>
         <div style={{ width: '100%', padding: 18, background: 'linear-gradient(transparent,rgba(23,19,12,.6))' }}>
           <div style={display(34, { color: C.cream, lineHeight: 0.92 })}>{terrace.name}</div>
-          <div style={{ fontWeight: 700, fontSize: 13, color: C.ink }}>{meta}</div>
+          <div style={{ fontWeight: 700, fontSize: 13, color: C.ink, marginTop: 6 }}>{meta}</div>
         </div>
       </div>
 

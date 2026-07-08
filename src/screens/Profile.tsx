@@ -22,12 +22,14 @@ export default function Profile({
   avatar,
   token,
   onAvatarChange,
+  onOpenTerrace,
   onLogout,
 }: {
   handle: string
   avatar: string | null
   token: string | null
   onAvatarChange: (v: string | null) => void
+  onOpenTerrace: (id: string) => void
   onLogout: () => void
 }) {
   const [u, setU] = useState<UserProfile | null>(null)
@@ -55,7 +57,15 @@ export default function Profile({
   }
 
   return (
-    <div style={{ animation: 'ombraSlideIn .3s both', padding: '6px 18px 20px' }}>
+    <div
+      style={{
+        animation: 'ombraSlideIn .3s both',
+        padding: '6px 18px 20px',
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: '100%',
+      }}
+    >
       <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
         <label style={{ position: 'relative', cursor: token ? 'pointer' : 'default', flexShrink: 0, lineHeight: 0 }}>
           <Avatar name={handle} src={avatar ?? u?.avatarUrl ?? null} size={64} ring={C.ink} />
@@ -131,16 +141,20 @@ export default function Profile({
           <div style={mono(12, { color: C.muted })}>Check in at a terrace to start your streak.</div>
         )}
         {u?.recent.map((r, i) => (
-          <div
+          <button
             key={i}
+            onClick={() => onOpenTerrace(r.id)}
             style={{
               display: 'flex',
               alignItems: 'center',
               gap: 10,
+              textAlign: 'left',
+              width: '100%',
               background: C.cream,
               border: `2px solid ${C.ink}`,
               borderRadius: 12,
               padding: '10px 13px',
+              cursor: 'pointer',
             }}
           >
             <Crown size={16} fill={C.sun} stroke={C.ink} />
@@ -151,7 +165,8 @@ export default function Profile({
               </span>
             </span>
             <span style={display(15, { color: C.greenText })}>+{r.points}</span>
-          </div>
+            <span style={{ color: C.muted, fontSize: 16, flexShrink: 0 }}>›</span>
+          </button>
         ))}
       </div>
 
@@ -196,7 +211,7 @@ export default function Profile({
         </div>
       )}
 
-      <div style={mono(9.5, { color: C.muted, textAlign: 'center', marginTop: 16, lineHeight: 1.5 })}>
+      <div style={mono(9.5, { color: C.muted, textAlign: 'center', marginTop: 'auto', paddingTop: 24, lineHeight: 1.5 })}>
         Terrace & places data © OpenStreetMap contributors, Overture Maps.
         <br />
         Licensed terraces: Ajuntament de Barcelona open data.
