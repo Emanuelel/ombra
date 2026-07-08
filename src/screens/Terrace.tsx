@@ -133,6 +133,28 @@ export default function Terrace({
         <div style={{ width: '100%', padding: 18, background: 'linear-gradient(transparent,rgba(23,19,12,.6))' }}>
           <div style={display(34, { color: C.cream, lineHeight: 0.92 })}>{terrace.name}</div>
           <div style={{ fontWeight: 700, fontSize: 13, color: C.ink, marginTop: 6 }}>{meta}</div>
+          <a
+            href={mapsHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              marginTop: 10,
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              background: C.cream,
+              border: `2px solid ${C.ink}`,
+              borderRadius: 999,
+              padding: '6px 12px',
+              fontWeight: 800,
+              fontSize: 12,
+              color: C.ink,
+              textDecoration: 'none',
+              boxShadow: `2px 2px 0 ${C.ink}`,
+            }}
+          >
+            📍 Open in Google Maps ↗
+          </a>
         </div>
       </div>
 
@@ -218,46 +240,9 @@ export default function Terrace({
             }}
           >
             <Crown size={20} fill={C.ink} />
-            <div style={{ flex: 1, fontWeight: 800, fontSize: 14 }}>No crown yet — claim it 👑</div>
+            <div style={{ flex: 1, fontWeight: 800, fontSize: 14 }}>No crown yet — claim it</div>
           </div>
         )}
-
-        <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', gap: 8, ...mono(12, { color: C.muted2 }) }}>
-          <span
-            style={{
-              width: 9,
-              height: 9,
-              borderRadius: '50%',
-              background: C.green,
-              boxShadow: '0 0 0 4px rgba(31,157,85,.2)',
-            }}
-          />
-          GPS-checked · you must be within 25m to check in
-        </div>
-
-        <div style={{ marginTop: 12, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-          <a
-            href={mapsHref}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 8,
-              background: C.cream,
-              border: `2px solid ${C.ink}`,
-              borderRadius: 12,
-              padding: '9px 14px',
-              fontWeight: 800,
-              fontSize: 13,
-              color: C.ink,
-              textDecoration: 'none',
-              boxShadow: `3px 3px 0 ${C.ink}`,
-            }}
-          >
-            📍 Open in Google Maps ↗
-          </a>
-        </div>
 
         <div
           style={{
@@ -300,6 +285,27 @@ export default function Terrace({
               {error}
             </div>
           )}
+          <div
+            style={{
+              marginBottom: 12,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 8,
+              ...mono(12, { color: C.muted2 }),
+            }}
+          >
+            <span
+              style={{
+                width: 9,
+                height: 9,
+                borderRadius: '50%',
+                background: C.green,
+                boxShadow: '0 0 0 4px rgba(31,157,85,.2)',
+              }}
+            />
+            GPS-checked · you must be within 25m to check in
+          </div>
           <button
             onClick={onCheckIn}
             style={{
