@@ -68,9 +68,27 @@ export default function HowItWorks({
         ))}
       </div>
 
-      <button onClick={onNext} style={{ ...btnBlock, marginTop: 'auto', background: C.ink, color: C.cream }}>
-        Let's go →
+      <button
+        onClick={onNext}
+        style={{
+          ...btnBlock,
+          marginTop: 'auto',
+          background: C.cream,
+          color: C.ink,
+          border: `2.5px solid ${C.ink}`,
+          boxShadow: `5px 5px 0 ${C.ink}`,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 10,
+        }}
+      >
+        <span style={display(18, { color: '#4285F4' })}>G</span>
+        Continue with Google
       </button>
+      <div style={mono(11, { textAlign: 'center', color: C.muted, marginTop: 12 })}>
+        one account, one crown — sign in to play
+      </div>
     </div>
   )
 }

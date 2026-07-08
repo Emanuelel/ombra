@@ -17,7 +17,6 @@ import Profile from './screens/Profile'
 import PublicProfile from './screens/PublicProfile'
 import { infoAt, bonusFor, shadedUntil } from './lib/shadeTable'
 import {
-  signup,
   fetchSession,
   finishProfile,
   googleAuthUrl,
@@ -80,7 +79,6 @@ export default function App() {
   const [avatar, setAvatar] = useState<string | null>(null)
   const [token, setToken] = useState<string | null>(null)
   const [authError, setAuthError] = useState<string | null>(null)
-  const [googleFinish, setGoogleFinish] = useState(false)
   const [googleError, setGoogleError] = useState<string | null>(null)
   const [connectingGoogle, setConnectingGoogle] = useState(false)
   const [busy, setBusy] = useState(false)
@@ -195,7 +193,6 @@ export default function App() {
         setScreen('map')
       } else if (r.needsHandle) {
         // Fresh Google account — finish by choosing a handle (avatar/handle pre-filled).
-        setGoogleFinish(true)
         if (r.google?.picture) setAvatar(r.google.picture)
         if (r.google?.email) setHandle(suggestHandle(r.google.email))
         setScreen('handle')
@@ -228,33 +225,23 @@ export default function App() {
     setScreen('user')
   }
 
-  // Create the account when leaving the handle step, then continue onboarding.
+  // Finish sign-in: the Google session already exists (everyone authenticates with
+  // Google) — the handle step just creates the profile for that account.
   async function doSignup() {
-    setBusy(true)
-    setAuthError(null)
-    // Finishing a Google sign-in: the session already exists — just create the profile.
-    if (googleFinish && token) {
-      const res = await finishProfile(token, handle.toLowerCase(), avatar, null)
-      setBusy(false)
-      if ('error' in res) {
-        setAuthError(res.error === 'handle_taken' ? 'That name is taken — try another' : 'Sign-up failed, try again')
-        return
-      }
-      setHandle(res.user.handle)
-      setAvatar(res.user.avatarUrl)
-      setGoogleFinish(false)
-      setScreen('perms')
+    if (!token) {
+      setAuthError('Sign in with Google to continue')
       return
     }
-    const res = await signup(handle.toLowerCase(), avatar, null)
+    setBusy(true)
+    setAuthError(null)
+    const res = await finishProfile(token, handle.toLowerCase(), avatar, null)
     setBusy(false)
     if ('error' in res) {
       setAuthError(res.error === 'handle_taken' ? 'That name is taken — try another' : 'Sign-up failed, try again')
       return
     }
-    localStorage.setItem('ombra_token', res.token)
-    setToken(res.token)
     setHandle(res.user.handle)
+    setAvatar(res.user.avatarUrl)
     setScreen('perms')
   }
 
@@ -389,7 +376,7 @@ export default function App() {
   if (screen === 'howto')
     return (
       <Shell>
-        <HowItWorks onBack={() => setScreen('welcome')} onNext={() => setScreen('handle')} />
+        <HowItWorks onBack={() => setScreen('welcome')} onNext={startGoogle} />
       </Shell>
     )
   if (screen === 'handle')
