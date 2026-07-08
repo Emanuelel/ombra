@@ -122,7 +122,7 @@ export async function logout(token: string): Promise<void> {
 export async function postCheckIn(
   token: string,
   body: { terraceId: string; lat: number; lon: number; accuracy?: number; shadeStatus?: string },
-): Promise<{ points?: number; youHoldCrown?: boolean; error?: string; waitMin?: number }> {
+): Promise<{ points?: number; youHoldCrown?: boolean; stolenFromSomeone?: boolean; error?: string; waitMin?: number }> {
   try {
     const r = await fetch(`${API}/api/check-in`, {
       method: 'POST',

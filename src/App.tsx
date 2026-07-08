@@ -84,6 +84,8 @@ export default function App() {
   const [minutes, setMinutes] = useState(nowMinutes)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [winPoints, setWinPoints] = useState(84)
+  const [wonCrown, setWonCrown] = useState(true)
+  const [stolen, setStolen] = useState(false)
   const [checkInError, setCheckInError] = useState<string | null>(null)
   const [viewUser, setViewUser] = useState<string | null>(null)
   const [userReturn, setUserReturn] = useState<Screen>('boards')
@@ -259,6 +261,8 @@ export default function App() {
       await new Promise((r) => setTimeout(r, Math.max(0, 1300 - (Date.now() - started))))
       if (result.ok) {
         setWinPoints(result.points)
+        setWonCrown(result.youHoldCrown)
+        setStolen(result.stolen)
         setScreen('celebrate')
       } else {
         setCheckInError(result.message)
@@ -269,7 +273,9 @@ export default function App() {
 
   // Real, strict check-in: needs a genuine GPS fix (no terrace-coord fallback) and
   // only "succeeds" if the server accepts it (proximity/cooldown/anti-gaming all pass).
-  async function doCheckIn(t: TerraceT): Promise<{ ok: true; points: number } | { ok: false; message: string }> {
+  async function doCheckIn(
+    t: TerraceT,
+  ): Promise<{ ok: true; points: number; youHoldCrown: boolean; stolen: boolean } | { ok: false; message: string }> {
     if (!token) return { ok: false, message: 'Sign in to check in.' }
     const pos = await new Promise<GeolocationPosition | null>((res) => {
       if (!('geolocation' in navigator)) return res(null)
@@ -299,7 +305,12 @@ export default function App() {
       }
       return { ok: false, message: msg[res.error] ?? 'Check-in failed — try again.' }
     }
-    return { ok: true, points: res.points ?? Math.max(1, Math.round(BASE_POINTS * shade.bonus)) }
+    return {
+      ok: true,
+      points: res.points ?? Math.max(1, Math.round(BASE_POINTS * shade.bonus)),
+      youHoldCrown: res.youHoldCrown ?? true,
+      stolen: res.stolenFromSomeone ?? false,
+    }
   }
 
   const selectedName = selected?.name ?? 'this terrace'
@@ -421,6 +432,10 @@ export default function App() {
         <Celebrate
           points={winPoints}
           terraceName={selectedName}
+          wonCrown={wonCrown}
+          stolen={stolen}
+          terraceId={selected?.id ?? ''}
+          handle={handle}
           token={token}
           promptAlerts={
             typeof Notification !== 'undefined' &&
