@@ -2,7 +2,6 @@ import { useMemo, useRef, useState, useDeferredValue, useEffect, useCallback } f
 import type { Bounds } from './components/MapView'
 import TabBar from './ui/TabBar'
 import Welcome from './screens/Welcome'
-import HowItWorks from './screens/HowItWorks'
 import Handle from './screens/Handle'
 import Perms from './screens/Perms'
 import Alerts from './screens/Alerts'
@@ -35,7 +34,6 @@ const terraces = terracesData as TerraceT[]
 
 type Screen =
   | 'welcome'
-  | 'howto'
   | 'handle'
   | 'perms'
   | 'alerts'
@@ -365,13 +363,7 @@ export default function App() {
   if (screen === 'welcome')
     return (
       <Shell>
-        <Welcome onStart={() => setScreen('howto')} onGoogle={startGoogle} error={googleError} />
-      </Shell>
-    )
-  if (screen === 'howto')
-    return (
-      <Shell>
-        <HowItWorks onBack={() => setScreen('welcome')} onNext={startGoogle} />
+        <Welcome onGoogle={startGoogle} error={googleError} />
       </Shell>
     )
   if (screen === 'handle')
@@ -387,7 +379,7 @@ export default function App() {
           setAvatar={setAvatar}
           busy={busy}
           error={authError}
-          onBack={() => setScreen('howto')}
+          onBack={() => setScreen('welcome')}
           onContinue={doSignup}
         />
       </Shell>

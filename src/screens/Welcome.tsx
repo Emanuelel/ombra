@@ -2,12 +2,10 @@ import { btnBlock, C, display, mono } from '../ui/tokens'
 import Crown from '../ui/Crown'
 
 export default function Welcome({
-  onStart,
   onGoogle,
   error,
 }: {
-  onStart: () => void
-  onGoogle?: () => void
+  onGoogle: () => void
   error?: string | null
 }) {
   return (
@@ -40,30 +38,23 @@ export default function Welcome({
         </div>
       </div>
       <button
-        onClick={onStart}
-        style={{ ...btnBlock, marginTop: 34, background: C.ink, color: C.cream }}
+        onClick={onGoogle}
+        style={{
+          ...btnBlock,
+          marginTop: 34,
+          background: C.cream,
+          color: C.ink,
+          border: `2.5px solid ${C.ink}`,
+          boxShadow: `5px 5px 0 ${C.ink}`,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 10,
+        }}
       >
-        Start hunting →
+        <span style={display(18, { color: '#4285F4' })}>G</span>
+        Continue with Google
       </button>
-      {onGoogle && (
-        <button
-          onClick={onGoogle}
-          style={{
-            ...btnBlock,
-            marginTop: 12,
-            background: C.cream,
-            color: C.ink,
-            border: `2.5px solid ${C.ink}`,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 10,
-          }}
-        >
-          <span style={display(18, { color: '#4285F4' })}>G</span>
-          Continue with Google
-        </button>
-      )}
       {error && <div style={mono(11, { textAlign: 'center', marginTop: 10, color: C.ink })}>{error}</div>}
       <div style={mono(11, { textAlign: 'center', marginTop: 14, color: '#3a1a12' })}>
         the sun is not your friend ☀
