@@ -15,6 +15,10 @@ export default defineConfig({
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
         // Adds push + notificationclick handlers to the generated service worker.
         importScripts: ['push-handler.js'],
+        // Don't let the SPA navigation fallback swallow API routes — top-level
+        // navigations to /api/* (e.g. the Google OAuth redirect + callback) must hit
+        // the server, not be served index.html from the cache.
+        navigateFallbackDenylist: [/^\/api\//],
       },
       manifest: {
         name: 'Ombra — caça la fresca',
