@@ -7,7 +7,7 @@ export default defineConfig({
         react(),
         VitePWA({
             registerType: 'autoUpdate',
-            includeAssets: ['favicon.svg'],
+            includeAssets: ['favicon.svg', 'apple-touch-icon.png', 'icon-192.png', 'icon-512.png'],
             workbox: {
                 // The committed OSM building data + geometry libs push the bundle past
                 // workbox's default 2 MiB precache cap; allow the app to be cached offline.
@@ -23,11 +23,14 @@ export default defineConfig({
                 name: 'Ombra — caça la fresca',
                 short_name: 'Ombra',
                 description: 'Find the shaded terraces of Barcelona — and steal your friends’ crowns.',
-                theme_color: '#0f172a',
-                background_color: '#0f172a',
+                theme_color: '#FF4A31',
+                background_color: '#FF4A31',
                 display: 'standalone',
                 orientation: 'portrait',
                 icons: [
+                    { src: 'icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
+                    { src: 'icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+                    { src: 'icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
                     { src: 'favicon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any' },
                 ],
             },
