@@ -82,6 +82,7 @@ export default function App() {
   const [authError, setAuthError] = useState<string | null>(null)
   const [googleFinish, setGoogleFinish] = useState(false)
   const [googleError, setGoogleError] = useState<string | null>(null)
+  const [connectingGoogle, setConnectingGoogle] = useState(false)
   const [busy, setBusy] = useState(false)
   const [restoring, setRestoring] = useState(true)
   const [minutes, setMinutes] = useState(nowMinutes)
@@ -204,6 +205,15 @@ export default function App() {
       setRestoring(false)
     })
   }, [])
+
+  // Show a branded "connecting" screen before navigating away, so the Welcome screen
+  // doesn't reflow under the browser chrome mid-redirect.
+  function startGoogle() {
+    setConnectingGoogle(true)
+    setTimeout(() => {
+      window.location.href = googleAuthUrl()
+    }, 60)
+  }
 
   function openTerrace(id: string, from: Screen = 'map') {
     setSelectedId(id)
@@ -336,17 +346,44 @@ export default function App() {
       </Shell>
     )
 
+  if (connectingGoogle)
+    return (
+      <Shell>
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: '#FF4A31',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 14,
+            color: '#17130c',
+            textAlign: 'center',
+            padding: 30,
+          }}
+        >
+          <div
+            style={{
+              fontFamily: "'Archivo Black', sans-serif",
+              fontSize: 40,
+              letterSpacing: '-.04em',
+              animation: 'ombraFloat 2s ease-in-out infinite',
+            }}
+          >
+            OMBRA
+          </div>
+          <div style={{ fontWeight: 800, fontSize: 15 }}>Connecting to Google…</div>
+        </div>
+      </Shell>
+    )
+
   // --- Full-bleed overlays ---
   if (screen === 'welcome')
     return (
       <Shell>
-        <Welcome
-          onStart={() => setScreen('howto')}
-          onGoogle={() => {
-            window.location.href = googleAuthUrl()
-          }}
-          error={googleError}
-        />
+        <Welcome onStart={() => setScreen('howto')} onGoogle={startGoogle} error={googleError} />
       </Shell>
     )
   if (screen === 'howto')
