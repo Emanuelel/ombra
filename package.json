@@ -1,0 +1,48 @@
+{
+  "name": "ombra",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "fetch-data": "tsx scripts/fetch-overpass.ts",
+    "build-terraces": "tsx scripts/build-terraces.ts",
+    "precompute-shade": "tsx scripts/precompute-shade.ts",
+    "fetch-poi": "python3 scripts/fetch_poi.py",
+    "db:push": "drizzle-kit push",
+    "db:generate": "drizzle-kit generate",
+    "seed": "tsx scripts/seed-db.ts",
+    "seed-activity": "tsx scripts/seed-activity.ts"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^1.1.0",
+    "@turf/turf": "^7.1.0",
+    "ably": "^2.23.0",
+    "drizzle-orm": "^0.45.2",
+    "leaflet": "^1.9.4",
+    "rbush": "^4.0.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-leaflet": "^4.2.1",
+    "suncalc": "^1.9.0",
+    "web-push": "^3.6.7"
+  },
+  "devDependencies": {
+    "@types/leaflet": "^1.9.12",
+    "@types/node": "^20.19.43",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@types/suncalc": "^1.9.2",
+    "@types/web-push": "^3.6.4",
+    "@vercel/node": "^5.8.22",
+    "@vitejs/plugin-react": "^4.3.1",
+    "drizzle-kit": "^0.31.10",
+    "tsx": "^4.16.2",
+    "typescript": "^5.5.4",
+    "vite": "^5.4.0",
+    "vite-plugin-pwa": "^0.20.5",
+    "workbox-precaching": "^7.4.1"
+  }
+}

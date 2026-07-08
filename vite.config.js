@@ -1,0 +1,32 @@
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import { VitePWA } from 'vite-plugin-pwa';
+export default defineConfig({
+    server: { port: 5199, strictPort: true, host: true },
+    plugins: [
+        react(),
+        VitePWA({
+            registerType: 'autoUpdate',
+            includeAssets: ['favicon.svg'],
+            workbox: {
+                // The committed OSM building data + geometry libs push the bundle past
+                // workbox's default 2 MiB precache cap; allow the app to be cached offline.
+                maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
+                // Adds push + notificationclick handlers to the generated service worker.
+                importScripts: ['push-handler.js'],
+            },
+            manifest: {
+                name: 'Ombra — caça la fresca',
+                short_name: 'Ombra',
+                description: 'Find the shaded terraces of Barcelona — and steal your friends’ crowns.',
+                theme_color: '#0f172a',
+                background_color: '#0f172a',
+                display: 'standalone',
+                orientation: 'portrait',
+                icons: [
+                    { src: 'favicon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any' },
+                ],
+            },
+        }),
+    ],
+});
