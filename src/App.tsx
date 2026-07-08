@@ -2,11 +2,9 @@ import { useMemo, useRef, useState, useDeferredValue, useEffect, useCallback } f
 import type { Bounds } from './components/MapView'
 import TabBar from './ui/TabBar'
 import Welcome from './screens/Welcome'
+import HowItWorks from './screens/HowItWorks'
 import Handle from './screens/Handle'
 import Perms from './screens/Perms'
-import Alerts from './screens/Alerts'
-import Install from './screens/Install'
-import { shouldOfferInstall } from './lib/platform'
 import MapScreen from './screens/MapScreen'
 import Terrace from './screens/Terrace'
 import Checking from './screens/Checking'
@@ -34,10 +32,9 @@ const terraces = terracesData as TerraceT[]
 
 type Screen =
   | 'welcome'
+  | 'howto'
   | 'handle'
   | 'perms'
-  | 'alerts'
-  | 'install'
   | 'map'
   | 'terrace'
   | 'checking'
@@ -363,7 +360,13 @@ export default function App() {
   if (screen === 'welcome')
     return (
       <Shell>
-        <Welcome onGoogle={startGoogle} error={googleError} />
+        <Welcome onStart={() => setScreen('howto')} error={googleError} />
+      </Shell>
+    )
+  if (screen === 'howto')
+    return (
+      <Shell>
+        <HowItWorks onBack={() => setScreen('welcome')} onNext={startGoogle} />
       </Shell>
     )
   if (screen === 'handle')
@@ -385,19 +388,7 @@ export default function App() {
       </Shell>
     )
   if (screen === 'perms')
-    return <Shell><Perms onBack={() => setScreen('handle')} onDone={() => setScreen('alerts')} /></Shell>
-  if (screen === 'alerts')
-    return (
-      <Shell>
-        <Alerts
-          token={token}
-          onBack={() => setScreen('perms')}
-          onDone={() => setScreen(shouldOfferInstall() ? 'install' : 'map')}
-        />
-      </Shell>
-    )
-  if (screen === 'install')
-    return <Shell><Install onDone={() => setScreen('map')} /></Shell>
+    return <Shell><Perms onBack={() => setScreen('handle')} onDone={() => setScreen('map')} /></Shell>
   if (screen === 'terrace' && selected)
     return (
       <Shell>
@@ -421,6 +412,12 @@ export default function App() {
         <Celebrate
           points={winPoints}
           terraceName={selectedName}
+          token={token}
+          promptAlerts={
+            typeof Notification !== 'undefined' &&
+            Notification.permission === 'default' &&
+            !localStorage.getItem('ombra_notif_asked')
+          }
           onSeeBoard={() => setScreen('boards')}
           onBackToMap={() => setScreen('map')}
         />

@@ -2,7 +2,7 @@ import { btnBlock, C, display, mono } from '../ui/tokens'
 
 const STEPS: [string, string, string][] = [
   ['1', 'Find the shade', 'See which terraces are shaded right now — drag the clock to any hour.'],
-  ['2', 'Check in', "Prove you're actually there (within 50m) to bank shade points."],
+  ['2', 'Check in', "Prove you're actually there (within 25m) to bank shade points."],
   ['3', 'Hold the crown', 'Most check-ins this week rules the terrace — until a friend steals it.'],
 ]
 

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { btnBlock, C, display, mono } from '../ui/tokens'
 import Crown from '../ui/Crown'
+import { subscribeToPush } from '../lib/api'
 
 const CONFETTI = [
   { left: '8%', w: 10, h: 16, bg: C.tomato, round: false, dur: 1.7, delay: 0 },
@@ -18,15 +19,38 @@ const CONFETTI = [
 export default function Celebrate({
   points,
   terraceName,
+  token,
+  promptAlerts,
   onSeeBoard,
   onBackToMap,
 }: {
   points: number
   terraceName: string
+  token?: string | null
+  promptAlerts?: boolean
   onSeeBoard: () => void
   onBackToMap: () => void
 }) {
   const [disp, setDisp] = useState(0)
+  // Just-in-time notification ask: you just won a crown — now offer alerts so you know
+  // when it's stolen. Shown once (App gates on Notification.permission + a localStorage flag).
+  const [showAlerts, setShowAlerts] = useState(!!promptAlerts)
+  function markAsked() {
+    try {
+      localStorage.setItem('ombra_notif_asked', '1')
+    } catch {
+      /* ignore */
+    }
+    setShowAlerts(false)
+  }
+  function enableAlerts() {
+    if ('Notification' in window) {
+      Notification.requestPermission().then((perm) => {
+        if (perm === 'granted' && token) void subscribeToPush(token)
+        markAsked()
+      }, markAsked)
+    } else markAsked()
+  }
 
   useEffect(() => {
     const step = Math.max(1, Math.ceil(points / 21))
@@ -155,6 +179,47 @@ export default function Celebrate({
       </div>
 
       <div style={{ marginTop: 'auto', width: '100%', animation: 'ombraFadeUp .5s .55s both' }}>
+        {showAlerts && (
+          <div
+            style={{
+              background: C.ink,
+              color: C.cream,
+              borderRadius: 14,
+              padding: '13px 15px',
+              marginBottom: 12,
+              textAlign: 'center',
+            }}
+          >
+            <div style={{ fontWeight: 800, fontSize: 14 }}>🔔 Guard your crown</div>
+            <div style={{ fontSize: 12, color: C.muted3, marginTop: 3, lineHeight: 1.35 }}>
+              Get pinged the second a friend steals it — so you can race back.
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 11 }}>
+              <button
+                onClick={enableAlerts}
+                style={{
+                  flex: 1,
+                  background: C.sun,
+                  border: `2px solid ${C.cream}`,
+                  borderRadius: 10,
+                  padding: '9px',
+                  fontWeight: 800,
+                  fontSize: 13,
+                  color: C.ink,
+                  cursor: 'pointer',
+                }}
+              >
+                Turn on alerts
+              </button>
+              <button
+                onClick={markAsked}
+                style={{ background: 'none', border: 'none', color: C.muted3, fontSize: 12, cursor: 'pointer', padding: '9px 6px' }}
+              >
+                Not now
+              </button>
+            </div>
+          </div>
+        )}
         <button
           onClick={onSeeBoard}
           style={{ ...btnBlock, borderRadius: 16, padding: 17, fontSize: 17, background: C.ink, color: C.cream }}
