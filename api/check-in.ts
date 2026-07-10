@@ -105,8 +105,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     .where(eq(profiles.userId, userId))
 
   // 4. Recompute the terrace crown over the rolling window.
+  //    Rank by total points (matches /api/leaderboard, which drives the crown
+  //    shown in the UI). Ranking by check-in count here would let the stored
+  //    holder diverge from who the app draws the crown on.
   const [top] = await db
-    .select({ userId: checkIns.userId, n: sql<number>`count(*)::int` })
+    .select({ userId: checkIns.userId, pts: sql<number>`sum(${checkIns.points})::int` })
     .from(checkIns)
     .where(
       and(
@@ -115,7 +118,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       ),
     )
     .groupBy(checkIns.userId)
-    .orderBy(desc(sql`count(*)`))
+    .orderBy(desc(sql`sum(${checkIns.points})`))
     .limit(1)
 
   const newHolder = top?.userId ?? userId
