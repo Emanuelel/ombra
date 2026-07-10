@@ -52,6 +52,7 @@
   "howItWorks": {
     "label": "How it works",
     "steps": ["See the shade near you", "Tap a bar", "Check in within 25m", "Steal the crown"],
+    "beats": ["See the shade near you", "Tap a bar", "Check in & win the crown", "Hold your crown"],
     "continueGoogle": "Continue with Google"
   },
   "handle": {

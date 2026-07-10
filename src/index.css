@@ -150,3 +150,12 @@ input.time-slider::-moz-range-track {
   height: 12px;
   border-radius: 999px;
 }
+
+/* How-it-works demo: a finger-press circle (mobile-demo style) that taps a target. */
+@keyframes htFinger {
+  0%, 26% { opacity: 0; transform: translate(-50%, -50%) scale(1.35); }
+  40% { opacity: 0.9; transform: translate(-50%, -50%) scale(1.35); }
+  54% { opacity: 1; transform: translate(-50%, -50%) scale(0.78); }
+  66% { opacity: 0.75; transform: translate(-50%, -50%) scale(1.1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.1); }
+}

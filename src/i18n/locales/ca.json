@@ -52,6 +52,7 @@
   "howItWorks": {
     "label": "Com funciona",
     "steps": ["Mira l’ombra a prop teu", "Toca un bar", "Fes check-in a menys de 25 m", "Roba la corona"],
+    "beats": ["Mira l’ombra a prop teu", "Toca un bar", "Fes check-in i guanya la corona", "Conserva la teva corona"],
     "continueGoogle": "Continua amb Google"
   },
   "handle": {

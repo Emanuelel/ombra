@@ -452,13 +452,15 @@ export default function App() {
         style={{
           position: 'absolute',
           inset: 0,
-          background: '#FBF1DB',
+          // The map tab wears a brand-red status band behind the OS status bar (per spec);
+          // other tabs keep the cream ground. The content area below stays cream either way.
+          background: activeTab === 'map' ? '#F84A2C' : '#FBF1DB',
           display: 'flex',
           flexDirection: 'column',
           paddingTop: 'max(10px, env(safe-area-inset-top))',
         }}
       >
-        <div className="ombra-scroll" style={{ flex: 1, position: 'relative', overflowY: 'auto' }}>
+        <div className="ombra-scroll" style={{ flex: 1, position: 'relative', overflowY: 'auto', background: '#FBF1DB' }}>
           {screen === 'map' && (
             <MapScreen
               terraces={visibleTerraces}
