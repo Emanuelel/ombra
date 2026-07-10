@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { btnBlock, C, display, mono } from '../ui/tokens'
 import Crown from '../ui/Crown'
 
@@ -8,6 +9,7 @@ export default function Welcome({
   onStart: () => void
   error?: string | null
 }) {
+  const { t } = useTranslation()
   return (
     <div
       style={{
@@ -21,7 +23,7 @@ export default function Welcome({
       }}
     >
       <div style={mono(12, { letterSpacing: '.22em', textTransform: 'uppercase' })}>
-        Barcelona · summer '26
+        {t('welcome.season')}
       </div>
       <div style={{ marginTop: 'auto' }}>
         <div style={{ animation: 'ombraFloat 3.4s ease-in-out infinite', width: 72 }}>
@@ -31,18 +33,18 @@ export default function Welcome({
           OMBRA
         </div>
         <div style={display(22, { lineHeight: 1.02, marginTop: 16, maxWidth: 280 })}>
-          The shade-hunting game for Barcelona terraces.
+          {t('welcome.tagline')}
         </div>
         <div style={{ fontSize: 15, lineHeight: 1.4, color: '#3a1a12', marginTop: 12, maxWidth: 290 }}>
-          Find the shadiest terrace. Check in. Hold the crown — until a friend comes to steal it.
+          {t('welcome.sub')}
         </div>
       </div>
       <button onClick={onStart} style={{ ...btnBlock, marginTop: 34, background: C.ink, color: C.cream }}>
-        Start hunting →
+        {t('welcome.start')}
       </button>
       {error && <div style={mono(11, { textAlign: 'center', marginTop: 10, color: C.ink })}>{error}</div>}
       <div style={mono(11, { textAlign: 'center', marginTop: 14, color: '#3a1a12' })}>
-        the sun is not your friend ☀
+        {t('welcome.footer')}
       </div>
     </div>
   )

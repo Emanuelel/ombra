@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { C, display, mono } from '../ui/tokens'
 import MapView, { type Bounds, type Camera } from '../components/MapView'
 import type { ShadeInfo, Terrace } from '../types'
@@ -25,6 +26,7 @@ export default function MapScreen({
   initialCamera?: Camera | null
   onCamera?: (c: Camera) => void
 }) {
+  const { t } = useTranslation()
   return (
     <div
       style={{
@@ -37,7 +39,7 @@ export default function MapScreen({
     >
       <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between' }}>
         <div style={display(34, { lineHeight: 0.85 })}>OMBRA</div>
-        <div style={mono(11, { color: C.muted, paddingBottom: 5 })}>shade near you</div>
+        <div style={mono(11, { color: C.muted, paddingBottom: 5 })}>{t('map.shadeNearYou')}</div>
       </div>
 
       <div style={{ marginTop: 12 }}>
@@ -54,8 +56,8 @@ export default function MapScreen({
             fontSize: 13,
           }}
         >
-          <span>◐ SHADE AT {fmt(minutes)}</span>
-          <span style={mono(11, { color: C.cream })}>drag time →</span>
+          <span>{t('map.shadeAt', { time: fmt(minutes) })}</span>
+          <span style={mono(11, { color: C.cream })}>{t('map.dragTime')}</span>
         </div>
         <input
           className="time-slider"
@@ -65,7 +67,7 @@ export default function MapScreen({
           step={5}
           value={minutes}
           onChange={(e) => setMinutes(Number(e.target.value))}
-          aria-label="Time of day"
+          aria-label={t('map.timeOfDay')}
           style={{
             background: `linear-gradient(90deg, ${C.sun} ${(minutes / 1439) * 100}%, ${C.mapBase} ${(minutes / 1439) * 100}%)`,
           }}

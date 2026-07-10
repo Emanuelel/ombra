@@ -35,7 +35,7 @@ export const profiles = pgTable('profiles', {
   pointsTotal: integer('points_total').default(0).notNull(),
 })
 
-// Opaque server-side sessions (revocable — logout deletes the row).
+// Opaque server-side sessions (revocable - logout deletes the row).
 export const sessions = pgTable('sessions', {
   token: text('token').primaryKey(),
   userId: text('user_id')
@@ -44,7 +44,7 @@ export const sessions = pgTable('sessions', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
 })
 
-// Saved favourites — a terrace or a barri, pinned to the top of the user's boards.
+// Saved favourites - a terrace or a barri, pinned to the top of the user's boards.
 export const favorites = pgTable(
   'favorites',
   {

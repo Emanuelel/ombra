@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { MapContainer, TileLayer, Marker, useMap, useMapEvents } from 'react-leaflet'
 import L from 'leaflet'
 import { BBOX, CENTER, DEFAULT_ZOOM } from '../lib/barcelona'
@@ -48,6 +49,7 @@ function distMeters(a: [number, number], b: [number, number]): number {
 
 function LocateButton({ onFix }: { onFix: (p: [number, number]) => void }) {
   const map = useMap()
+  const { t } = useTranslation()
   return (
     <button
       onClick={() => {
@@ -62,7 +64,7 @@ function LocateButton({ onFix }: { onFix: (p: [number, number]) => void }) {
           { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 },
         )
       }}
-      title="Centre on me"
+      title={t('map.centreOnMe')}
       style={{
         position: 'absolute',
         right: 12,
@@ -97,7 +99,7 @@ function MapEvents({
   onCamera: (center: [number, number], zoom: number) => void
   restored: boolean
 }) {
-  // Once the user drags/zooms, never auto-recentre — don't fight their panning.
+  // Once the user drags/zooms, never auto-recentre - don't fight their panning.
   const userMoved = useRef(false)
   const reportCamera = () => {
     const c = map.getCenter()

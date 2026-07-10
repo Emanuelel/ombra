@@ -5,7 +5,7 @@ import * as schema from './schema.js'
 /**
  * Pooled Postgres connection string. Vercel's native Neon integration injects
  * `DATABASE_URL` (pooled) automatically; we also accept the legacy Vercel Postgres
- * name and the unpooled URL as fallbacks. Server-only — never import into client code.
+ * name and the unpooled URL as fallbacks. Server-only - never import into client code.
  */
 const url =
   process.env.DATABASE_URL ||

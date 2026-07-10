@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, type CSSProperties } from 'react'
+import { useTranslation } from 'react-i18next'
 import { C, display, mono } from '../ui/tokens'
 import Crown from '../ui/Crown'
 import Avatar from '../ui/Avatar'
@@ -64,6 +65,7 @@ export default function Boards({
   onUser: (handle: string) => void
   onOpenTerrace: (id: string) => void
 }) {
+  const { t } = useTranslation()
   const [tab, setTab] = useState<Tab>('city')
   const [barri, setBarri] = useState<string | null>(null)
   const [terrace, setTerrace] = useState<{ id: string; name: string } | null>(null)
@@ -143,35 +145,35 @@ export default function Boards({
 
   const title =
     tab === 'city'
-      ? 'All Barcelona'
+      ? t('boards.titleCity')
       : tab === 'barri'
-        ? (barri ?? 'Your barri')
+        ? (barri ?? t('boards.titleBarri'))
         : tab === 'terrace'
-          ? (terrace?.name ?? 'A bar')
-          : 'Your friends'
+          ? (terrace?.name ?? t('boards.titleBar'))
+          : t('boards.titleFriends')
 
   return (
     <div style={{ animation: 'ombraSlideIn .3s both', padding: '4px 18px 20px' }}>
-      <div style={display(30, { lineHeight: 0.9 })}>LEADERBOARDS</div>
+      <div style={display(30, { lineHeight: 0.9 })}>{t('boards.title')}</div>
 
       <div className="ombra-scroll" style={{ display: 'flex', gap: 8, overflowX: 'auto', margin: '14px -18px 0', padding: '0 18px 4px' }}>
         <button
           onClick={() => (tab === 'barri' ? setPicker('barri') : setTab('barri'))}
           style={tabStyle(tab === 'barri')}
         >
-          {tab === 'barri' && barri ? `${barri} ▾` : 'My barri ▾'}
+          {tab === 'barri' && barri ? t('boards.barriPick', { barri }) : t('boards.myBarri')}
         </button>
         <button
           onClick={() => (terrace && tab !== 'terrace' ? setTab('terrace') : setPicker('terrace'))}
           style={tabStyle(tab === 'terrace')}
         >
-          {tab === 'terrace' && terrace ? `${terrace.name} ▾` : 'A bar ▾'}
+          {tab === 'terrace' && terrace ? t('boards.barPick', { name: terrace.name }) : t('boards.aBar')}
         </button>
         <button onClick={() => setTab('city')} style={tabStyle(tab === 'city')}>
-          All BCN
+          {t('boards.allBcn')}
         </button>
         <button onClick={() => setTab('friends')} style={tabStyle(tab === 'friends')}>
-          Friends
+          {t('boards.friends')}
         </button>
         {favs.map((f) => {
           const active =
@@ -230,11 +232,11 @@ export default function Boards({
                 whiteSpace: 'nowrap',
               }}
             >
-              {isFav ? '★ Saved' : '☆ Save'}
+              {isFav ? t('boards.saved') : t('boards.save')}
             </button>
           )}
           <div style={mono(10, { letterSpacing: '.1em', textTransform: 'uppercase', color: C.greenText })}>
-            ● live · 7d
+            {t('boards.liveTag')}
           </div>
         </div>
       </div>
@@ -242,16 +244,16 @@ export default function Boards({
       {tab === 'friends' ? (
         <div style={{ textAlign: 'center', padding: '48px 20px', color: C.muted }}>
           <Crown size={44} fill={C.sun} stroke={C.ink} />
-          <div style={{ ...display(20), color: C.ink, marginTop: 14 }}>Friends, coming soon</div>
+          <div style={{ ...display(20), color: C.ink, marginTop: 14 }}>{t('boards.friendsSoon')}</div>
           <div style={{ fontSize: 14, lineHeight: 1.4, marginTop: 8, maxWidth: 260, marginInline: 'auto' }}>
-            Invite links and friend-only crown-stealing are next.
+            {t('boards.friendsSoonBody')}
           </div>
         </div>
       ) : rows === null ? (
-        <div style={mono(12, { color: C.muted, textAlign: 'center', marginTop: 24 })}>loading…</div>
+        <div style={mono(12, { color: C.muted, textAlign: 'center', marginTop: 24 })}>{t('common.loading')}</div>
       ) : rows.length === 0 ? (
         <div style={mono(12, { color: C.muted, textAlign: 'center', marginTop: 24 })}>
-          No check-ins here yet — be the first.
+          {t('boards.noCheckins')}
         </div>
       ) : (
         <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 7 }}>
@@ -267,10 +269,10 @@ export default function Boards({
                 <span style={{ flex: 1, lineHeight: 1.15, minWidth: 0 }}>
                   <span style={{ display: 'flex', alignItems: 'center', gap: 5, fontWeight: 800, fontSize: 14 }}>
                     {i === 0 && <Crown size={15} fill={C.ink} />}
-                    {you ? `@${handle} · you` : `@${name}`}
+                    {you ? t('boards.you', { handle }) : t('boards.handle', { name })}
                   </span>
                   <span style={{ display: 'block', fontSize: 11, color: C.muted2 }}>
-                    {r.checkins} check-in{r.checkins === 1 ? '' : 's'} this week
+                    {t('boards.checkinsWeek', { count: r.checkins })}
                   </span>
                 </span>
                 <span style={display(16)}>{r.points}</span>
@@ -282,8 +284,8 @@ export default function Boards({
 
       {picker === 'barri' && (
         <PickerSheet
-          title="Pick a barri"
-          placeholder="Search neighbourhood…"
+          title={t('boards.pickBarri')}
+          placeholder={t('boards.searchBarri')}
           items={barris.map((b) => ({ key: b, primary: b }))}
           onPick={(k) => {
             setBarri(k)
@@ -295,12 +297,12 @@ export default function Boards({
       )}
       {picker === 'terrace' && (
         <PickerSheet
-          title="Find a bar"
-          placeholder="Search by name or street…"
-          items={terraces.map((t) => ({
-            key: t.id,
-            primary: t.name,
-            secondary: `${t.barri ?? 'Barcelona'}${t.address ? ` · ${t.address}` : ''}`,
+          title={t('boards.findBar')}
+          placeholder={t('boards.searchBar')}
+          items={terraces.map((tr) => ({
+            key: tr.id,
+            primary: tr.name,
+            secondary: `${tr.barri ?? t('common.barcelona')}${tr.address ? ` · ${tr.address}` : ''}`,
           }))}
           onPick={(id, primary) => {
             setTerrace({ id, name: primary })
@@ -333,6 +335,7 @@ function PickerSheet({
   onPick: (key: string, primary: string) => void
   onClose: () => void
 }) {
+  const { t } = useTranslation()
   const [q, setQ] = useState('')
   const list = useMemo(() => {
     const s = q.trim().toLowerCase()
@@ -398,7 +401,7 @@ function PickerSheet({
         }}
       />
       <div className="ombra-scroll" style={{ flex: 1, minHeight: 0, overflowY: 'auto', marginTop: 14, display: 'flex', flexDirection: 'column', gap: 6, paddingBottom: 8 }}>
-        {list.length === 0 && <div style={mono(12, { color: C.muted })}>Nothing found.</div>}
+        {list.length === 0 && <div style={mono(12, { color: C.muted })}>{t('boards.nothingFound')}</div>}
         {list.map((it) => (
           <button
             key={it.key}

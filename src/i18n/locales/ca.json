@@ -1,0 +1,193 @@
+{
+  "common": {
+    "loading": "carregant…",
+    "justNow": "ara mateix",
+    "hoursAgo": "fa {{count}} h",
+    "daysAgo": "fa {{count}} d",
+    "aFew": "uns",
+    "barcelona": "Barcelona"
+  },
+  "app": {
+    "connectingGoogle": "Connectant amb Google…"
+  },
+  "errors": {
+    "google": {
+      "google_setup": "L’inici de sessió amb Google encara no està configurat.",
+      "state": "La sessió de Google ha caducat. Torna-ho a provar.",
+      "token": "L’inici de sessió amb Google ha fallat. Torna-ho a provar.",
+      "userinfo": "No hem pogut llegir el teu perfil de Google. Torna-ho a provar.",
+      "server": "Alguna cosa ha anat malament. Torna-ho a provar.",
+      "default": "L’inici de sessió amb Google ha fallat. Torna-ho a provar."
+    },
+    "checkin": {
+      "needSignin": "Inicia sessió per fer check-in.",
+      "needLocation": "Activa la ubicació. Necessitem el teu lloc real per fer check-in.",
+      "too_far": "Estàs massa lluny. Acosta’t a menys de 25 m del bar per fer check-in.",
+      "cooldown": "Ja has fet check-in aquí fa poc.",
+      "slow_down": "Més a poc a poc. Espera {{wait}} min entre check-ins.",
+      "poor_gps": "No hem pogut ubicar-te amb precisió. Torna-ho a provar a l’aire lliure.",
+      "impossible_travel": "Aquest salt ha estat massa ràpid per ser real.",
+      "unauthenticated": "La sessió ha caducat. Inicia sessió de nou.",
+      "terrace_not_found": "Aquest bar encara no és al joc.",
+      "default": "El check-in ha fallat. Torna-ho a provar."
+    },
+    "signup": {
+      "needGoogle": "Inicia sessió amb Google per continuar",
+      "handleTaken": "Aquest nom ja està agafat. Prova’n un altre",
+      "failed": "El registre ha fallat, torna-ho a provar"
+    }
+  },
+  "welcome": {
+    "season": "Barcelona · estiu '26",
+    "tagline": "El joc de caçar ombra a les terrasses de Barcelona.",
+    "sub": "Troba la terrassa amb més ombra. Fes check-in. Conserva la corona fins que un amic vingui a robar-te-la.",
+    "start": "A caçar ombra →",
+    "footer": "el sol no és el teu amic ☀"
+  },
+  "howItWorks": {
+    "label": "Com funciona",
+    "steps": ["Mira l’ombra a prop teu", "Toca un bar", "Fes check-in a menys de 25 m", "Roba la corona"],
+    "continueGoogle": "Continua amb Google"
+  },
+  "handle": {
+    "step": "Pas 1 de 2",
+    "title1": "Tria el teu",
+    "title2": "nom de caçador",
+    "placeholder": "martina",
+    "typeToClaim": "escriu un nom per reservar-lo",
+    "checking": "comprovant…",
+    "taken": "✗ @{{name}} ja està agafat",
+    "upForGrabs": "✓ @{{name}} està lliure",
+    "errPrefix": "✗ {{error}}",
+    "creating": "Creant…",
+    "continue": "Continua →"
+  },
+  "perms": {
+    "step": "Pas 2 de 2",
+    "title1": "Activa la",
+    "title2": "ubicació",
+    "body": "Comprovem que ets <em>realment</em> a la terrassa. Res de corones des del sofà. Has d’estar a menys de 25 m per fer check-in.",
+    "allow": "Permet la ubicació",
+    "notNow": "ara no"
+  },
+  "install": {
+    "oneLastThing": "Una última cosa",
+    "title1": "Dóna a la corona",
+    "title2": "un lloc a l’inici",
+    "ios": "Toca <hl>Comparteix</hl> i després <hl>«Afegeix a la pantalla d’inici».</hl>",
+    "androidPrompt": "Toca el botó de sota. <hl>Ombra s’instal·la amb un toc.</hl>",
+    "other": "Toca <hl>⋮</hl> i després <hl>«Afegeix a la pantalla d’inici».</hl>",
+    "noStore": "sense botiga d’apps · sense descàrrega · apareix i ja",
+    "addToHome": "Afegeix a l’inici",
+    "done": "Fet · ja l’he afegit",
+    "maybeLater": "potser més tard"
+  },
+  "checking": {
+    "lockingIn": "Fixant la teva posició…",
+    "confirmingAt": "confirmant que ets a {{name}}"
+  },
+  "terrace": {
+    "thisTerrace": "aquesta terrassa",
+    "openInMaps": "📍 Obre a Google Maps ↗",
+    "saveAria": "Desa aquest bar",
+    "savedAria": "Desat als teus bars",
+    "tablesOutside": "{{count}} taules a fora",
+    "inShade": "a l’ombra ara mateix",
+    "inSun": "a ple sol ara mateix",
+    "shadedUntil": "amb ombra fins a les {{until}}",
+    "shadedAWhile": "amb ombra una bona estona encara",
+    "findShadier": "busca un lloc amb més ombra a prop",
+    "rulesThisTerrace": "@{{name}} mana en aquesta terrassa",
+    "noCrownYet": "Encara sense corona. Reclama-la",
+    "worth": "AQUEST CHECK-IN VAL",
+    "points": "+{{points}} pts",
+    "base": "{{base}} base",
+    "shadeBonus": "×{{bonus}} bonus d’ombra",
+    "ctaReady": "Check-in · roba la corona",
+    "ctaLocating": "Buscant la teva ubicació…",
+    "ctaDenied": "Activa la ubicació per fer check-in",
+    "ctaPoor": "GPS feble. Surt a l’aire lliure",
+    "ctaFar": "Massa lluny. Acosta’t a 25 m",
+    "ctaFarDist": "Massa lluny. Acosta’t a 25 m · a {{dist}} m"
+  },
+  "celebrate": {
+    "guardTitle": "🔔 Protegeix la teva corona",
+    "guardBody": "T’avisem tan bon punt un amic te la robi, perquè corris a recuperar-la.",
+    "installTitle": "👑 Rep avisos de corona",
+    "installBody": "A l’iPhone, els avisos només funcionen amb Ombra a la pantalla d’inici. Afegeix-la perquè et puguem avisar quan algú et prengui la corona.",
+    "installGot": "Fet",
+    "turnOnAlerts": "Activa els avisos",
+    "notNow": "Ara no",
+    "seeLeaderboard": "Mira la classificació →",
+    "backToMap": "torna al mapa",
+    "checkedIn": "check-in fet",
+    "pts": "+{{points}} pts",
+    "standing_one": "<b>@{{holder}}</b> encara mana a {{terrace}} amb {{count}} check-in aquesta setmana. Tu en portes {{mine}}, <b>{{gap}} més</b> per robar la corona.",
+    "standing_other": "<b>@{{holder}}</b> encara mana a {{terrace}} amb {{count}} check-ins aquesta setmana. Tu en portes {{mine}}, <b>{{gap}} més</b> per robar la corona.",
+    "someoneHolds": "Una altra persona té la corona de {{terrace}}. Segueix fent check-ins per robar-la.",
+    "crownStolen": "check-in fet · corona robada",
+    "crownClaimed": "check-in fet · corona reclamada",
+    "youStole1": "Has robat",
+    "youStole2": "la corona",
+    "youClaimed1": "Has reclamat",
+    "youClaimed2": "la corona",
+    "terraceYours": "{{terrace}} és teva 👑",
+    "ptsCaps": "+{{points}} PTS"
+  },
+  "boards": {
+    "title": "CLASSIFICACIONS",
+    "myBarri": "El meu barri ▾",
+    "barriPick": "{{barri}} ▾",
+    "aBar": "Un bar ▾",
+    "barPick": "{{name}} ▾",
+    "allBcn": "Tot BCN",
+    "friends": "Amics",
+    "titleCity": "Tota Barcelona",
+    "titleBarri": "El teu barri",
+    "titleBar": "Un bar",
+    "titleFriends": "Els teus amics",
+    "saved": "★ Desat",
+    "save": "☆ Desa",
+    "liveTag": "● en directe · 7d",
+    "friendsSoon": "Amics, ben aviat",
+    "friendsSoonBody": "Els enllaços d’invitació i robar corones només entre amics arriben aviat.",
+    "noCheckins": "Encara no hi ha check-ins aquí. Sigues el primer.",
+    "you": "@{{handle}} · tu",
+    "handle": "@{{name}}",
+    "checkinsWeek_one": "{{count}} check-in aquesta setmana",
+    "checkinsWeek_other": "{{count}} check-ins aquesta setmana",
+    "pickBarri": "Tria un barri",
+    "searchBarri": "Cerca un barri…",
+    "findBar": "Troba un bar",
+    "searchBar": "Cerca per nom o carrer…",
+    "nothingFound": "No s’ha trobat res."
+  },
+  "profile": {
+    "shadeHunter": "caçador d’ombra",
+    "shadeHunterSince": "caçador d’ombra des de {{since}}",
+    "crownsHeldNow": "corones ara",
+    "ptsThisWeek": "pts aquesta setmana",
+    "checkins": "check-ins",
+    "crownsNow": "corones ara",
+    "recentCheckins": "Check-ins recents",
+    "startStreak": "Fes check-in en una terrassa per començar la teva ratxa.",
+    "addToHome": "📲 Afegeix a l’inici",
+    "logout": "Tanca la sessió",
+    "savePhotoError": "No s’ha pogut desar la foto. Prova amb una imatge més petita.",
+    "language": "Idioma",
+    "notFound": "Caçador no trobat.",
+    "noCheckinsYet": "Encara no hi ha check-ins."
+  },
+  "map": {
+    "shadeNearYou": "ombra a prop teu",
+    "shadeAt": "◐ OMBRA A LES {{time}}",
+    "dragTime": "arrossega l’hora →",
+    "timeOfDay": "Hora del dia",
+    "centreOnMe": "Centra en mi"
+  },
+  "tabs": {
+    "map": "Mapa",
+    "boards": "Classificació",
+    "you": "Tu"
+  }
+}

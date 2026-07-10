@@ -1,6 +1,6 @@
 // Runtime shade lookups against the baked timetable (src/data/shade-table.json).
 // The heavy sun+building geometry is precomputed offline by scripts/precompute-shade.ts,
-// so the app ships NO building footprints and never recomputes shade — it just reads
+// so the app ships NO building footprints and never recomputes shade - it just reads
 // this table. Sun altitude (for day/night status + the points bonus) is still derived
 // live via SunCalc, which is cheap and needs no buildings.
 import shadeTableData from '../data/shade-table.json'
@@ -53,7 +53,7 @@ function statusFor(percent: number, altitudeDeg: number): ShadeStatus {
   return altitudeDeg < LOW_SUN_DEG ? 'low-sun' : 'sun'
 }
 
-/** Combined {percent,status} for a terrace — drop-in for the old computeShade info entry. */
+/** Combined {percent,status} for a terrace - drop-in for the old computeShade info entry. */
 export function infoAt(id: string, date: Date): ShadeInfo {
   const altitudeDeg = getSunPos(date).altitudeDeg
   if (altitudeDeg <= 0) return { status: 'night', percent: 100 }
@@ -61,7 +61,7 @@ export function infoAt(id: string, date: Date): ShadeInfo {
   return { status: statusFor(percent, altitudeDeg), percent }
 }
 
-/** Points scarcity bonus (1×–3×) from the sun's altitude — no buildings needed. */
+/** Points scarcity bonus (1×–3×) from the sun's altitude - no buildings needed. */
 export function bonusFor(date: Date): number {
   return shadeBonus(getSunPos(date).altitudeDeg)
 }

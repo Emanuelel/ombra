@@ -1,12 +1,11 @@
 import { useMemo, useRef, useState, useDeferredValue, useEffect, useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 import type { Bounds, Camera } from './components/MapView'
 import TabBar from './ui/TabBar'
 import Welcome from './screens/Welcome'
 import HowItWorks from './screens/HowItWorks'
 import Handle from './screens/Handle'
 import Perms from './screens/Perms'
-import Install from './screens/Install'
-import { shouldOfferInstall } from './lib/platform'
 import MapScreen from './screens/MapScreen'
 import Terrace from './screens/Terrace'
 import Checking from './screens/Checking'
@@ -29,7 +28,7 @@ import terracesData from './data/terraces-all.json'
 import type { ShadeInfo, Terrace as TerraceT } from './types'
 
 // Every licensed terrace in Barcelona. Shade comes from the baked timetable
-// (src/lib/shadeTable.ts) — no building geometry ships to the client.
+// (src/lib/shadeTable.ts) - no building geometry ships to the client.
 const terraces = terracesData as TerraceT[]
 
 type Screen =
@@ -37,7 +36,6 @@ type Screen =
   | 'howto'
   | 'handle'
   | 'perms'
-  | 'install'
   | 'map'
   | 'terrace'
   | 'checking'
@@ -63,15 +61,8 @@ function suggestHandle(email: string): string {
   const base = (email.split('@')[0] ?? '').toLowerCase().replace(/[^a-z0-9_.]/g, '').slice(0, 20)
   return base.length >= 2 ? base : 'hunter'
 }
-const GOOGLE_ERR: Record<string, string> = {
-  google_setup: 'Google sign-in isn’t set up yet.',
-  state: 'Google sign-in expired — try again.',
-  token: 'Google sign-in failed — try again.',
-  userinfo: 'Couldn’t read your Google profile — try again.',
-  server: 'Something went wrong — try again.',
-}
-
 export default function App() {
+  const { t } = useTranslation()
   const [screen, setScreen] = useState<Screen>('welcome')
   const [handle, setHandle] = useState('martina')
   const [avatar, setAvatar] = useState<string | null>(null)
@@ -103,7 +94,7 @@ export default function App() {
   }))
   const deferred = useDeferredValue(minutes)
 
-  // Shade is computed only for terraces in view — keeps it fast and scales to any
+  // Shade is computed only for terraces in view - keeps it fast and scales to any
   // number of terraces. Panning recomputes for the new neighbourhood.
   const visibleTerraces = useMemo(() => {
     const pad = 0.0015
@@ -170,27 +161,27 @@ export default function App() {
     const hashToken = hash.get('ombra_token')
     const hashErr = hash.get('authError')
     if (hashToken || hashErr) history.replaceState(null, '', location.pathname + location.search)
-    if (hashErr) setGoogleError(GOOGLE_ERR[hashErr] ?? 'Google sign-in failed — try again.')
+    if (hashErr) setGoogleError(t([`errors.google.${hashErr}`, 'errors.google.default']))
     if (hashToken) localStorage.setItem('ombra_token', hashToken)
 
-    const t = hashToken ?? localStorage.getItem('ombra_token')
-    if (!t) {
+    const tok = hashToken ?? localStorage.getItem('ombra_token')
+    if (!tok) {
       setRestoring(false)
       return
     }
-    fetchSession(t).then((r) => {
+    fetchSession(tok).then((r) => {
       if (!r) {
         localStorage.removeItem('ombra_token')
         setRestoring(false)
         return
       }
-      setToken(t)
+      setToken(tok)
       if (r.user) {
         setHandle(r.user.handle)
         setAvatar(r.user.avatarUrl)
         setScreen('map')
       } else if (r.needsHandle) {
-        // Fresh Google account — finish by choosing a handle (avatar/handle pre-filled).
+        // Fresh Google account - finish by choosing a handle (avatar/handle pre-filled).
         if (r.google?.picture) setAvatar(r.google.picture)
         if (r.google?.email) setHandle(suggestHandle(r.google.email))
         setScreen('handle')
@@ -224,10 +215,10 @@ export default function App() {
   }
 
   // Finish sign-in: the Google session already exists (everyone authenticates with
-  // Google) — the handle step just creates the profile for that account.
+  // Google) - the handle step just creates the profile for that account.
   async function doSignup() {
     if (!token) {
-      setAuthError('Sign in with Google to continue')
+      setAuthError(t('errors.signup.needGoogle'))
       return
     }
     setBusy(true)
@@ -235,7 +226,7 @@ export default function App() {
     const res = await finishProfile(token, handle.toLowerCase(), avatar, null)
     setBusy(false)
     if ('error' in res) {
-      setAuthError(res.error === 'handle_taken' ? 'That name is taken — try another' : 'Sign-up failed, try again')
+      setAuthError(res.error === 'handle_taken' ? t('errors.signup.handleTaken') : t('errors.signup.failed'))
       return
     }
     setHandle(res.user.handle)
@@ -254,12 +245,12 @@ export default function App() {
 
   function startCheckIn() {
     if (!selected) return
-    const t = selected
+    const terrace = selected
     setCheckInError(null)
     setScreen('checking')
     const started = Date.now()
     void (async () => {
-      const result = await doCheckIn(t)
+      const result = await doCheckIn(terrace)
       // hold the "locking you in…" animation for at least a beat
       await new Promise((r) => setTimeout(r, Math.max(0, 1300 - (Date.now() - started))))
       if (result.ok) {
@@ -277,9 +268,9 @@ export default function App() {
   // Real, strict check-in: needs a genuine GPS fix (no terrace-coord fallback) and
   // only "succeeds" if the server accepts it (proximity/cooldown/anti-gaming all pass).
   async function doCheckIn(
-    t: TerraceT,
+    terrace: TerraceT,
   ): Promise<{ ok: true; points: number; youHoldCrown: boolean; stolen: boolean } | { ok: false; message: string }> {
-    if (!token) return { ok: false, message: 'Sign in to check in.' }
+    if (!token) return { ok: false, message: t('errors.checkin.needSignin') }
     const pos = await new Promise<GeolocationPosition | null>((res) => {
       if (!('geolocation' in navigator)) return res(null)
       navigator.geolocation.getCurrentPosition(res, () => res(null), {
@@ -288,25 +279,21 @@ export default function App() {
         maximumAge: 0,
       })
     })
-    if (!pos) return { ok: false, message: 'Turn on location — we need your real spot to check in.' }
+    if (!pos) return { ok: false, message: t('errors.checkin.needLocation') }
     const res = await apiCheckIn(token, {
-      terraceId: t.id,
+      terraceId: terrace.id,
       lat: pos.coords.latitude,
       lon: pos.coords.longitude,
       accuracy: pos.coords.accuracy,
-      shadeStatus: shade.info[t.id]?.status ?? infoAt(t.id, todayAt(deferred)).status,
+      shadeStatus: shade.info[terrace.id]?.status ?? infoAt(terrace.id, todayAt(deferred)).status,
     })
     if (res.error) {
-      const msg: Record<string, string> = {
-        too_far: "You're too far — get within 25m of the bar to check in.",
-        cooldown: 'You already checked in here recently.',
-        slow_down: `Slow down — wait ${res.waitMin ?? 'a few'} min between check-ins.`,
-        poor_gps: "Couldn't pin your location precisely — try again in the open.",
-        impossible_travel: 'That jump was too fast to be real.',
-        unauthenticated: 'Session expired — sign in again.',
-        terrace_not_found: 'This bar is not in the game yet.',
+      return {
+        ok: false,
+        message: t([`errors.checkin.${res.error}`, 'errors.checkin.default'], {
+          wait: res.waitMin ?? t('common.aFew'),
+        }),
       }
-      return { ok: false, message: msg[res.error] ?? 'Check-in failed — try again.' }
     }
     return {
       ok: true,
@@ -316,7 +303,7 @@ export default function App() {
     }
   }
 
-  const selectedName = selected?.name ?? 'this terrace'
+  const selectedName = selected?.name ?? t('terrace.thisTerrace')
 
   if (restoring)
     return (
@@ -368,7 +355,7 @@ export default function App() {
           >
             OMBRA
           </div>
-          <div style={{ fontWeight: 800, fontSize: 15 }}>Connecting to Google…</div>
+          <div style={{ fontWeight: 800, fontSize: 15 }}>{t('app.connectingGoogle')}</div>
         </div>
       </Shell>
     )
@@ -407,11 +394,11 @@ export default function App() {
   if (screen === 'perms')
     return (
       <Shell>
-        <Perms onBack={() => setScreen('handle')} onDone={() => setScreen(shouldOfferInstall() ? 'install' : 'map')} />
+        {/* Location is the only permission asked up front - the game is useless without it.
+            Install (iOS) + notifications are deferred to the first crown (see Celebrate). */}
+        <Perms onBack={() => setScreen('handle')} onDone={() => setScreen('map')} />
       </Shell>
     )
-  if (screen === 'install')
-    return <Shell><Install onDone={() => setScreen('map')} /></Shell>
   if (screen === 'terrace' && selected)
     return (
       <Shell>
@@ -440,11 +427,6 @@ export default function App() {
           terraceId={selected?.id ?? ''}
           handle={handle}
           token={token}
-          promptAlerts={
-            typeof Notification !== 'undefined' &&
-            Notification.permission === 'default' &&
-            !localStorage.getItem('ombra_notif_asked')
-          }
           onSeeBoard={() => setScreen('boards')}
           onBackToMap={() => setScreen('map')}
         />

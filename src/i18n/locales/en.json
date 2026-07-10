@@ -1,0 +1,193 @@
+{
+  "common": {
+    "loading": "loading…",
+    "justNow": "just now",
+    "hoursAgo": "{{count}}h ago",
+    "daysAgo": "{{count}}d ago",
+    "aFew": "a few",
+    "barcelona": "Barcelona"
+  },
+  "app": {
+    "connectingGoogle": "Connecting to Google…"
+  },
+  "errors": {
+    "google": {
+      "google_setup": "Google sign-in isn’t set up yet.",
+      "state": "Google sign-in expired. Try again.",
+      "token": "Google sign-in failed. Try again.",
+      "userinfo": "Couldn’t read your Google profile. Try again.",
+      "server": "Something went wrong. Try again.",
+      "default": "Google sign-in failed. Try again."
+    },
+    "checkin": {
+      "needSignin": "Sign in to check in.",
+      "needLocation": "Turn on location. We need your real spot to check in.",
+      "too_far": "You're too far. Get within 25m of the bar to check in.",
+      "cooldown": "You already checked in here recently.",
+      "slow_down": "Slow down. Wait {{wait}} min between check-ins.",
+      "poor_gps": "Couldn't pin your location precisely. Try again in the open.",
+      "impossible_travel": "That jump was too fast to be real.",
+      "unauthenticated": "Session expired. Sign in again.",
+      "terrace_not_found": "This bar is not in the game yet.",
+      "default": "Check-in failed. Try again."
+    },
+    "signup": {
+      "needGoogle": "Sign in with Google to continue",
+      "handleTaken": "That name is taken. Try another",
+      "failed": "Sign-up failed, try again"
+    }
+  },
+  "welcome": {
+    "season": "Barcelona · summer '26",
+    "tagline": "The shade-hunting game for Barcelona terraces.",
+    "sub": "Find the shadiest terrace. Check in. Hold the crown until a friend comes to steal it.",
+    "start": "Start hunting →",
+    "footer": "the sun is not your friend ☀"
+  },
+  "howItWorks": {
+    "label": "How it works",
+    "steps": ["See the shade near you", "Tap a bar", "Check in within 25m", "Steal the crown"],
+    "continueGoogle": "Continue with Google"
+  },
+  "handle": {
+    "step": "Step 1 of 2",
+    "title1": "Pick your",
+    "title2": "hunter name",
+    "placeholder": "martina",
+    "typeToClaim": "type a name to claim it",
+    "checking": "checking…",
+    "taken": "✗ @{{name}} is taken",
+    "upForGrabs": "✓ @{{name}} is up for grabs",
+    "errPrefix": "✗ {{error}}",
+    "creating": "Creating…",
+    "continue": "Continue →"
+  },
+  "perms": {
+    "step": "Step 2 of 2",
+    "title1": "Turn on",
+    "title2": "location",
+    "body": "We check you're <em>actually</em> at the terrace. No crowns from your couch. You must be within 25m to check in.",
+    "allow": "Allow location",
+    "notNow": "not now"
+  },
+  "install": {
+    "oneLastThing": "One last thing",
+    "title1": "Give the crown",
+    "title2": "a home screen",
+    "ios": "Tap <hl>Share</hl>, then <hl>“Add to Home Screen.”</hl>",
+    "androidPrompt": "Tap the button below. <hl>Ombra installs in a tap.</hl>",
+    "other": "Tap <hl>⋮</hl>, then <hl>“Add to Home screen.”</hl>",
+    "noStore": "no app store · no download · it just shows up",
+    "addToHome": "Add to home screen",
+    "done": "Done · I added it",
+    "maybeLater": "maybe later"
+  },
+  "checking": {
+    "lockingIn": "Locking you in…",
+    "confirmingAt": "confirming you're at {{name}}"
+  },
+  "terrace": {
+    "thisTerrace": "this terrace",
+    "openInMaps": "📍 Open in Google Maps ↗",
+    "saveAria": "Save this bar",
+    "savedAria": "Saved to your bars",
+    "tablesOutside": "{{count}} tables outside",
+    "inShade": "in the shade right now",
+    "inSun": "in full sun right now",
+    "shadedUntil": "stays shaded until {{until}}",
+    "shadedAWhile": "shaded for a while yet",
+    "findShadier": "find a shadier spot nearby",
+    "rulesThisTerrace": "@{{name}} rules this terrace",
+    "noCrownYet": "No crown yet. Claim it",
+    "worth": "THIS CHECK-IN IS WORTH",
+    "points": "+{{points}} pts",
+    "base": "{{base}} base",
+    "shadeBonus": "×{{bonus}} shade bonus",
+    "ctaReady": "Check in · steal the crown",
+    "ctaLocating": "Finding your location…",
+    "ctaDenied": "Turn on location to check in",
+    "ctaPoor": "Weak GPS. Step into the open",
+    "ctaFar": "Too far. Get within 25m",
+    "ctaFarDist": "Too far. Get within 25m · {{dist}}m away"
+  },
+  "celebrate": {
+    "guardTitle": "🔔 Guard your crown",
+    "guardBody": "Get pinged the second a friend steals it, so you can race back.",
+    "installTitle": "👑 Get crown-steal alerts",
+    "installBody": "On iPhone, alerts only work once Ombra is on your home screen. Add it so we can ping you the second someone takes your crown.",
+    "installGot": "Got it",
+    "turnOnAlerts": "Turn on alerts",
+    "notNow": "Not now",
+    "seeLeaderboard": "See the leaderboard →",
+    "backToMap": "back to the map",
+    "checkedIn": "checked in",
+    "pts": "+{{points}} pts",
+    "standing_one": "<b>@{{holder}}</b> still rules {{terrace}} with {{count}} check-in this week. You're on {{mine}}, <b>{{gap}} more</b> to steal the crown.",
+    "standing_other": "<b>@{{holder}}</b> still rules {{terrace}} with {{count}} check-ins this week. You're on {{mine}}, <b>{{gap}} more</b> to steal the crown.",
+    "someoneHolds": "Someone else holds {{terrace}}'s crown. Keep checking in to steal it.",
+    "crownStolen": "checked in · crown stolen",
+    "crownClaimed": "checked in · crown claimed",
+    "youStole1": "You stole",
+    "youStole2": "the crown",
+    "youClaimed1": "You claimed",
+    "youClaimed2": "the crown",
+    "terraceYours": "{{terrace}} is yours 👑",
+    "ptsCaps": "+{{points}} PTS"
+  },
+  "boards": {
+    "title": "LEADERBOARDS",
+    "myBarri": "My barri ▾",
+    "barriPick": "{{barri}} ▾",
+    "aBar": "A bar ▾",
+    "barPick": "{{name}} ▾",
+    "allBcn": "All BCN",
+    "friends": "Friends",
+    "titleCity": "All Barcelona",
+    "titleBarri": "Your barri",
+    "titleBar": "A bar",
+    "titleFriends": "Your friends",
+    "saved": "★ Saved",
+    "save": "☆ Save",
+    "liveTag": "● live · 7d",
+    "friendsSoon": "Friends, coming soon",
+    "friendsSoonBody": "Invite links and friend-only crown-stealing are next.",
+    "noCheckins": "No check-ins here yet. Be the first.",
+    "you": "@{{handle}} · you",
+    "handle": "@{{name}}",
+    "checkinsWeek_one": "{{count}} check-in this week",
+    "checkinsWeek_other": "{{count}} check-ins this week",
+    "pickBarri": "Pick a barri",
+    "searchBarri": "Search neighbourhood…",
+    "findBar": "Find a bar",
+    "searchBar": "Search by name or street…",
+    "nothingFound": "Nothing found."
+  },
+  "profile": {
+    "shadeHunter": "shade hunter",
+    "shadeHunterSince": "shade hunter since {{since}}",
+    "crownsHeldNow": "crowns held now",
+    "ptsThisWeek": "pts this week",
+    "checkins": "check-ins",
+    "crownsNow": "crowns now",
+    "recentCheckins": "Recent check-ins",
+    "startStreak": "Check in at a terrace to start your streak.",
+    "addToHome": "📲 Add to home screen",
+    "logout": "Log out",
+    "savePhotoError": "Could not save photo. Try a smaller image.",
+    "language": "Language",
+    "notFound": "Hunter not found.",
+    "noCheckinsYet": "No check-ins yet."
+  },
+  "map": {
+    "shadeNearYou": "shade near you",
+    "shadeAt": "◐ SHADE AT {{time}}",
+    "dragTime": "drag time →",
+    "timeOfDay": "Time of day",
+    "centreOnMe": "Centre on me"
+  },
+  "tabs": {
+    "map": "Map",
+    "boards": "Boards",
+    "you": "You"
+  }
+}

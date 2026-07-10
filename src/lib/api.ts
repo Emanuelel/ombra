@@ -147,7 +147,12 @@ function urlBase64ToUint8Array(base64: string): Uint8Array {
 /** Subscribe this device to web push and register it server-side. Best-effort. */
 export async function subscribeToPush(token: string): Promise<boolean> {
   try {
-    if (!('serviceWorker' in navigator) || !('PushManager' in window) || !VAPID_PUBLIC) return false
+    if (!VAPID_PUBLIC) {
+      if ((import.meta as any).env?.DEV)
+        console.warn('[ombra] VITE_VAPID_PUBLIC_KEY is not set - push notifications are disabled. Set it in your env / Vercel to enable alerts.')
+      return false
+    }
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) return false
     // Don't hang if no service worker is active (e.g. in the Vite dev preview).
     const reg = await Promise.race([
       navigator.serviceWorker.ready,

@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "check:i18n": "node scripts/check-i18n.mjs",
+    "prebuild": "node scripts/check-i18n.mjs",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "fetch-data": "tsx scripts/fetch-overpass.ts",
@@ -21,10 +23,12 @@
     "@turf/turf": "^7.1.0",
     "ably": "^2.23.0",
     "drizzle-orm": "^0.45.2",
+    "i18next": "^26.3.6",
     "leaflet": "^1.9.4",
     "rbush": "^4.0.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-i18next": "^17.0.9",
     "react-leaflet": "^4.2.1",
     "suncalc": "^1.9.0",
     "web-push": "^3.6.7"

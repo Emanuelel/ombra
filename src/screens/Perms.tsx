@@ -1,3 +1,4 @@
+import { Trans, useTranslation } from 'react-i18next'
 import { btnBlock, C, display, mono } from '../ui/tokens'
 
 export default function Perms({
@@ -7,6 +8,7 @@ export default function Perms({
   onBack: () => void
   onDone: () => void
 }) {
+  const { t } = useTranslation()
   function allow() {
     if ('geolocation' in navigator) {
       // Trigger the real permission prompt; proceed regardless of the outcome.
@@ -39,7 +41,7 @@ export default function Perms({
         ←
       </button>
       <div style={mono(12, { letterSpacing: '.22em', textTransform: 'uppercase', marginTop: 14 })}>
-        Step 2 of 2
+        {t('perms.step')}
       </div>
 
       <div style={{ margin: 'auto', textAlign: 'center' }}>
@@ -77,18 +79,17 @@ export default function Perms({
           />
         </div>
         <div style={display(32, { lineHeight: 0.98, marginTop: 26 })}>
-          Turn on
+          {t('perms.title1')}
           <br />
-          location
+          {t('perms.title2')}
         </div>
         <div style={{ fontSize: 15, lineHeight: 1.45, marginTop: 12, maxWidth: 280, marginLeft: 'auto', marginRight: 'auto' }}>
-          We check you're <em>actually</em> at the terrace — no crowns from your couch. You must be
-          within 50m to check in.
+          <Trans i18nKey="perms.body" components={{ em: <em /> }} />
         </div>
       </div>
 
       <button onClick={allow} style={{ ...btnBlock, background: C.ink, color: C.cream }}>
-        Allow location
+        {t('perms.allow')}
       </button>
       <button
         onClick={onDone}
@@ -101,7 +102,7 @@ export default function Perms({
           cursor: 'pointer',
         }}
       >
-        not now
+        {t('perms.notNow')}
       </button>
     </div>
   )

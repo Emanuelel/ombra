@@ -1,20 +1,23 @@
 import { useEffect, useState, type ChangeEvent } from 'react'
+import { useTranslation } from 'react-i18next'
+import type { TFunction } from 'i18next'
 import { C, display, mono } from '../ui/tokens'
 import Crown from '../ui/Crown'
 import Avatar from '../ui/Avatar'
 import { getUser, updateAvatar, type UserProfile } from '../lib/api'
 import { fileToDataUrl } from '../lib/image'
 import { shouldOfferInstall } from '../lib/platform'
+import { getLang, LANGS, setLang } from '../i18n/lang'
 import Install from './Install'
 
-function sinceLabel(iso: string): string {
-  return new Date(iso).toLocaleDateString('en', { month: 'short', year: '2-digit' }).replace(' ', " '")
+function sinceLabel(iso: string, lang: string): string {
+  return new Date(iso).toLocaleDateString(lang, { month: 'short', year: '2-digit' }).replace(' ', " '")
 }
-function ago(iso: string): string {
+function ago(iso: string, t: TFunction): string {
   const h = Math.floor((Date.now() - new Date(iso).getTime()) / 3_600_000)
-  if (h < 1) return 'just now'
-  if (h < 24) return `${h}h ago`
-  return `${Math.floor(h / 24)}d ago`
+  if (h < 1) return t('common.justNow')
+  if (h < 24) return t('common.hoursAgo', { count: h })
+  return t('common.daysAgo', { count: Math.floor(h / 24) })
 }
 
 export default function Profile({
@@ -32,6 +35,7 @@ export default function Profile({
   onOpenTerrace: (id: string) => void
   onLogout: () => void
 }) {
+  const { t, i18n } = useTranslation()
   const [u, setU] = useState<UserProfile | null>(null)
   const [saving, setSaving] = useState(false)
   const [err, setErr] = useState<string | null>(null)
@@ -52,7 +56,7 @@ export default function Profile({
     setSaving(false)
     if (!ok) {
       onAvatarChange(prev ?? null)
-      setErr('Could not save photo — try a smaller image.')
+      setErr(t('profile.savePhotoError'))
     }
   }
 
@@ -96,7 +100,7 @@ export default function Profile({
         <div>
           <div style={display(24)}>@{handle}</div>
           <div style={mono(11, { color: C.muted })}>
-            shade hunter{u ? ` since ${sinceLabel(u.joinedAt)}` : ''}
+            {u ? t('profile.shadeHunterSince', { since: sinceLabel(u.joinedAt, getLang()) }) : t('profile.shadeHunter')}
             {u?.topBarri ? ` · ${u.topBarri}` : ''}
           </div>
           {err && <div style={mono(10, { color: C.tomato, marginTop: 4 })}>{err}</div>}
@@ -117,7 +121,7 @@ export default function Profile({
       >
         <div>
           <div style={display(46, { color: C.sun, lineHeight: 0.85 })}>{u?.crowns ?? 0}</div>
-          <div style={mono(11, { color: C.muted3 })}>crowns held now</div>
+          <div style={mono(11, { color: C.muted3 })}>{t('profile.crownsHeldNow')}</div>
         </div>
         <Crown size={50} fill={C.sun} />
       </div>
@@ -125,20 +129,20 @@ export default function Profile({
       <div style={{ marginTop: 12, display: 'flex', gap: 10 }}>
         <div style={{ flex: 1, background: C.sun, border: `2.5px solid ${C.ink}`, borderRadius: 14, padding: 13 }}>
           <div style={display(26)}>{u?.points7d ?? 0}</div>
-          <div style={{ fontSize: 11 }}>pts this week</div>
+          <div style={{ fontSize: 11 }}>{t('profile.ptsThisWeek')}</div>
         </div>
         <div style={{ flex: 1, background: C.cream, border: `2.5px solid ${C.ink}`, borderRadius: 14, padding: 13 }}>
           <div style={display(26)}>{u?.checkinsAll ?? 0}</div>
-          <div style={{ fontSize: 11 }}>check-ins</div>
+          <div style={{ fontSize: 11 }}>{t('profile.checkins')}</div>
         </div>
       </div>
 
       <div style={mono(11, { letterSpacing: '.1em', textTransform: 'uppercase', color: C.muted2, marginTop: 16 })}>
-        Recent check-ins
+        {t('profile.recentCheckins')}
       </div>
       <div style={{ marginTop: 9, display: 'flex', flexDirection: 'column', gap: 8 }}>
         {u && u.recent.length === 0 && (
-          <div style={mono(12, { color: C.muted })}>Check in at a terrace to start your streak.</div>
+          <div style={mono(12, { color: C.muted })}>{t('profile.startStreak')}</div>
         )}
         {u?.recent.map((r, i) => (
           <button
@@ -161,7 +165,7 @@ export default function Profile({
             <span style={{ flex: 1, lineHeight: 1.15, minWidth: 0 }}>
               <span style={{ display: 'block', fontWeight: 800, fontSize: 14 }}>{r.terrace}</span>
               <span style={mono(11, { color: C.muted2 })}>
-                {r.barri ?? 'Barcelona'} · {ago(r.createdAt)}
+                {r.barri ?? t('common.barcelona')} · {ago(r.createdAt, t)}
               </span>
             </span>
             <span style={display(15, { color: C.greenText })}>+{r.points}</span>
@@ -185,9 +189,38 @@ export default function Profile({
             cursor: 'pointer',
           }}
         >
-          📲 Add to home screen
+          {t('profile.addToHome')}
         </button>
       )}
+
+      <div style={mono(11, { letterSpacing: '.1em', textTransform: 'uppercase', color: C.muted2, marginTop: 22 })}>
+        {t('profile.language')}
+      </div>
+      <div style={{ marginTop: 9, display: 'flex', gap: 8 }}>
+        {LANGS.map((l) => {
+          const active = i18n.resolvedLanguage === l.code
+          return (
+            <button
+              key={l.code}
+              onClick={() => setLang(l.code)}
+              aria-pressed={active}
+              style={{
+                flex: 1,
+                background: active ? C.ink : C.cream,
+                color: active ? C.sun : C.ink,
+                border: `2px solid ${C.ink}`,
+                borderRadius: 12,
+                padding: '11px 8px',
+                fontWeight: 800,
+                fontSize: 13,
+                cursor: 'pointer',
+              }}
+            >
+              {l.label}
+            </button>
+          )
+        })}
+      </div>
 
       <button
         onClick={onLogout}
@@ -202,7 +235,7 @@ export default function Profile({
           cursor: 'pointer',
         }}
       >
-        Log out
+        {t('profile.logout')}
       </button>
 
       {showInstall && (
@@ -211,6 +244,7 @@ export default function Profile({
         </div>
       )}
 
+      {/* i18n-ignore: data attribution / credit line, kept verbatim across languages */}
       <div style={mono(9.5, { color: C.muted, textAlign: 'center', marginTop: 'auto', paddingTop: 24, lineHeight: 1.5 })}>
         Terrace & places data © OpenStreetMap contributors, Overture Maps.
         <br />

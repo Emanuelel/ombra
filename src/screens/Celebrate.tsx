@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
+import { Trans, useTranslation } from 'react-i18next'
 import { btnBlock, C, display, mono } from '../ui/tokens'
-import Crown from '../ui/Crown'
+import CrownBadge from '../ui/CrownBadge'
+import { isIOS, isStandalone } from '../lib/platform'
 import { getLeaderboard, subscribeToPush } from '../lib/api'
 
 const CONFETTI = [
@@ -24,7 +26,6 @@ export default function Celebrate({
   terraceId,
   handle,
   token,
-  promptAlerts,
   onSeeBoard,
   onBackToMap,
 }: {
@@ -35,12 +36,23 @@ export default function Celebrate({
   terraceId: string
   handle: string
   token?: string | null
-  promptAlerts?: boolean
   onSeeBoard: () => void
   onBackToMap: () => void
 }) {
+  const { t } = useTranslation()
   const [disp, setDisp] = useState(0)
-  const [showAlerts, setShowAlerts] = useState(!!promptAlerts)
+  // First-crown nudge. On iOS, web push only works from the home-screen PWA, so we
+  // nudge install there; everywhere else we can request notifications straight away.
+  const [nudge, setNudge] = useState<'install' | 'alerts' | null>(() => {
+    try {
+      if (isIOS() && !isStandalone()) return localStorage.getItem('ombra_install_asked') ? null : 'install'
+      if ('Notification' in window && Notification.permission === 'default' && !localStorage.getItem('ombra_notif_asked'))
+        return 'alerts'
+    } catch {
+      /* ignore */
+    }
+    return null
+  })
   const [standing, setStanding] = useState<{ holder: string; holderN: number; mine: number } | null>(null)
 
   // Count the points up.
@@ -79,7 +91,15 @@ export default function Celebrate({
     } catch {
       /* ignore */
     }
-    setShowAlerts(false)
+    setNudge(null)
+  }
+  function dismissInstall() {
+    try {
+      localStorage.setItem('ombra_install_asked', '1')
+    } catch {
+      /* ignore */
+    }
+    setNudge(null)
   }
   function enableAlerts() {
     if ('Notification' in window) {
@@ -90,39 +110,73 @@ export default function Celebrate({
     } else markAsked()
   }
 
-  // Shared bottom section (alerts opt-in + navigation) — works on either background.
+  // Shared bottom section (alerts opt-in + navigation) - works on either background.
   const bottom = (
     <div style={{ marginTop: 'auto', width: '100%', animation: 'ombraFadeUp .5s .55s both' }}>
-      {showAlerts && (
+      {nudge === 'alerts' && (
         <div style={{ background: C.ink, color: C.cream, borderRadius: 14, padding: '13px 15px', marginBottom: 12, textAlign: 'center' }}>
-          <div style={{ fontWeight: 800, fontSize: 14 }}>🔔 Guard your crown</div>
+          <div style={{ fontWeight: 800, fontSize: 14 }}>{t('celebrate.guardTitle')}</div>
           <div style={{ fontSize: 12, color: C.muted3, marginTop: 3, lineHeight: 1.35 }}>
-            Get pinged the second a friend steals it — so you can race back.
+            {t('celebrate.guardBody')}
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 11 }}>
             <button
               onClick={enableAlerts}
               style={{ flex: 1, background: C.sun, border: `2px solid ${C.cream}`, borderRadius: 10, padding: '9px', fontWeight: 800, fontSize: 13, color: C.ink, cursor: 'pointer' }}
             >
-              Turn on alerts
+              {t('celebrate.turnOnAlerts')}
             </button>
             <button onClick={markAsked} style={{ background: 'none', border: 'none', color: C.muted3, fontSize: 12, cursor: 'pointer', padding: '9px 6px' }}>
-              Not now
+              {t('celebrate.notNow')}
             </button>
           </div>
+        </div>
+      )}
+      {nudge === 'install' && (
+        <div style={{ background: C.ink, color: C.cream, borderRadius: 14, padding: '13px 15px', marginBottom: 12, textAlign: 'left' }}>
+          <div style={{ fontWeight: 800, fontSize: 14 }}>{t('celebrate.installTitle')}</div>
+          <div style={{ fontSize: 12, color: C.muted3, marginTop: 3, lineHeight: 1.35 }}>{t('celebrate.installBody')}</div>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+              marginTop: 11,
+              background: 'rgba(255,246,228,.08)',
+              borderRadius: 10,
+              padding: '9px 11px',
+            }}
+          >
+            <span style={{ flexShrink: 0, width: 30, height: 30, borderRadius: 8, background: C.sun, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <svg width="15" height="17" viewBox="0 0 24 26" fill="none" stroke="#17130c" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 3v13" />
+                <path d="M8 7l4-4 4 4" />
+                <path d="M6 12H4v12h16V12h-2" />
+              </svg>
+            </span>
+            <div style={{ fontSize: 12.5, lineHeight: 1.3 }}>
+              <Trans i18nKey="install.ios" components={{ hl: <span style={{ color: C.sun, fontWeight: 800 }} /> }} />
+            </div>
+          </div>
+          <button
+            onClick={dismissInstall}
+            style={{ width: '100%', marginTop: 11, background: C.sun, border: 'none', borderRadius: 10, padding: '9px', fontWeight: 800, fontSize: 13, color: C.ink, cursor: 'pointer' }}
+          >
+            {t('celebrate.installGot')}
+          </button>
         </div>
       )}
       <button
         onClick={onSeeBoard}
         style={{ ...btnBlock, borderRadius: 16, padding: 17, fontSize: 17, background: C.ink, color: C.cream }}
       >
-        See the leaderboard →
+        {t('celebrate.seeLeaderboard')}
       </button>
       <button
         onClick={onBackToMap}
         style={{ background: 'none', border: 'none', width: '100%', marginTop: 8, ...mono(12, { color: C.muted }), cursor: 'pointer' }}
       >
-        back to the map
+        {t('celebrate.backToMap')}
       </button>
     </div>
   )
@@ -161,20 +215,21 @@ export default function Celebrate({
             <span style={display(52, { lineHeight: 1 })}>✓</span>
           </div>
           <div style={mono(12, { letterSpacing: '.24em', textTransform: 'uppercase', marginTop: 22, color: C.muted })}>
-            checked in
+            {t('celebrate.checkedIn')}
           </div>
           <div style={display(40, { marginTop: 8, letterSpacing: '-.02em' })}>
             +{disp} <span style={{ fontSize: 22 }}>pts</span>
           </div>
           <div style={{ fontSize: 14.5, lineHeight: 1.45, marginTop: 14, maxWidth: 310, color: C.muted2 }}>
             {standing ? (
-              <>
-                <span style={{ fontWeight: 800, color: C.ink }}>@{standing.holder}</span> still rules {terraceName} with{' '}
-                {standing.holderN} check-in{standing.holderN === 1 ? '' : 's'} this week — you're on {standing.mine}.{' '}
-                <span style={{ fontWeight: 800, color: C.ink }}>{gap} more</span> to steal the crown.
-              </>
+              <Trans
+                i18nKey="celebrate.standing"
+                count={standing.holderN}
+                values={{ holder: standing.holder, terrace: terraceName, mine: standing.mine, gap }}
+                components={{ b: <span style={{ fontWeight: 800, color: C.ink }} /> }}
+              />
             ) : (
-              <>Someone else holds {terraceName}'s crown — keep checking in to steal it.</>
+              <>{t('celebrate.someoneHolds', { terrace: terraceName })}</>
             )}
           </div>
         </div>
@@ -217,37 +272,9 @@ export default function Celebrate({
       </div>
 
       <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', position: 'relative' }}>
-        <div
-          style={{
-            position: 'absolute',
-            top: -30,
-            width: 280,
-            height: 280,
-            background: 'repeating-conic-gradient(#FF4A31 0 11deg, transparent 11deg 24deg)',
-            opacity: 0.22,
-            borderRadius: '50%',
-            animation: 'ombraSpin 10s linear infinite',
-          }}
-        />
-        <div
-          style={{
-            position: 'relative',
-            width: 140,
-            height: 140,
-            background: C.tomato,
-            border: `4px solid ${C.ink}`,
-            borderRadius: '50%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            boxShadow: `8px 8px 0 ${C.ink}`,
-            animation: 'ombraPop .6s cubic-bezier(.2,1.3,.4,1) both',
-          }}
-        >
-          <Crown size={74} fill={C.cream} />
-        </div>
+        <CrownBadge size={140} />
         <div style={mono(12, { letterSpacing: '.24em', textTransform: 'uppercase', marginTop: 22, animation: 'ombraFadeUp .5s .2s both' })}>
-          {stolen ? 'checked in · crown stolen' : 'checked in · crown claimed'}
+          {stolen ? t('celebrate.crownStolen') : t('celebrate.crownClaimed')}
         </div>
         <div
           style={display(50, {
@@ -260,20 +287,20 @@ export default function Celebrate({
         >
           {stolen ? (
             <>
-              You stole
+              {t('celebrate.youStole1')}
               <br />
-              the crown
+              {t('celebrate.youStole2')}
             </>
           ) : (
             <>
-              You claimed
+              {t('celebrate.youClaimed1')}
               <br />
-              the crown
+              {t('celebrate.youClaimed2')}
             </>
           )}
         </div>
         <div style={{ fontWeight: 700, fontSize: 15, marginTop: 10, animation: 'ombraFadeUp .5s .4s both' }}>
-          {terraceName} is yours 👑
+          {t('celebrate.terraceYours', { terrace: terraceName })}
         </div>
         <div
           style={{
@@ -286,7 +313,7 @@ export default function Celebrate({
             animation: 'ombraFadeUp .5s .45s both',
           }}
         >
-          +{disp} PTS
+          {t('celebrate.ptsCaps', { points: disp })}
         </div>
       </div>
 

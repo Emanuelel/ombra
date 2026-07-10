@@ -21,7 +21,7 @@ export function shadeBonus(altitudeDeg: number): number {
   return Math.round((1 + 2 * t) * 10) / 10
 }
 
-/** Equirectangular metres between two lon/lat points — fast, good at city scale. */
+/** Equirectangular metres between two lon/lat points - fast, good at city scale. */
 export function distM(aLon: number, aLat: number, bLon: number, bLat: number): number {
   const R = 6371000
   const rad = Math.PI / 180

@@ -8,7 +8,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg', 'apple-touch-icon.png', 'icon-192.png', 'icon-512.png'],
+      includeAssets: ['favicon.svg', 'apple-touch-icon.png', 'icon-192.png', 'icon-512.png', 'badge-96.png'],
       workbox: {
         // The committed OSM building data + geometry libs push the bundle past
         // workbox's default 2 MiB precache cap; allow the app to be cached offline.

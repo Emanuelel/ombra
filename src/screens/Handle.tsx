@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type ChangeEvent } from 'react'
+import { useTranslation } from 'react-i18next'
 import Avatar from '../ui/Avatar'
 import { checkHandle } from '../lib/api'
 import { fileToDataUrl } from '../lib/image'
@@ -23,6 +24,7 @@ export default function Handle({
   onBack: () => void
   onContinue: () => void
 }) {
+  const { t } = useTranslation()
   const clean = handle.replace(/[^a-z0-9_.]/gi, '').toLowerCase()
 
   const [avail, setAvail] = useState<null | boolean>(null)
@@ -75,12 +77,12 @@ export default function Handle({
         ←
       </button>
       <div style={mono(12, { letterSpacing: '.22em', textTransform: 'uppercase', color: C.muted, marginTop: 14 })}>
-        Step 1 of 2
+        {t('handle.step')}
       </div>
       <div style={display(38, { lineHeight: 0.95, marginTop: 8 })}>
-        Pick your
+        {t('handle.title1')}
         <br />
-        hunter name
+        {t('handle.title2')}
       </div>
 
       <div style={{ marginTop: 34, display: 'flex', alignItems: 'center', gap: 16 }}>
@@ -130,7 +132,7 @@ export default function Handle({
             autoCorrect="off"
             spellCheck={false}
             maxLength={20}
-            placeholder="martina"
+            placeholder={t('handle.placeholder')}
             style={{
               ...display(22),
               flex: 1,
@@ -152,14 +154,14 @@ export default function Handle({
         })}
       >
         {error
-          ? `✗ ${error}`
+          ? t('handle.errPrefix', { error })
           : clean.length < 2
-            ? 'type a name to claim it'
+            ? t('handle.typeToClaim')
             : checking
-              ? 'checking…'
+              ? t('handle.checking')
               : avail === false
-                ? `✗ @${clean} is taken`
-                : `✓ @${clean} is up for grabs`}
+                ? t('handle.taken', { name: clean })
+                : t('handle.upForGrabs', { name: clean })}
       </div>
 
       <button
@@ -173,7 +175,7 @@ export default function Handle({
           opacity: canContinue ? 1 : 0.4,
         }}
       >
-        {busy ? 'Creating…' : 'Continue →'}
+        {busy ? t('handle.creating') : t('handle.continue')}
       </button>
     </div>
   )

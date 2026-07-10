@@ -8,7 +8,7 @@ function colorFor(name: string): string {
   return PALETTE[h % PALETTE.length]
 }
 
-/** Circular avatar — shows an uploaded photo if `src` is set, else a colour + initial. */
+/** Circular avatar - shows an uploaded photo if `src` is set, else a colour + initial. */
 export default function Avatar({
   name,
   src,

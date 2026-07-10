@@ -1,3 +1,4 @@
+// i18n-exempt: legacy screen, not wired into the app (see App.tsx routing). Left untranslated on purpose.
 import { btnBlock, C, display, mono } from '../ui/tokens'
 import Crown from '../ui/Crown'
 import { subscribeToPush } from '../lib/api'
@@ -84,7 +85,7 @@ export default function Alerts({
           in silence
         </div>
         <div style={{ fontSize: 15, lineHeight: 1.45, marginTop: 12, maxWidth: 285, marginLeft: 'auto', marginRight: 'auto', color: '#3a1a12' }}>
-          Get a ping the moment a friend steals one of your crowns — so you can race back and take
+          Get a ping the moment a friend steals one of your crowns - so you can race back and take
           it right off them.
         </div>
       </div>

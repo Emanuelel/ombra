@@ -1,4 +1,4 @@
-// Seed leaderboard datasets — exact content from the design handoff. These are
+// Seed leaderboard datasets - exact content from the design handoff. These are
 // invented demo data; the live app replaces them via /api/leaderboard (see Boards).
 
 export type BoardTab = 'terrace' | 'hood' | 'friends' | 'city'
@@ -32,7 +32,7 @@ export function boardData(tab: BoardTab, held: boolean): Board {
       return {
         title: 'Bar Nàufrag',
         sub: 'Crown · rolling 7d',
-        foot: held ? 'you snatched it — 1 visit ahead' : 'top 4 of 38 regulars',
+        foot: held ? 'you snatched it - 1 visit ahead' : 'top 4 of 38 regulars',
         rows: held
           ? [
               { rank: 1, name: '@martina · you', meta: '5 check-ins this week', val: 374, crown: true, you: true },
@@ -76,7 +76,7 @@ export function boardData(tab: BoardTab, held: boolean): Board {
       return {
         title: 'All Barcelona',
         sub: 'Top hunters · 7d',
-        foot: "you're #47 city-wide — climbing",
+        foot: "you're #47 city-wide - climbing",
         rows: [
           { rank: 1, name: '@solbandit', meta: 'Gràcia · 11 crowns', val: 3120, crown: true },
           { rank: 2, name: '@ombravedor', meta: 'El Raval · 9 crowns', val: 2980 },

@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react'
+import { useTranslation } from 'react-i18next'
 import { C } from './tokens'
 
 type Tab = 'map' | 'boards' | 'profile'
@@ -61,6 +62,7 @@ export default function TabBar({
   onBoards: () => void
   onProfile: () => void
 }) {
+  const { t } = useTranslation()
   return (
     <div
       style={{
@@ -73,13 +75,13 @@ export default function TabBar({
         paddingBottom: 'calc(12px + env(safe-area-inset-bottom))',
       }}
     >
-      <button onClick={onMap} style={navStyle(active === 'map')} aria-label="Map">
+      <button onClick={onMap} style={navStyle(active === 'map')} aria-label={t('tabs.map')}>
         <MapIcon />
       </button>
-      <button onClick={onBoards} style={navStyle(active === 'boards')} aria-label="Boards">
+      <button onClick={onBoards} style={navStyle(active === 'boards')} aria-label={t('tabs.boards')}>
         <CrownIcon />
       </button>
-      <button onClick={onProfile} style={navStyle(active === 'profile')} aria-label="You">
+      <button onClick={onProfile} style={navStyle(active === 'profile')} aria-label={t('tabs.you')}>
         <PersonIcon />
       </button>
     </div>

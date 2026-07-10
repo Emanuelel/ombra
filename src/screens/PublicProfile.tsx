@@ -1,19 +1,22 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import type { TFunction } from 'i18next'
 import { C, display, mono } from '../ui/tokens'
 import Avatar from '../ui/Avatar'
 import Crown from '../ui/Crown'
 import { getUser, type UserProfile } from '../lib/api'
+import { getLang } from '../i18n/lang'
 
-function sinceLabel(iso: string): string {
+function sinceLabel(iso: string, lang: string): string {
   const d = new Date(iso)
-  return d.toLocaleDateString('en', { month: 'short', year: '2-digit' }).replace(' ', " '")
+  return d.toLocaleDateString(lang, { month: 'short', year: '2-digit' }).replace(' ', " '")
 }
-function ago(iso: string): string {
+function ago(iso: string, t: TFunction): string {
   const ms = Date.now() - new Date(iso).getTime()
   const h = Math.floor(ms / 3_600_000)
-  if (h < 1) return 'just now'
-  if (h < 24) return `${h}h ago`
-  return `${Math.floor(h / 24)}d ago`
+  if (h < 1) return t('common.justNow')
+  if (h < 24) return t('common.hoursAgo', { count: h })
+  return t('common.daysAgo', { count: Math.floor(h / 24) })
 }
 
 function Tile({ big, label, sun }: { big: string; label: string; sun?: boolean }) {
@@ -42,6 +45,7 @@ export default function PublicProfile({
   onBack: () => void
   onOpenTerrace: (id: string) => void
 }) {
+  const { t } = useTranslation()
   const [u, setU] = useState<UserProfile | null | 'loading'>('loading')
 
   useEffect(() => {
@@ -69,8 +73,8 @@ export default function PublicProfile({
         ←
       </button>
 
-      {u === 'loading' && <div style={mono(12, { color: C.muted, marginTop: 24 })}>loading…</div>}
-      {u === null && <div style={mono(13, { color: C.muted, marginTop: 24 })}>Hunter not found.</div>}
+      {u === 'loading' && <div style={mono(12, { color: C.muted, marginTop: 24 })}>{t('common.loading')}</div>}
+      {u === null && <div style={mono(13, { color: C.muted, marginTop: 24 })}>{t('profile.notFound')}</div>}
 
       {u && u !== 'loading' && (
         <div className="ombra-scroll" style={{ overflowY: 'auto', flex: 1 }}>
@@ -79,23 +83,23 @@ export default function PublicProfile({
             <div>
               <div style={display(26)}>@{u.handle}</div>
               <div style={mono(11, { color: C.muted })}>
-                shade hunter since {sinceLabel(u.joinedAt)}
+                {t('profile.shadeHunterSince', { since: sinceLabel(u.joinedAt, getLang()) })}
                 {u.topBarri ? ` · ${u.topBarri}` : ''}
               </div>
             </div>
           </div>
 
           <div style={{ display: 'flex', gap: 10, marginTop: 18 }}>
-            <Tile big={String(u.crowns)} label="crowns now" sun />
-            <Tile big={String(u.points7d)} label="pts this week" />
-            <Tile big={String(u.checkinsAll)} label="check-ins" />
+            <Tile big={String(u.crowns)} label={t('profile.crownsNow')} sun />
+            <Tile big={String(u.points7d)} label={t('profile.ptsThisWeek')} />
+            <Tile big={String(u.checkinsAll)} label={t('profile.checkins')} />
           </div>
 
           <div style={mono(11, { letterSpacing: '.1em', textTransform: 'uppercase', color: C.muted2, marginTop: 22 })}>
-            Recent check-ins
+            {t('profile.recentCheckins')}
           </div>
           <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', gap: 7 }}>
-            {u.recent.length === 0 && <div style={mono(12, { color: C.muted })}>No check-ins yet.</div>}
+            {u.recent.length === 0 && <div style={mono(12, { color: C.muted })}>{t('profile.noCheckinsYet')}</div>}
             {u.recent.map((r, i) => (
               <button
                 key={i}
@@ -117,7 +121,7 @@ export default function PublicProfile({
                 <span style={{ flex: 1, lineHeight: 1.15, minWidth: 0 }}>
                   <span style={{ display: 'block', fontWeight: 800, fontSize: 14 }}>{r.terrace}</span>
                   <span style={mono(11, { color: C.muted2 })}>
-                    {r.barri ?? 'Barcelona'} · {ago(r.createdAt)}
+                    {r.barri ?? t('common.barcelona')} · {ago(r.createdAt, t)}
                   </span>
                 </span>
                 <span style={display(15, { color: C.greenText })}>+{r.points}</span>

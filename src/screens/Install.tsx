@@ -1,3 +1,4 @@
+import { Trans, useTranslation } from 'react-i18next'
 import { btnBlock, C, display, mono } from '../ui/tokens'
 import Crown from '../ui/Crown'
 import { installMode, promptInstall } from '../lib/platform'
@@ -50,7 +51,9 @@ function ShareGlyph() {
 }
 
 export default function Install({ onDone }: { onDone: () => void }) {
+  const { t } = useTranslation()
   const mode = installMode()
+  const instructionKey = mode === 'ios' ? 'install.ios' : mode === 'android-prompt' ? 'install.androidPrompt' : 'install.other'
 
   async function androidInstall() {
     await promptInstall()
@@ -70,11 +73,12 @@ export default function Install({ onDone }: { onDone: () => void }) {
       }}
     >
       <div style={mono(12, { letterSpacing: '.22em', textTransform: 'uppercase', color: C.muted })}>
-        One last thing
+        {t('install.oneLastThing')}
       </div>
       <div style={display(34, { lineHeight: 0.98, marginTop: 8 })}>
-        Give the crown
-        <br />a home screen
+        {t('install.title1')}
+        <br />
+        {t('install.title2')}
       </div>
 
       {/* home-screen mock */}
@@ -115,26 +119,12 @@ export default function Install({ onDone }: { onDone: () => void }) {
       >
         {mode === 'ios' && <ShareGlyph />}
         <div style={{ fontWeight: 700, fontSize: 15, lineHeight: 1.35 }}>
-          {mode === 'ios' ? (
-            <>
-              Tap <span style={{ color: C.sun }}>Share</span>, then{' '}
-              <span style={{ color: C.sun }}>“Add to Home Screen.”</span>
-            </>
-          ) : mode === 'android-prompt' ? (
-            <>
-              Tap the button below — <span style={{ color: C.sun }}>Ombra installs in a tap.</span>
-            </>
-          ) : (
-            <>
-              Tap <span style={{ color: C.sun }}>⋮</span>, then{' '}
-              <span style={{ color: C.sun }}>“Add to Home screen.”</span>
-            </>
-          )}
+          <Trans i18nKey={instructionKey} components={{ hl: <span style={{ color: C.sun }} /> }} />
         </div>
       </div>
 
       <div style={mono(12, { textAlign: 'center', color: C.muted, marginTop: 14 })}>
-        no app store · no download · it just shows up
+        {t('install.noStore')}
       </div>
 
       {mode === 'android-prompt' ? (
@@ -142,21 +132,21 @@ export default function Install({ onDone }: { onDone: () => void }) {
           onClick={androidInstall}
           style={{ ...btnBlock, marginTop: 'auto', background: C.tomato, color: C.cream, border: `2.5px solid ${C.ink}`, boxShadow: `5px 5px 0 ${C.ink}` }}
         >
-          Add to home screen
+          {t('install.addToHome')}
         </button>
       ) : (
         <button
           onClick={onDone}
           style={{ ...btnBlock, marginTop: 'auto', background: C.tomato, color: C.cream, border: `2.5px solid ${C.ink}`, boxShadow: `5px 5px 0 ${C.ink}` }}
         >
-          Done · I added it
+          {t('install.done')}
         </button>
       )}
       <button
         onClick={onDone}
         style={{ background: 'none', border: 'none', width: '100%', marginTop: 10, ...mono(12, { color: C.muted }), cursor: 'pointer' }}
       >
-        maybe later
+        {t('install.maybeLater')}
       </button>
     </div>
   )

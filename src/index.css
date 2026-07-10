@@ -106,7 +106,7 @@ button {
   filter: sepia(0.32) saturate(1.15) brightness(1.03) hue-rotate(-8deg);
 }
 
-/* Time scrubber — a visible, chunky "sticker" slider. */
+/* Time scrubber - a visible, chunky "sticker" slider. */
 input.time-slider {
   -webkit-appearance: none;
   appearance: none;

@@ -8,8 +8,10 @@ self.addEventListener('push', function (event) {
   event.waitUntil(
     self.registration.showNotification(data.title || 'Ombra', {
       body: data.body || '',
-      icon: '/favicon.svg',
-      badge: '/favicon.svg',
+      // Large icon: the full-colour crown. Badge: a monochrome PNG that Android
+      // tints for the status bar (an SVG badge renders as a generic dot there).
+      icon: '/icon-192.png',
+      badge: '/badge-96.png',
       tag: data.tag || 'ombra',
       data: { url: data.url || '/' },
     }),

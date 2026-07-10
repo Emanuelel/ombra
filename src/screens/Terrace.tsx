@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { C, display, mono } from '../ui/tokens'
 import Crown from '../ui/Crown'
 import Avatar from '../ui/Avatar'
@@ -28,10 +29,11 @@ export default function Terrace({
   onCheckIn: () => void
   onUser: (handle: string) => void
 }) {
+  const { t } = useTranslation()
   const [board, setBoard] = useState<LbRow[] | null>(null)
   const [isFav, setIsFav] = useState(false)
   // Proactive proximity gate: watch the user's location while this screen is open so the
-  // check-in CTA reflects whether they can actually check in — no tap-then-fail surprise.
+  // check-in CTA reflects whether they can actually check in - no tap-then-fail surprise.
   const [gate, setGate] = useState<'locating' | 'denied' | 'poor' | 'far' | 'ok'>('locating')
   const [dist, setDist] = useState<number | null>(null)
   useEffect(() => {
@@ -82,15 +84,20 @@ export default function Terrace({
   const ready = gate === 'ok'
   const ctaLabel =
     gate === 'ok'
-      ? 'Check in · steal the crown'
+      ? t('terrace.ctaReady')
       : gate === 'locating'
-        ? 'Finding your location…'
+        ? t('terrace.ctaLocating')
         : gate === 'denied'
-          ? 'Turn on location to check in'
+          ? t('terrace.ctaDenied')
           : gate === 'poor'
-            ? 'Weak GPS — step into the open'
-            : `Too far — get within 25m${dist ? ` · ${Math.round(dist)}m away` : ''}`
-  const meta = [terrace.barri || 'Barcelona', terrace.tables ? `${terrace.tables} tables outside` : null]
+            ? t('terrace.ctaPoor')
+            : dist
+              ? t('terrace.ctaFarDist', { dist: Math.round(dist) })
+              : t('terrace.ctaFar')
+  const meta = [
+    terrace.barri || t('common.barcelona'),
+    terrace.tables ? t('terrace.tablesOutside', { count: terrace.tables }) : null,
+  ]
     .filter(Boolean)
     .join(' · ')
 
@@ -152,7 +159,7 @@ export default function Terrace({
         </button>
         <button
           onClick={toggleFav}
-          aria-label={isFav ? 'Saved to your bars' : 'Save this bar'}
+          aria-label={isFav ? t('terrace.savedAria') : t('terrace.saveAria')}
           style={{
             position: 'absolute',
             top: 48,
@@ -196,7 +203,7 @@ export default function Terrace({
               boxShadow: `2px 2px 0 ${C.ink}`,
             }}
           >
-            📍 Open in Google Maps ↗
+            {t('terrace.openInMaps')}
           </a>
         </div>
       </div>
@@ -212,10 +219,14 @@ export default function Terrace({
           </div>
           <div style={{ lineHeight: 1.2 }}>
             <div style={{ fontWeight: 800, fontSize: 15 }}>
-              {shaded ? 'in the shade right now' : 'in full sun right now'}
+              {shaded ? t('terrace.inShade') : t('terrace.inSun')}
             </div>
             <div style={{ fontSize: 12, color: C.muted2 }}>
-              {until ? `stays shaded until ${until}` : shaded ? 'shaded for a while yet' : 'find a shadier spot nearby'}
+              {until
+                ? t('terrace.shadedUntil', { until })
+                : shaded
+                  ? t('terrace.shadedAWhile')
+                  : t('terrace.findShadier')}
             </div>
           </div>
         </div>
@@ -240,7 +251,7 @@ export default function Terrace({
               <Crown size={20} fill={C.ink} />
               <Avatar name={board[0].displayName ?? '?'} src={board[0].avatarUrl} size={30} />
               <div style={{ flex: 1, fontWeight: 800, fontSize: 14 }}>
-                @{board[0].displayName} rules this terrace
+                {t('terrace.rulesThisTerrace', { name: board[0].displayName })}
               </div>
               <div style={mono(11)}>
                 {board[0].checkins} · 7d
@@ -283,7 +294,7 @@ export default function Terrace({
             }}
           >
             <Crown size={20} fill={C.ink} />
-            <div style={{ flex: 1, fontWeight: 800, fontSize: 14 }}>No crown yet — claim it</div>
+            <div style={{ flex: 1, fontWeight: 800, fontSize: 14 }}>{t('terrace.noCrownYet')}</div>
           </div>
         )}
 
@@ -300,13 +311,13 @@ export default function Terrace({
           }}
         >
           <div>
-            <div style={mono(10, { color: C.muted3, letterSpacing: '.1em' })}>THIS CHECK-IN IS WORTH</div>
-            <div style={display(28, { color: C.sun })}>+{points} pts</div>
+            <div style={mono(10, { color: C.muted3, letterSpacing: '.1em' })}>{t('terrace.worth')}</div>
+            <div style={display(28, { color: C.sun })}>{t('terrace.points', { points })}</div>
           </div>
           <div style={{ textAlign: 'right', ...mono(11, { color: C.muted3 }) }}>
-            {BASE_POINTS} base
+            {t('terrace.base', { base: BASE_POINTS })}
             <br />
-            <span style={{ color: C.sun }}>×{bonus} shade bonus</span>
+            <span style={{ color: C.sun }}>{t('terrace.shadeBonus', { bonus })}</span>
           </div>
         </div>
 

@@ -1,7 +1,9 @@
+import { useTranslation } from 'react-i18next'
 import { C, display, mono } from '../ui/tokens'
 import Crown from '../ui/Crown'
 
 export default function Checking({ terraceName }: { terraceName: string }) {
+  const { t } = useTranslation()
   return (
     <div
       style={{
@@ -49,9 +51,9 @@ export default function Checking({ terraceName }: { terraceName: string }) {
         />
         <Crown size={52} fill={C.sun} />
       </div>
-      <div style={display(22, { marginTop: 32 })}>Locking you in…</div>
+      <div style={display(22, { marginTop: 32 })}>{t('checking.lockingIn')}</div>
       <div style={mono(12, { color: C.muted3, marginTop: 8 })}>
-        confirming you're at {terraceName}
+        {t('checking.confirmingAt', { name: terraceName })}
       </div>
     </div>
   )

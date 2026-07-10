@@ -11,7 +11,7 @@ import type { Building, ShadeInfo, ShadeStatus, Terrace } from '../types'
 import { getSunPos, shadeBonus, distM, type SunPos } from './sun'
 import type { BuildingIndex } from './buildingIndex'
 
-// NOTE: this module (and its @turf/rbush deps) is BUILD-TIME ONLY — used by
+// NOTE: this module (and its @turf/rbush deps) is BUILD-TIME ONLY - used by
 // scripts/precompute-shade.ts to bake src/data/shade-table.json. The app reads the
 // baked table via src/lib/shadeTable.ts and never imports this file at runtime.
 const MAX_SHADOW_M = 140 // cap: beyond this the flat-shadow approximation is unreliable
