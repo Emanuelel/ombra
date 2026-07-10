@@ -19,7 +19,7 @@ export default function UpdatePrompt() {
         position: 'fixed',
         left: 12,
         right: 12,
-        bottom: 'calc(12px + env(safe-area-inset-bottom))',
+        top: 'calc(12px + env(safe-area-inset-top))',
         zIndex: 5000,
         background: C.ink,
         color: C.cream,
@@ -30,7 +30,7 @@ export default function UpdatePrompt() {
         alignItems: 'center',
         gap: 10,
         boxShadow: '4px 4px 0 rgba(0,0,0,.35)',
-        animation: 'ombraFadeUp .3s both',
+        animation: 'ombraDropDown .3s both',
       }}
     >
       <span style={{ flex: 1, fontWeight: 800, fontSize: 14, lineHeight: 1.25 }}>{t('update.available')}</span>
