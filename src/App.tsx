@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState, useDeferredValue, useEffect, useCallback } from 'react'
-import type { Bounds } from './components/MapView'
+import type { Bounds, Camera } from './components/MapView'
 import TabBar from './ui/TabBar'
 import Welcome from './screens/Welcome'
 import HowItWorks from './screens/HowItWorks'
@@ -91,6 +91,9 @@ export default function App() {
   const [userReturn, setUserReturn] = useState<Screen>('boards')
   const [terraceReturn, setTerraceReturn] = useState<Screen>('map')
   const timer = useRef<ReturnType<typeof setTimeout>>()
+  // Remember the map camera so opening/closing a terrace (which unmounts the map)
+  // returns you to where you were panning, not back to your location.
+  const mapCamera = useRef<Camera | null>(null)
 
   const [view, setView] = useState<Bounds>(() => ({
     s: CENTER[0] - 0.006,
@@ -482,6 +485,10 @@ export default function App() {
               setMinutes={(m) => setMinutes(m)}
               onSelect={(id) => openTerrace(id)}
               onView={onView}
+              initialCamera={mapCamera.current}
+              onCamera={(c) => {
+                mapCamera.current = c
+              }}
             />
           )}
           {screen === 'boards' && (

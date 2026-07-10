@@ -89,12 +89,20 @@ function LocateButton({ onFix }: { onFix: (p: [number, number]) => void }) {
 function MapEvents({
   onView,
   onUserPos,
+  onCamera,
+  restored,
 }: {
   onView: (b: Bounds) => void
   onUserPos: (p: [number, number]) => void
+  onCamera: (center: [number, number], zoom: number) => void
+  restored: boolean
 }) {
   // Once the user drags/zooms, never auto-recentre — don't fight their panning.
   const userMoved = useRef(false)
+  const reportCamera = () => {
+    const c = map.getCenter()
+    onCamera([c.lat, c.lng], map.getZoom())
+  }
   const map = useMapEvents({
     dragstart: () => {
       userMoved.current = true
@@ -102,10 +110,18 @@ function MapEvents({
     zoomstart: () => {
       userMoved.current = true
     },
-    moveend: () => onView(toBounds(map.getBounds())),
-    zoomend: () => onView(toBounds(map.getBounds())),
+    moveend: () => {
+      onView(toBounds(map.getBounds()))
+      reportCamera()
+    },
+    zoomend: () => {
+      onView(toBounds(map.getBounds()))
+      reportCamera()
+    },
   })
-  const didCenter = useRef(false)
+  // If we restored a saved camera, treat the map as already positioned so the first
+  // GPS fix doesn't yank it back to the user's location.
+  const didCenter = useRef(restored)
   const lastPos = useRef<[number, number] | null>(null)
   useEffect(() => {
     map.invalidateSize()
@@ -137,16 +153,25 @@ function MapEvents({
   return null
 }
 
+export interface Camera {
+  center: [number, number]
+  zoom: number
+}
+
 export default function MapView({
   terraces,
   info,
   onSelect,
   onView,
+  initialCamera,
+  onCamera,
 }: {
   terraces: Terrace[]
   info: Record<string, ShadeInfo>
   onSelect: (id: string) => void
   onView: (b: Bounds) => void
+  initialCamera?: Camera | null
+  onCamera?: (c: Camera) => void
 }) {
   const [userPos, setUserPos] = useState<[number, number] | null>(null)
   // Cache icons by shade % so panning doesn't rebuild every marker.
@@ -161,8 +186,18 @@ export default function MapView({
   }
 
   return (
-    <MapContainer center={CENTER} zoom={DEFAULT_ZOOM} zoomControl={false} attributionControl={false}>
-      <MapEvents onView={onView} onUserPos={setUserPos} />
+    <MapContainer
+      center={initialCamera?.center ?? CENTER}
+      zoom={initialCamera?.zoom ?? DEFAULT_ZOOM}
+      zoomControl={false}
+      attributionControl={false}
+    >
+      <MapEvents
+        onView={onView}
+        onUserPos={setUserPos}
+        onCamera={(center, zoom) => onCamera?.({ center, zoom })}
+        restored={!!initialCamera}
+      />
       <TileLayer
         url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png"
         subdomains="abcd"

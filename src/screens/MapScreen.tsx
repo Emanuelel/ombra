@@ -1,5 +1,5 @@
 import { C, display, mono } from '../ui/tokens'
-import MapView, { type Bounds } from '../components/MapView'
+import MapView, { type Bounds, type Camera } from '../components/MapView'
 import type { ShadeInfo, Terrace } from '../types'
 
 function fmt(minutes: number): string {
@@ -13,6 +13,8 @@ export default function MapScreen({
   setMinutes,
   onSelect,
   onView,
+  initialCamera,
+  onCamera,
 }: {
   terraces: Terrace[]
   info: Record<string, ShadeInfo>
@@ -20,6 +22,8 @@ export default function MapScreen({
   setMinutes: (m: number) => void
   onSelect: (id: string) => void
   onView: (b: Bounds) => void
+  initialCamera?: Camera | null
+  onCamera?: (c: Camera) => void
 }) {
   return (
     <div
@@ -79,7 +83,14 @@ export default function MapScreen({
           overflow: 'hidden',
         }}
       >
-        <MapView terraces={terraces} info={info} onSelect={onSelect} onView={onView} />
+        <MapView
+          terraces={terraces}
+          info={info}
+          onSelect={onSelect}
+          onView={onView}
+          initialCamera={initialCamera}
+          onCamera={onCamera}
+        />
       </div>
     </div>
   )
