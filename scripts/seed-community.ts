@@ -35,22 +35,23 @@ const CENTRAL_BARRIS = [
   'el Raval',
 ]
 
-// 60 credible handles. Order doesn't matter; tiers/barris are assigned below.
+// 60 handles modelled on how people ACTUALLY pick them: mostly internet-native
+// (anime + numbers, gamer tags, random words, in-jokes), with only a minority being
+// real name / name.surname. Order doesn't matter; tiers/barris are assigned below.
 const HANDLES = [
-  // Catalan (24)
-  'jordi.serra', 'laia_bcn', 'pau.vidal', 'arnau88', 'oriol.m', 'nuria.p',
-  'quimet.g', 'montse_r', 'roger.ferrer', 'gemma.sole', 'aleixx', 'martavidal',
-  'biel.roca', 'mar_puig', 'ferran.c', 'txell.bcn', 'guillemb', 'ona.riera',
-  'sergi_p', 'bruna.mas', 'marcel.font', 'aina_g', 'pol.torres', 'nilcasals',
-  // Spanish (22)
-  'ale.moreno', 'lucia_bcn', 'javis', 'carmen.ruiz', 'dani.g', 'sara_g',
-  'raul.m', 'elena.dominguez', 'marcos.rey', 'paula_88', 'ruben.diaz', 'natalia.v',
-  'adri.lopez', 'cristina.b', 'hector_m', 'rocio.g', 'ivan.serrano', 'marina_bcn',
-  'pablo.gil', 'ines.romero', 'vicky.m', 'nachooo',
-  // Expat / international (14)
-  'emma.k', 'marco_rm', 'yuki.bcn', 'tom.hikes', 'lena.b', 'lukas_berlin',
-  'chiara.v', 'noura.bcn', 'dieter.h', 'amelie_p', 'matteo.r', 'sanne.k',
-  'priya.bcn', 'jack.o',
+  // Real names — kept deliberately rare; only a few full name.surname
+  'jordi.serra', 'pau.vidal', 'gemma.sole', 'laia_bcn', 'nuria.p', 'montse_r',
+  'marc88', 'quimet', 'arnau_92', 'txell.bcn', 'aleix', 'biel', 'carla.m', 'sergi_p',
+  // Anime / gaming handles, usually with numbers
+  'kirito92', 'narutobcn', 'gojo_satoru', 'levi_ackerman', 'sasuke99', 'itachi_bcn',
+  'tanjiro_x', 'zelda_04', 'geralt_21', 'pikachu77', 'totoro_88', 'sailormoon22',
+  'akira2k', 'eren_yeager', 'mikasa_04', 'luffy_d', 'spikeg99', 'cloud_7',
+  'link_bcn', 'yasuo_main', 'kenji.x', 'megatron88', 'goku_ssj',
+  // Random words / net handles / gamer tags
+  'solysombra', 'vermutboy', 'sunchaser', 'elgato', 'potato.exe', 'bcn_nights',
+  'cafeconleche', 'noctambul', 'mrshadow', 'la_penya', 'cerveza_fria', 'guiri.vibes',
+  'terrasseig', 'xokito', 'ramen_lvl9', 'sk8ordie', 'elmostri', 'shadow_hunter',
+  'lobo_solitario', 'donpepe', 'lupita.exe', 'quesito', 'panot.bcn',
 ]
 
 const HANDLE_RE = /^[a-z0-9_.]{2,20}$/
@@ -85,8 +86,10 @@ async function main() {
 
   const ids = HANDLES.map((h) => `seed:${h}`)
 
-  console.log(`Resetting ${ids.length} seed hunters (and any prior seed:* users)…`)
-  await db.delete(checkIns).where(sql`${checkIns.userId} like 'seed:%'`)
+  // Fully wipe every seed:* user (cascades to their profiles + check-ins) so handles
+  // that were renamed or dropped don't linger as orphan profiles. Then rebuild.
+  console.log(`Resetting all seed:* users and rebuilding ${ids.length} hunters…`)
+  await db.delete(users).where(sql`${users.id} like 'seed:%'`)
 
   console.log('Seeding profiles + realistic daytime check-ins over the last ~3 weeks…')
   const totals = new Map<string, number>() // userId -> points sum
