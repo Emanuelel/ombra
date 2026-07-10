@@ -148,7 +148,7 @@ export default function Celebrate({
             }}
           >
             <span style={{ flexShrink: 0, width: 30, height: 30, borderRadius: 8, background: C.sun, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <svg width="15" height="17" viewBox="0 0 24 26" fill="none" stroke="#17130c" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round">
+              <svg width="15" height="17" viewBox="0 0 24 26" fill="none" stroke="#1A1408" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round">
                 <path d="M12 3v13" />
                 <path d="M8 7l4-4 4 4" />
                 <path d="M6 12H4v12h16V12h-2" />

@@ -312,14 +312,14 @@ export default function App() {
           style={{
             position: 'absolute',
             inset: 0,
-            background: '#FF4A31',
+            background: '#F84A2C',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             fontFamily: "'Archivo Black', sans-serif",
             fontSize: 40,
             letterSpacing: '-.04em',
-            color: '#17130c',
+            color: '#1A1408',
           }}
         >
           OMBRA
@@ -334,13 +334,13 @@ export default function App() {
           style={{
             position: 'absolute',
             inset: 0,
-            background: '#FF4A31',
+            background: '#F84A2C',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
             gap: 14,
-            color: '#17130c',
+            color: '#1A1408',
             textAlign: 'center',
             padding: 30,
           }}
@@ -452,7 +452,7 @@ export default function App() {
         style={{
           position: 'absolute',
           inset: 0,
-          background: '#FFF6E4',
+          background: '#FBF1DB',
           display: 'flex',
           flexDirection: 'column',
           paddingTop: 'max(10px, env(safe-area-inset-top))',

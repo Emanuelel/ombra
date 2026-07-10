@@ -10,7 +10,7 @@ import GoogleG from '../ui/GoogleG'
 function pin(pct: number, bg: string, fg: string): L.DivIcon {
   return L.divIcon({
     className: '',
-    html: `<div style="width:28px;height:28px;border-radius:50%;background:${bg};border:2px solid #17130c;box-shadow:2px 2px 0 #17130c;display:flex;align-items:center;justify-content:center;font-family:'Archivo',sans-serif;font-weight:800;font-size:10px;color:${fg};">${pct}</div>`,
+    html: `<div style="width:28px;height:28px;border-radius:50%;background:${bg};border:2px solid #1A1408;box-shadow:2px 2px 0 #1A1408;display:flex;align-items:center;justify-content:center;font-family:'Archivo',sans-serif;font-weight:800;font-size:10px;color:${fg};">${pct}</div>`,
     iconSize: [28, 28],
     iconAnchor: [14, 14],
   })

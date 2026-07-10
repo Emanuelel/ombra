@@ -41,7 +41,7 @@ function ShareGlyph() {
         flexShrink: 0,
       }}
     >
-      <svg width="20" height="22" viewBox="0 0 24 26" fill="none" stroke="#17130c" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round">
+      <svg width="20" height="22" viewBox="0 0 24 26" fill="none" stroke="#1A1408" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round">
         <path d="M12 3v13" />
         <path d="M8 7l4-4 4 4" />
         <path d="M6 12H4v12h16V12h-2" />
@@ -85,7 +85,7 @@ export default function Install({ onDone }: { onDone: () => void }) {
       <div
         style={{
           marginTop: 24,
-          background: '#EFE6CF',
+          background: '#FBF4DD',
           border: `2.5px solid ${C.ink}`,
           borderRadius: 20,
           padding: '18px 16px 14px',

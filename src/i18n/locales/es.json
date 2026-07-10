@@ -10,6 +10,11 @@
   "app": {
     "connectingGoogle": "Conectando con Google…"
   },
+  "update": {
+    "available": "Nueva versión disponible",
+    "reload": "Recargar",
+    "dismiss": "Descartar"
+  },
   "errors": {
     "google": {
       "google_setup": "El inicio de sesión con Google aún no está configurado.",

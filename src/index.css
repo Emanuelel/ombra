@@ -1,17 +1,17 @@
 :root {
-  --ink: #17130c;
-  --cream: #fff6e4;
-  --sun: #ffd400;
-  --tomato: #ff4a31;
+  --ink: #1A1408;
+  --cream: #FBF1DB;
+  --sun: #FFC800;
+  --tomato: #F4432B;
   --shade-blue: rgba(44, 51, 85, 0.3);
-  --map-base: #efe6cf;
-  --map-street: #e3d6b4;
+  --map-base: #FBF4DD;
+  --map-street: #F4E6B0;
   --map-building: #d9c89e;
   --muted: #a1794a;
   --muted2: #8a7f6d;
   --muted3: #b7ad98;
-  --green: #1f9d55;
-  --green-text: #1f7a4d;
+  --green: #1E8A48;
+  --green-text: #1E8A48;
 }
 
 * {

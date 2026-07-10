@@ -10,6 +10,11 @@
   "app": {
     "connectingGoogle": "Connectant amb Google…"
   },
+  "update": {
+    "available": "Nova versió disponible",
+    "reload": "Recarrega",
+    "dismiss": "Descarta"
+  },
   "errors": {
     "google": {
       "google_setup": "L’inici de sessió amb Google encara no està configurat.",

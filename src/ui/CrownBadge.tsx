@@ -29,7 +29,7 @@ export default function CrownBadge({ size = 140, ray = true }: { size?: number; 
             position: 'absolute',
             width: size * 2,
             height: size * 2,
-            background: 'repeating-conic-gradient(#FF4A31 0 11deg, transparent 11deg 24deg)',
+            background: 'repeating-conic-gradient(#F4432B 0 11deg, transparent 11deg 24deg)',
             opacity: 0.22,
             borderRadius: '50%',
             animation: 'ombraSpin 10s linear infinite',

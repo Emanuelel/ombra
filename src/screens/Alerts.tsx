@@ -28,7 +28,7 @@ export default function Alerts({
       style={{
         position: 'absolute',
         inset: 0,
-        background: C.tomato,
+        background: C.brand,
         padding: '56px 30px 34px',
         display: 'flex',
         flexDirection: 'column',

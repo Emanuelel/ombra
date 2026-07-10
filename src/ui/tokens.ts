@@ -1,19 +1,22 @@
 import type { CSSProperties } from 'react'
 
 export const C = {
-  ink: '#17130c',
-  cream: '#FFF6E4',
-  sun: '#FFD400',
-  tomato: '#FF4A31',
+  ink: '#1A1408',
+  cream: '#FBF1DB', // app background
+  creamCard: '#FBF6E9', // cards, Google button (slightly lighter than the bg)
+  sun: '#FFC800',
+  tomato: '#F4432B', // action red: CTAs, pins, crown medallion, caret
+  brand: '#F84A2C', // background red: Land screen, status bands
+  blue: '#2979F2', // handles, location dot, links, photo-add badge
   shadeBlue: 'rgba(44,51,85,.30)',
-  mapBase: '#EFE6CF',
-  mapStreet: '#E3D6B4',
+  mapBase: '#FBF4DD',
+  mapStreet: '#F4E6B0',
   mapBuilding: '#D9C89E',
   muted: '#a1794a',
   muted2: '#8a7f6d',
   muted3: '#b7ad98',
-  green: '#1f9d55',
-  greenText: '#1f7a4d',
+  green: '#1E8A48',
+  greenText: '#1E8A48',
 } as const
 
 /** Archivo Black display type. */

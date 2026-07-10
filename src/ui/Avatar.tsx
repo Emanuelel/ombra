@@ -1,6 +1,6 @@
 import { C } from './tokens'
 
-const PALETTE = ['#FF4A31', '#e0851f', '#1f9d55', '#2563eb', '#7c3aed', '#db2777', '#0d9488']
+const PALETTE = ['#F4432B', '#e0851f', '#1E8A48', '#2979F2', '#7c3aed', '#db2777', '#0d9488']
 
 function colorFor(name: string): string {
   let h = 0

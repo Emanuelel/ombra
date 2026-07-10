@@ -7,7 +7,9 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      registerType: 'autoUpdate',
+      // Prompt users to reload for a new version instead of silently auto-updating,
+      // so a fresh deploy is picked up on the same visit (see src/ui/UpdatePrompt.tsx).
+      registerType: 'prompt',
       includeAssets: ['favicon.svg', 'apple-touch-icon.png', 'icon-192.png', 'icon-512.png', 'badge-96.png'],
       workbox: {
         // The committed OSM building data + geometry libs push the bundle past
@@ -15,15 +17,15 @@ export default defineConfig({
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
         // Adds push + notificationclick handlers to the generated service worker.
         importScripts: ['push-handler.js'],
-        // Don't let the SPA navigation fallback swallow API routes — top-level
+        // Don't let the SPA navigation fallback swallow API routes. Top-level
         // navigations to /api/* (e.g. the Google OAuth redirect + callback) must hit
         // the server, not be served index.html from the cache.
         navigateFallbackDenylist: [/^\/api\//],
       },
       manifest: {
-        name: 'Ombra — caça la fresca',
+        name: 'Ombra: caça la fresca',
         short_name: 'Ombra',
-        description: 'Find the shaded terraces of Barcelona — and steal your friends’ crowns.',
+        description: 'Find the shaded terraces of Barcelona and steal your friends’ crowns.',
         theme_color: '#FF4A31',
         background_color: '#FF4A31',
         display: 'standalone',

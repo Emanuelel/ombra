@@ -85,7 +85,7 @@ export function shadedUntil(id: string, date: Date): string | null {
 }
 
 export function pinColors(percent: number): { bg: string; fg: string } {
-  if (percent >= 65) return { bg: '#FFD400', fg: '#17130c' }
-  if (percent >= 40) return { bg: '#FFF6E4', fg: '#17130c' }
-  return { bg: '#FF4A31', fg: '#FFF6E4' }
+  if (percent >= 65) return { bg: '#FFC800', fg: '#1A1408' }
+  if (percent >= 40) return { bg: '#FBF3E0', fg: '#1A1408' }
+  return { bg: '#F4432B', fg: '#FBF1DB' }
 }

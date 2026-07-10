@@ -10,6 +10,11 @@
   "app": {
     "connectingGoogle": "Connecting to Google…"
   },
+  "update": {
+    "available": "New version available",
+    "reload": "Reload",
+    "dismiss": "Dismiss"
+  },
   "errors": {
     "google": {
       "google_setup": "Google sign-in isn’t set up yet.",

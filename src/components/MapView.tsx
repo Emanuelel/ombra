@@ -17,7 +17,7 @@ function pctIcon(percent: number): L.DivIcon {
   const { bg, fg } = pinColors(percent)
   return L.divIcon({
     className: '',
-    html: `<div style="width:28px;height:28px;border-radius:50%;background:${bg};border:2px solid #17130c;box-shadow:2px 2px 0 #17130c;display:flex;align-items:center;justify-content:center;font-family:'Archivo',sans-serif;font-weight:800;font-size:10px;color:${fg};">${percent}</div>`,
+    html: `<div style="width:28px;height:28px;border-radius:50%;background:${bg};border:2px solid #1A1408;box-shadow:2px 2px 0 #1A1408;display:flex;align-items:center;justify-content:center;font-family:'Archivo',sans-serif;font-weight:800;font-size:10px;color:${fg};">${percent}</div>`,
     iconSize: [28, 28],
     iconAnchor: [14, 14],
   })
@@ -29,7 +29,7 @@ const youIcon = L.divIcon({
   className: '',
   html: `<div style="position:relative;width:20px;height:20px;">
     <span style="position:absolute;inset:-9px;border-radius:50%;background:rgba(37,99,235,.25);animation:ombraPing 2s ease-out infinite;"></span>
-    <span style="position:absolute;inset:0;border-radius:50%;background:#2563eb;border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4);"></span>
+    <span style="position:absolute;inset:0;border-radius:50%;background:#2979F2;border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4);"></span>
   </div>`,
   iconSize: [20, 20],
   iconAnchor: [10, 10],
@@ -73,9 +73,9 @@ function LocateButton({ onFix }: { onFix: (p: [number, number]) => void }) {
         width: 42,
         height: 42,
         borderRadius: '50%',
-        background: '#FFF6E4',
-        border: '2px solid #17130c',
-        boxShadow: '2px 2px 0 #17130c',
+        background: '#FBF1DB',
+        border: '2px solid #1A1408',
+        boxShadow: '2px 2px 0 #1A1408',
         cursor: 'pointer',
         fontSize: 19,
         display: 'flex',
