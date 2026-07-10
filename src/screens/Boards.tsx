@@ -153,10 +153,10 @@ export default function Boards({
           : t('boards.titleFriends')
 
   return (
-    <div style={{ animation: 'ombraSlideIn .3s both', padding: '4px 18px 20px' }}>
+    <div style={{ animation: 'ombraSlideIn .3s both', padding: '16px 18px 20px' }}>
       <div style={display(30, { lineHeight: 0.9 })}>{t('boards.title')}</div>
 
-      <div className="ombra-scroll" style={{ display: 'flex', gap: 8, overflowX: 'auto', margin: '14px -18px 0', padding: '0 18px 4px' }}>
+      <div className="ombra-scroll" style={{ display: 'flex', gap: 8, overflowX: 'auto', margin: '20px -18px 0', padding: '0 18px 4px' }}>
         <button
           onClick={() => (tab === 'barri' ? setPicker('barri') : setTab('barri'))}
           style={tabStyle(tab === 'barri')}

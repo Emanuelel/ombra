@@ -47,13 +47,17 @@ function distMeters(a: [number, number], b: [number, number]): number {
   return Math.sqrt(x * x + y * y) * R
 }
 
-function LocateButton({ onFix }: { onFix: (p: [number, number]) => void }) {
+function LocateButton({ onFix, current }: { onFix: (p: [number, number]) => void; current: [number, number] | null }) {
   const map = useMap()
   const { t } = useTranslation()
   return (
     <button
       onClick={() => {
-        // Always pull a fresh fix so "centre on me" is truly current.
+        // Recenter immediately on the already-tracked position (the Map tab live-watches
+        // it), so every tap responds even when a fresh GPS fix is slow. Previously this
+        // forced maximumAge:0 and silently no-op'd on timeout, so it "worked randomly".
+        if (current) map.setView(current, 16)
+        // Then refine with a fresh fix; forgiving options (accept a recent cached fix).
         navigator.geolocation?.getCurrentPosition(
           (p) => {
             const pos: [number, number] = [p.coords.latitude, p.coords.longitude]
@@ -61,7 +65,7 @@ function LocateButton({ onFix }: { onFix: (p: [number, number]) => void }) {
             map.setView(pos, 16)
           },
           () => {},
-          { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 },
+          { enableHighAccuracy: true, timeout: 8000, maximumAge: 10000 },
         )
       }}
       title={t('map.centreOnMe')}
@@ -217,7 +221,7 @@ export default function MapView({
         )
       })}
       {userPos && <Marker position={userPos} icon={youIcon} interactive={false} zIndexOffset={2000} />}
-      <LocateButton onFix={setUserPos} />
+      <LocateButton onFix={setUserPos} current={userPos} />
     </MapContainer>
   )
 }

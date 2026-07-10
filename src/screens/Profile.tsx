@@ -222,10 +222,16 @@ export default function Profile({
         })}
       </div>
 
+      {showInstall && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 3000 }}>
+          <Install onDone={() => setShowInstall(false)} />
+        </div>
+      )}
+
       <button
         onClick={onLogout}
         style={{
-          marginTop: 12,
+          marginTop: 'auto',
           width: '100%',
           background: C.cream,
           border: `2px solid ${C.ink}`,
@@ -238,14 +244,8 @@ export default function Profile({
         {t('profile.logout')}
       </button>
 
-      {showInstall && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 3000 }}>
-          <Install onDone={() => setShowInstall(false)} />
-        </div>
-      )}
-
       {/* i18n-ignore: data attribution / credit line, kept verbatim across languages */}
-      <div style={mono(9.5, { color: C.muted, textAlign: 'center', marginTop: 'auto', paddingTop: 24, lineHeight: 1.5 })}>
+      <div style={mono(9.5, { color: C.muted, textAlign: 'center', marginTop: 14, paddingTop: 0, lineHeight: 1.5 })}>
         Terrace & places data © OpenStreetMap contributors, Overture Maps.
         <br />
         Licensed terraces: Ajuntament de Barcelona open data.

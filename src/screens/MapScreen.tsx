@@ -31,7 +31,7 @@ export default function MapScreen({
     <div
       style={{
         animation: 'ombraSlideIn .3s both',
-        padding: '4px 18px 18px',
+        padding: '18px 18px 18px',
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
