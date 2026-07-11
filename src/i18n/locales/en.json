@@ -182,7 +182,11 @@
     "savePhotoError": "Could not save photo. Try a smaller image.",
     "language": "Language",
     "notFound": "Hunter not found.",
-    "noCheckinsYet": "No check-ins yet."
+    "noCheckinsYet": "No check-ins yet.",
+    "support": "Support",
+    "contactUs": "Contact us",
+    "contactSub": "Questions or feedback? Send us an email.",
+    "contactSubject": "Ombra feedback"
   },
   "map": {
     "shadeNearYou": "shade near you",

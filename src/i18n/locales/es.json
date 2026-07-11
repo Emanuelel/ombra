@@ -182,7 +182,11 @@
     "savePhotoError": "No se pudo guardar la foto. Prueba con una imagen más pequeña.",
     "language": "Idioma",
     "notFound": "Cazador no encontrado.",
-    "noCheckinsYet": "Aún no hay check-ins."
+    "noCheckinsYet": "Aún no hay check-ins.",
+    "support": "Soporte",
+    "contactUs": "Contáctanos",
+    "contactSub": "¿Preguntas o comentarios? Escríbenos un email.",
+    "contactSubject": "Comentarios sobre Ombra"
   },
   "map": {
     "shadeNearYou": "sombra cerca de ti",
