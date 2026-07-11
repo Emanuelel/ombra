@@ -64,7 +64,9 @@ function Finger({ left, top }: { left: string; top: string }) {
         border: '2.5px solid rgba(26,20,8,.55)',
         boxShadow: 'inset 0 0 0 5px rgba(255,255,255,.28)',
         zIndex: 4,
-        animation: 'htFinger 2s ease-in-out infinite',
+        // One press per beat, timed to the beat length so it taps once and the
+        // screen transitions right after (no double-tap from a short loop).
+        animation: `htFinger ${BEAT_MS}ms ease-in-out both`,
       }}
     />
   )
@@ -107,7 +109,7 @@ function LocDot() {
   )
 }
 
-function LbAvatar({ initial, bg }: { initial: string; bg: string }) {
+function LbAvatar({ initial, bg, src }: { initial: string; bg: string; src?: string }) {
   return (
     <div
       style={{
@@ -118,13 +120,14 @@ function LbAvatar({ initial, bg }: { initial: string; bg: string }) {
         background: bg,
         color: C.cream,
         border: `2px solid ${C.ink}`,
+        overflow: 'hidden',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         ...display(13),
       }}
     >
-      {initial}
+      {src ? <img src={src} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : initial}
     </div>
   )
 }
@@ -305,7 +308,7 @@ export default function HowItWorks({ onBack, onNext }: { onBack: () => void; onN
               </div>
               <div style={{ marginTop: 18, background: C.sun, border: `2.5px solid ${C.ink}`, borderRadius: 13, padding: '10px 12px', display: 'flex', alignItems: 'center', gap: 10 }}>
                 <Crown size={18} fill={C.ink} />
-                <LbAvatar initial="S" bg="#C77A22" />
+                <LbAvatar initial="S" bg="#C77A22" src="/seed-avatars/jordi.serra.png" />
                 <div style={{ flex: 1, fontWeight: 800, fontSize: 12.5, color: C.blue }}>{t('terrace.rulesThisTerrace', { name: 'solbandit' })}</div>
                 <div style={mono(10, { color: '#5f4410' })}>1 · 7d</div>
               </div>
@@ -410,7 +413,7 @@ export default function HowItWorks({ onBack, onNext }: { onBack: () => void; onN
               {/* #1 — you, holding the crown */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: C.sun, border: `2.5px solid ${C.ink}`, borderRadius: 13, padding: '8px 11px', boxShadow: `0 4px 0 ${C.ink}` }}>
                 <span style={{ width: 14, textAlign: 'center', ...display(14) }}>1</span>
-                <LbAvatar initial="M" bg="#F0912E" />
+                <LbAvatar initial="M" bg="#F0912E" src="/seed-avatars/montse_r.png" />
                 <div style={{ flex: 1, minWidth: 0, lineHeight: 1.15 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontWeight: 800, fontSize: 14 }}>
                     <Crown size={15} fill={C.ink} />
@@ -423,7 +426,7 @@ export default function HowItWorks({ onBack, onNext }: { onBack: () => void; onN
               {/* #2 */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: '#fff', border: `2px solid rgba(26,20,8,.14)`, borderRadius: 13, padding: '8px 11px' }}>
                 <span style={{ width: 14, textAlign: 'center', ...display(14, { color: C.muted }) }}>2</span>
-                <LbAvatar initial="S" bg="#C77A22" />
+                <LbAvatar initial="S" bg="#C77A22" src="/seed-avatars/jordi.serra.png" />
                 <div style={{ flex: 1, minWidth: 0, lineHeight: 1.15 }}>
                   <div style={{ fontWeight: 800, fontSize: 14, color: C.blue }}>@solbandit</div>
                   <div style={{ fontSize: 11, color: C.muted2 }}>{t('boards.checkinsWeek', { count: 2 })}</div>
@@ -433,7 +436,7 @@ export default function HowItWorks({ onBack, onNext }: { onBack: () => void; onN
               {/* #3 */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: '#fff', border: `2px solid rgba(26,20,8,.14)`, borderRadius: 13, padding: '8px 11px' }}>
                 <span style={{ width: 14, textAlign: 'center', ...display(14, { color: C.muted }) }}>3</span>
-                <LbAvatar initial="L" bg="#9C6B3B" />
+                <LbAvatar initial="L" bg="#9C6B3B" src="/seed-avatars/laia_bcn.png" />
                 <div style={{ flex: 1, minWidth: 0, lineHeight: 1.15 }}>
                   <div style={{ fontWeight: 800, fontSize: 14, color: C.blue }}>@laia</div>
                   <div style={{ fontSize: 11, color: C.muted2 }}>{t('boards.checkinsWeek', { count: 1 })}</div>
