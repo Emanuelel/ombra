@@ -116,7 +116,7 @@ export default function Boards({
       if (u?.topBarri) {
         setBarri(u.topBarri)
         setTab('barri')
-      } else setBarri((b) => b ?? barris[0] ?? null)
+      }
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [handle])
@@ -158,7 +158,7 @@ export default function Boards({
 
       <div className="ombra-scroll" style={{ display: 'flex', gap: 8, overflowX: 'auto', margin: '20px -18px 0', padding: '0 18px 4px' }}>
         <button
-          onClick={() => (tab === 'barri' ? setPicker('barri') : setTab('barri'))}
+          onClick={() => (barri && tab !== 'barri' ? setTab('barri') : setPicker('barri'))}
           style={tabStyle(tab === 'barri')}
         >
           {tab === 'barri' && barri ? t('boards.barriPick', { barri }) : t('boards.myBarri')}
