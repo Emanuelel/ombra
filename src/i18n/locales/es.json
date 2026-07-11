@@ -186,7 +186,9 @@
     "support": "Soporte",
     "contactUs": "Contáctanos",
     "contactSub": "¿Preguntas o comentarios? Escríbenos un email.",
-    "contactSubject": "Comentarios sobre Ombra"
+    "contactSubject": "Comentarios sobre Ombra",
+    "privacy": "Privacidad",
+    "terms": "Términos"
   },
   "map": {
     "shadeNearYou": "sombra cerca de ti",

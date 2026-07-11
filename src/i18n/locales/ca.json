@@ -186,7 +186,9 @@
     "support": "Suport",
     "contactUs": "Contacta amb nosaltres",
     "contactSub": "Preguntes o comentaris? Escriu-nos un email.",
-    "contactSubject": "Comentaris sobre Ombra"
+    "contactSubject": "Comentaris sobre Ombra",
+    "privacy": "Privacitat",
+    "terms": "Termes"
   },
   "map": {
     "shadeNearYou": "ombra a prop teu",

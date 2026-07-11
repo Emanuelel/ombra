@@ -186,7 +186,9 @@
     "support": "Support",
     "contactUs": "Contact us",
     "contactSub": "Questions or feedback? Send us an email.",
-    "contactSubject": "Ombra feedback"
+    "contactSubject": "Ombra feedback",
+    "privacy": "Privacy",
+    "terms": "Terms"
   },
   "map": {
     "shadeNearYou": "shade near you",

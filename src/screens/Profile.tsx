@@ -267,6 +267,11 @@ export default function Profile({
         <span style={{ color: C.muted, fontSize: 16, flexShrink: 0 }}>›</span>
       </a>
 
+      <div style={{ marginTop: 20, display: 'flex', justifyContent: 'center', gap: 16, ...mono(12) }}>
+        <a href="/privacy" style={{ color: C.muted, textDecoration: 'underline' }}>{t('profile.privacy')}</a>
+        <a href="/terms" style={{ color: C.muted, textDecoration: 'underline' }}>{t('profile.terms')}</a>
+      </div>
+
       {showInstall && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 3000 }}>
           <Install onDone={() => setShowInstall(false)} />
