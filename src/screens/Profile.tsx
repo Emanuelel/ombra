@@ -10,6 +10,24 @@ import { shouldOfferInstall } from '../lib/platform'
 import { getLang, LANGS, setLang } from '../i18n/lang'
 import Install from './Install'
 
+function MailIcon() {
+  return (
+    <svg
+      width={20}
+      height={20}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={C.ink}
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <rect x="3" y="5" width="18" height="14" rx="2" />
+      <path d="m3 7 9 6 9-6" />
+    </svg>
+  )
+}
+
 function sinceLabel(iso: string, lang: string): string {
   return new Date(iso).toLocaleDateString(lang, { month: 'short', year: '2-digit' }).replace(' ', " '")
 }
@@ -221,6 +239,33 @@ export default function Profile({
           )
         })}
       </div>
+
+      <div style={mono(11, { letterSpacing: '.1em', textTransform: 'uppercase', color: C.muted2, marginTop: 22 })}>
+        {t('profile.support')}
+      </div>
+      <a
+        href={`mailto:selene.app.studio@outlook.com?subject=${encodeURIComponent(t('profile.contactSubject'))}`}
+        style={{
+          marginTop: 9,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 10,
+          width: '100%',
+          background: C.cream,
+          border: `2px solid ${C.ink}`,
+          borderRadius: 12,
+          padding: '10px 13px',
+          textDecoration: 'none',
+          color: C.ink,
+        }}
+      >
+        <MailIcon />
+        <span style={{ flex: 1, lineHeight: 1.15, minWidth: 0 }}>
+          <span style={{ display: 'block', fontWeight: 800, fontSize: 14 }}>{t('profile.contactUs')}</span>
+          <span style={mono(11, { color: C.muted2 })}>{t('profile.contactSub')}</span>
+        </span>
+        <span style={{ color: C.muted, fontSize: 16, flexShrink: 0 }}>›</span>
+      </a>
 
       {showInstall && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 3000 }}>

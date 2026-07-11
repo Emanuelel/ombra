@@ -182,7 +182,11 @@
     "savePhotoError": "No s’ha pogut desar la foto. Prova amb una imatge més petita.",
     "language": "Idioma",
     "notFound": "Caçador no trobat.",
-    "noCheckinsYet": "Encara no hi ha check-ins."
+    "noCheckinsYet": "Encara no hi ha check-ins.",
+    "support": "Suport",
+    "contactUs": "Contacta amb nosaltres",
+    "contactSub": "Preguntes o comentaris? Escriu-nos un email.",
+    "contactSubject": "Comentaris sobre Ombra"
   },
   "map": {
     "shadeNearYou": "ombra a prop teu",
