@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { btnBlock, C, display, mono } from '../ui/tokens'
 import Crown from '../ui/Crown'
+import LangFlags from '../ui/LangFlags'
 
 export default function Welcome({
   onStart,
@@ -22,8 +23,18 @@ export default function Welcome({
         color: C.ink,
       }}
     >
-      <div style={mono(12, { letterSpacing: '.22em', textTransform: 'uppercase' })}>
-        {t('welcome.season')}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 10,
+        }}
+      >
+        <div style={mono(12, { letterSpacing: '.22em', textTransform: 'uppercase', whiteSpace: 'nowrap', marginTop: 6 })}>
+          {t('welcome.season')}
+        </div>
+        <LangFlags />
       </div>
       <div style={{ marginTop: 'auto' }}>
         <div style={{ animation: 'ombraFloat 3.4s ease-in-out infinite', width: 72 }}>

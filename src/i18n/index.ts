@@ -6,8 +6,9 @@ import ca from './locales/ca.json'
 
 export const SUPPORTED = ['es', 'ca', 'en'] as const
 
-// Resolve the startup language: a remembered choice wins, otherwise everyone
-// defaults to Spanish (the broadest common language for the Barcelona audience).
+// Resolve the startup language: a remembered choice wins; on first run we
+// auto-detect from the browser (ca → Catalan, en → English, es and everything
+// else → Spanish, the broadest common language for the Barcelona audience).
 const stored = (() => {
   try {
     return localStorage.getItem('ombra_lang')
@@ -15,7 +16,25 @@ const stored = (() => {
     return null
   }
 })()
-const lng = stored && (SUPPORTED as readonly string[]).includes(stored) ? stored : 'es'
+
+function detectLang(): (typeof SUPPORTED)[number] {
+  const candidates =
+    typeof navigator !== 'undefined'
+      ? [...(navigator.languages ?? []), navigator.language].filter(Boolean)
+      : []
+  for (const tag of candidates) {
+    const prefix = tag.toLowerCase().split('-')[0]
+    if (prefix === 'ca') return 'ca'
+    if (prefix === 'en') return 'en'
+    if (prefix === 'es') return 'es'
+  }
+  return 'es'
+}
+
+const lng =
+  stored && (SUPPORTED as readonly string[]).includes(stored)
+    ? (stored as (typeof SUPPORTED)[number])
+    : detectLang()
 
 i18n.use(initReactI18next).init({
   resources: {

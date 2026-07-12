@@ -47,7 +47,8 @@
     "tagline": "El joc de caçar ombra a les terrasses de Barcelona.",
     "sub": "Troba la terrassa amb més ombra. Fes check-in. Conserva la corona fins que un amic vingui a robar-te-la.",
     "start": "A caçar ombra →",
-    "footer": "el sol no és el teu amic ☀"
+    "footer": "el sol no és el teu amic ☀",
+    "switchTo": "Canvia a {{lang}}"
   },
   "howItWorks": {
     "label": "Com funciona",
@@ -188,7 +189,14 @@
     "contactSub": "Preguntes o comentaris? Escriu-nos un email.",
     "contactSubject": "Comentaris sobre Ombra",
     "privacy": "Privacitat",
-    "terms": "Termes"
+    "terms": "Termes",
+    "notifications": "Notificacions",
+    "enableAlertsSub": "Rep un avís quan et robin la corona, i una empenta diària per caçar.",
+    "sendTest": "Envia una notificació de prova",
+    "testSent": "Enviada. Mira les teves notificacions.",
+    "testNoDevice": "No hem arribat a cap dispositiu. A l’iPhone, afegeix Ombra a la pantalla d’inici primer.",
+    "testFailed": "No s’ha pogut enviar. Torna-ho a provar.",
+    "alertsBlocked": "Les notificacions estan bloquejades als ajustos del navegador."
   },
   "map": {
     "shadeNearYou": "ombra a prop teu",
@@ -201,5 +209,37 @@
     "map": "Mapa",
     "boards": "Classificació",
     "you": "Tu"
+  },
+  "push": {
+    "crownStolen": {
+      "title": "👑 T’han robat la corona!",
+      "body": "@{{handle}} t’ha robat la corona a {{terrace}}"
+    },
+    "test": {
+      "title": "☀ Prova d’Ombra",
+      "body": "Les notificacions estan actives. La caça t’espera."
+    },
+    "fomo": {
+      "weekdayA": {
+        "title": "☀ Les terrasses s’omplen",
+        "body": "Hi ha gent sumant punts a prop teu. No et quedis al sol."
+      },
+      "weekdayB": {
+        "title": "👑 Les corones estan en joc",
+        "body": "Algú va darrere dels teus llocs. Fes check-in i defensa’ls."
+      },
+      "weekdayC": {
+        "title": "☀ Una terrassa avui?",
+        "body": "L’ombra està immillorable. Un cafè i uns quants punts."
+      },
+      "weekendA": {
+        "title": "🍹 Comença la caça del cap de setmana",
+        "body": "Terrasses plenes i punts volant. Surt a buscar-los."
+      },
+      "weekendB": {
+        "title": "☀ Cap de setmana de terrasses",
+        "body": "El millor dia per robar corones. El teu barri no es defensa sol."
+      }
+    }
   }
 }
