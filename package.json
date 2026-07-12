@@ -23,10 +23,12 @@
   "dependencies": {
     "@neondatabase/serverless": "^1.1.0",
     "@turf/turf": "^7.1.0",
+    "@vercel/analytics": "^2.0.1",
     "ably": "^2.23.0",
     "drizzle-orm": "^0.45.2",
     "i18next": "^26.3.6",
     "leaflet": "^1.9.4",
+    "posthog-js": "^1.399.2",
     "rbush": "^4.0.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
