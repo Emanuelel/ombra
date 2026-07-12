@@ -22,6 +22,7 @@ import {
   postCheckIn as apiCheckIn,
 } from './lib/api'
 import { distM } from './lib/sun'
+import { track, identify, resetAnalytics } from './lib/analytics'
 import { CENTER } from './lib/barcelona'
 import { BASE_POINTS } from './lib/scoring'
 import terracesData from './data/terraces-all.json'
@@ -154,6 +155,12 @@ export default function App() {
   )
   useEffect(() => () => clearTimeout(timer.current), [])
 
+  // Funnel: the sequence of screen_view events is the onboarding funnel
+  // (welcome → howto → handle → perms → map …). Tab switches re-fire too, which is fine.
+  useEffect(() => {
+    track('screen_view', { screen })
+  }, [screen])
+
   // Restore a persisted session on load; also handle returning from Google OAuth, where
   // the token (+ needsHandle) or an error arrive in the URL hash.
   useEffect(() => {
@@ -177,6 +184,7 @@ export default function App() {
       }
       setToken(tok)
       if (r.user) {
+        identify(r.user.handle)
         setHandle(r.user.handle)
         setAvatar(r.user.avatarUrl)
         setScreen('map')
@@ -195,6 +203,7 @@ export default function App() {
   // Show a branded "connecting" screen before navigating away, so the Welcome screen
   // doesn't reflow under the browser chrome mid-redirect.
   function startGoogle() {
+    track('auth_google_start')
     setConnectingGoogle(true)
     setTimeout(() => {
       window.location.href = googleAuthUrl()
@@ -229,6 +238,8 @@ export default function App() {
       setAuthError(res.error === 'handle_taken' ? t('errors.signup.handleTaken') : t('errors.signup.failed'))
       return
     }
+    identify(res.user.handle)
+    track('signup_complete')
     setHandle(res.user.handle)
     setAvatar(res.user.avatarUrl)
     setScreen('perms')
@@ -236,6 +247,7 @@ export default function App() {
 
   async function logout() {
     if (token) apiLogout(token)
+    resetAnalytics()
     localStorage.removeItem('ombra_token')
     setToken(null)
     setSelectedId(null)
@@ -254,6 +266,12 @@ export default function App() {
       // hold the "locking you in…" animation for at least a beat
       await new Promise((r) => setTimeout(r, Math.max(0, 1300 - (Date.now() - started))))
       if (result.ok) {
+        track('check_in_success', {
+          terraceId: terrace.id,
+          points: result.points,
+          crown: result.youHoldCrown,
+          stolen: result.stolen,
+        })
         setWinPoints(result.points)
         setWonCrown(result.youHoldCrown)
         setStolen(result.stolen)
