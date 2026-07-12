@@ -4,7 +4,7 @@ import type { TFunction } from 'i18next'
 import { C, display, mono } from '../ui/tokens'
 import Crown from '../ui/Crown'
 import Avatar from '../ui/Avatar'
-import { getUser, updateAvatar, type UserProfile } from '../lib/api'
+import { getUser, sendTestPush, subscribeToPush, updateAvatar, type UserProfile } from '../lib/api'
 import { fileToDataUrl } from '../lib/image'
 import { shouldOfferInstall } from '../lib/platform'
 import { getLang, LANGS, setLang } from '../i18n/lang'
@@ -58,9 +58,40 @@ export default function Profile({
   const [saving, setSaving] = useState(false)
   const [err, setErr] = useState<string | null>(null)
   const [showInstall, setShowInstall] = useState(false)
+  const [notifMsg, setNotifMsg] = useState<string | null>(null) // an i18n key
+  const [notifBusy, setNotifBusy] = useState(false)
   useEffect(() => {
     getUser(handle).then(setU)
   }, [handle])
+
+  // Turn on alerts (subscribe this device) and send a test push in one tap. This also
+  // raises FOMO reach, since Profile is reachable by everyone (unlike the Celebrate moment).
+  async function sendTest() {
+    if (!token || notifBusy) return
+    setNotifBusy(true)
+    setNotifMsg(null)
+    try {
+      if (!('Notification' in window)) {
+        setNotifMsg('profile.alertsBlocked')
+        return
+      }
+      if (Notification.permission === 'default') {
+        const perm = await Notification.requestPermission()
+        if (perm !== 'granted') {
+          setNotifMsg('profile.alertsBlocked')
+          return
+        }
+      } else if (Notification.permission === 'denied') {
+        setNotifMsg('profile.alertsBlocked')
+        return
+      }
+      await subscribeToPush(token, getLang())
+      const { ok, count } = await sendTestPush(token)
+      setNotifMsg(!ok ? 'profile.testFailed' : count === 0 ? 'profile.testNoDevice' : 'profile.testSent')
+    } finally {
+      setNotifBusy(false)
+    }
+  }
 
   async function onPickAvatar(e: ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0]
@@ -239,6 +270,39 @@ export default function Profile({
           )
         })}
       </div>
+
+      {token && (
+        <>
+          <div style={mono(11, { letterSpacing: '.1em', textTransform: 'uppercase', color: C.muted2, marginTop: 22 })}>
+            {t('profile.notifications')}
+          </div>
+          <button
+            onClick={sendTest}
+            disabled={notifBusy}
+            style={{
+              marginTop: 9,
+              width: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+              background: C.cream,
+              border: `2px solid ${C.ink}`,
+              borderRadius: 12,
+              padding: '10px 13px',
+              cursor: notifBusy ? 'default' : 'pointer',
+              opacity: notifBusy ? 0.6 : 1,
+              textAlign: 'left',
+            }}
+          >
+            <Crown size={16} fill={C.sun} stroke={C.ink} />
+            <span style={{ flex: 1, lineHeight: 1.15, minWidth: 0 }}>
+              <span style={{ display: 'block', fontWeight: 800, fontSize: 14 }}>{t('profile.sendTest')}</span>
+              <span style={mono(11, { color: C.muted2 })}>{t('profile.enableAlertsSub')}</span>
+            </span>
+          </button>
+          {notifMsg && <div style={mono(11, { color: C.muted, marginTop: 6 })}>{t(notifMsg)}</div>}
+        </>
+      )}
 
       <div style={mono(11, { letterSpacing: '.1em', textTransform: 'uppercase', color: C.muted2, marginTop: 22 })}>
         {t('profile.support')}

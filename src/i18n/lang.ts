@@ -1,4 +1,5 @@
 import i18n, { SUPPORTED } from './index'
+import { persistLang } from '../lib/api'
 
 export type LangCode = (typeof SUPPORTED)[number]
 
@@ -24,4 +25,11 @@ export function setLang(code: LangCode): void {
     /* ignore */
   }
   if (typeof document !== 'undefined') document.documentElement.lang = code
+  // Sync to the server (for localized push) when signed in. Best-effort, fire-and-forget.
+  try {
+    const token = localStorage.getItem('ombra_token')
+    if (token) void persistLang(token, code)
+  } catch {
+    /* ignore */
+  }
 }

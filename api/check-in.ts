@@ -4,6 +4,7 @@ import Ably from 'ably'
 import { db, schema } from '../src/db/client.js'
 import { getSessionUserId } from '../src/lib/auth-server.js'
 import { sendPushToUser } from '../src/lib/push-server.js'
+import { pushCopy } from '../src/lib/push-copy.js'
 import { cors } from '../src/lib/http.js'
 import { distM } from '../src/lib/sun.js'
 import {
@@ -160,11 +161,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         .select({ handle: profiles.displayName })
         .from(profiles)
         .where(eq(profiles.userId, newHolder))
-      await sendPushToUser(prev.holderUserId, {
-        title: '👑 Crown stolen!',
-        body: `${nh?.handle ? '@' + nh.handle : 'Someone'} took your crown at ${terrace.name}`,
-        url: '/',
+      const [ph] = await db
+        .select({ lang: profiles.lang })
+        .from(profiles)
+        .where(eq(profiles.userId, prev.holderUserId))
+      const copy = pushCopy(ph?.lang ?? null, 'push.crownStolen', {
+        handle: nh?.handle ?? 'ombra',
+        terrace: terrace.name,
       })
+      await sendPushToUser(prev.holderUserId, { ...copy, url: '/', tag: 'ombra-crown' })
     }
   }
 

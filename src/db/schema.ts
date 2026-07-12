@@ -33,6 +33,7 @@ export const profiles = pgTable('profiles', {
   avatarUrl: text('avatar_url'),
   homeBarri: text('home_barri'),
   pointsTotal: integer('points_total').default(0).notNull(),
+  lang: text('lang'), // preferred UI language ('es' | 'ca' | 'en'); null => 'es'. Used to localize server-sent push.
 })
 
 // Opaque server-side sessions (revocable - logout deletes the row).
