@@ -73,6 +73,9 @@ export default function App() {
   const [connectingGoogle, setConnectingGoogle] = useState(false)
   const [busy, setBusy] = useState(false)
   const [restoring, setRestoring] = useState(true)
+  // A "steal my crown" deep link (?t=<terraceId>), resolved to the terrace it points at.
+  // When set, onboarding lands the user on that terrace's leaderboard instead of the map.
+  const [deepTerrace, setDeepTerrace] = useState<{ id: string; name: string } | null>(null)
   const [minutes, setMinutes] = useState(nowMinutes)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [winPoints, setWinPoints] = useState(84)
@@ -164,10 +167,24 @@ export default function App() {
   // Restore a persisted session on load; also handle returning from Google OAuth, where
   // the token (+ needsHandle) or an error arrive in the URL hash.
   useEffect(() => {
+    // Capture a steal-my-crown deep link (?t=<terraceId>&ref=<handle>) BEFORE cleaning the URL.
+    // It's persisted to localStorage because the Google OAuth callback returns to /#ombra_token
+    // and drops the query string entirely, so an in-URL param would not survive the round-trip.
+    const query = new URLSearchParams(location.search)
+    const dl = query.get('t')
+    const ref = query.get('ref')
+    if (dl) localStorage.setItem('ombra_deeplink', dl)
+    if (ref) localStorage.setItem('ombra_ref', ref)
+
     const hash = new URLSearchParams(location.hash.replace(/^#/, ''))
     const hashToken = hash.get('ombra_token')
     const hashErr = hash.get('authError')
-    if (hashToken || hashErr) history.replaceState(null, '', location.pathname + location.search)
+    if (hashToken || hashErr || dl || ref) {
+      query.delete('t')
+      query.delete('ref')
+      const qs = query.toString()
+      history.replaceState(null, '', location.pathname + (qs ? '?' + qs : ''))
+    }
     if (hashErr) setGoogleError(t([`errors.google.${hashErr}`, 'errors.google.default']))
     if (hashToken) localStorage.setItem('ombra_token', hashToken)
 
@@ -187,7 +204,8 @@ export default function App() {
         identify(r.user.handle)
         setHandle(r.user.handle)
         setAvatar(r.user.avatarUrl)
-        setScreen('map')
+        // A returning user who followed a "steal my crown" link lands on that leaderboard.
+        setScreen(consumeDeepLink() ? 'boards' : 'map')
       } else if (r.needsHandle) {
         // Fresh Google account - finish by choosing a handle (avatar/handle pre-filled).
         if (r.google?.picture) setAvatar(r.google.picture)
@@ -221,6 +239,28 @@ export default function App() {
     setViewUser(handle)
     setUserReturn(from)
     setScreen('user')
+  }
+
+  // Consume a persisted "steal my crown" deep link: resolve its terrace so Boards can open on
+  // that leaderboard. Returns true (caller routes to 'boards') only when the terrace resolves;
+  // a stale/unknown id is cleared and ignored.
+  function consumeDeepLink(): boolean {
+    const id = localStorage.getItem('ombra_deeplink')
+    if (!id) return false
+    const ref = localStorage.getItem('ombra_ref') ?? undefined
+    localStorage.removeItem('ombra_deeplink')
+    localStorage.removeItem('ombra_ref')
+    const terrace = terraces.find((x) => x.id === id)
+    if (!terrace) return false
+    setDeepTerrace({ id: terrace.id, name: terrace.name })
+    track('invite_landing', { terrace: id, ref })
+    return true
+  }
+
+  // Last step of onboarding (after location perms). A fresh user who arrived via a crown link
+  // lands on that leaderboard; everyone else lands on the map.
+  function finishOnboarding() {
+    setScreen(consumeDeepLink() ? 'boards' : 'map')
   }
 
   // Finish sign-in: the Google session already exists (everyone authenticates with
@@ -414,7 +454,7 @@ export default function App() {
       <Shell>
         {/* Location is the only permission asked up front - the game is useless without it.
             Install (iOS) + notifications are deferred to the first crown (see Celebrate). */}
-        <Perms onBack={() => setScreen('handle')} onDone={() => setScreen('map')} />
+        <Perms onBack={() => setScreen('handle')} onDone={finishOnboarding} />
       </Shell>
     )
   if (screen === 'terrace' && selected)
@@ -498,6 +538,7 @@ export default function App() {
               handle={handle}
               avatar={avatar}
               token={token}
+              initialTerrace={deepTerrace}
               onUser={(h) => openUser(h, 'boards')}
               onOpenTerrace={(id) => openTerrace(id, 'boards')}
             />

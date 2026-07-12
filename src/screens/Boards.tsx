@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { C, display, mono } from '../ui/tokens'
 import Crown from '../ui/Crown'
 import Avatar from '../ui/Avatar'
+import ShareButton from '../ui/ShareButton'
 import {
   getFavorites,
   getLeaderboard,
@@ -56,19 +57,22 @@ export default function Boards({
   handle,
   avatar,
   token,
+  initialTerrace,
   onUser,
   onOpenTerrace,
 }: {
   handle: string
   avatar: string | null
   token: string | null
+  initialTerrace?: { id: string; name: string } | null
   onUser: (handle: string) => void
   onOpenTerrace: (id: string) => void
 }) {
   const { t } = useTranslation()
-  const [tab, setTab] = useState<Tab>('city')
+  // A crown deep link opens straight on that terrace's board (see App consumeDeepLink).
+  const [tab, setTab] = useState<Tab>(initialTerrace ? 'terrace' : 'city')
   const [barri, setBarri] = useState<string | null>(null)
-  const [terrace, setTerrace] = useState<{ id: string; name: string } | null>(null)
+  const [terrace, setTerrace] = useState<{ id: string; name: string } | null>(initialTerrace ?? null)
   const [picker, setPicker] = useState<Picker>(null)
   const [rows, setRows] = useState<LbRow[] | null>(null)
   const [favs, setFavs] = useState<Favorite[]>([])
@@ -94,6 +98,8 @@ export default function Boards({
         ? { kind: 'terrace', ref: terrace.id, label: terrace.name }
         : null
   const isFav = !!currentFav && favs.some((f) => f.kind === currentFav.kind && f.ref === currentFav.ref)
+  // The viewer holds this terrace's crown when they top its board: offer to dare friends to steal it.
+  const iHold = tab === 'terrace' && !!terrace && !!rows && rows.length > 0 && (rows[0].displayName ?? 'hunter') === handle
 
   async function toggleCurrent() {
     if (!currentFav || !token) return
@@ -112,6 +118,8 @@ export default function Boards({
 
   useEffect(() => {
     if (!handle) return
+    // A crown deep link takes precedence: don't let the default barri auto-select clobber it.
+    if (initialTerrace) return
     getUser(handle).then((u) => {
       if (u?.topBarri) {
         setBarri(u.topBarri)
@@ -215,6 +223,15 @@ export default function Boards({
           </div>
         )}
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
+          {iHold && terrace && (
+            <ShareButton
+              variant="compact"
+              terraceId={terrace.id}
+              terraceName={terrace.name}
+              handle={handle}
+              label={t('share.buttonBoards')}
+            />
+          )}
           {currentFav && (
             <button
               onClick={toggleCurrent}

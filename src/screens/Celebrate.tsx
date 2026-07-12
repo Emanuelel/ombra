@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { btnBlock, C, display, mono } from '../ui/tokens'
 import CrownBadge from '../ui/CrownBadge'
+import ShareButton from '../ui/ShareButton'
 import { isIOS, isStandalone } from '../lib/platform'
 import { getLeaderboard, subscribeToPush } from '../lib/api'
 import { getLang } from '../i18n/lang'
@@ -166,6 +167,15 @@ export default function Celebrate({
             {t('celebrate.installGot')}
           </button>
         </div>
+      )}
+      {wonCrown && terraceId && (
+        <ShareButton
+          variant="primary"
+          terraceId={terraceId}
+          terraceName={terraceName}
+          handle={handle}
+          label={t('share.button')}
+        />
       )}
       <button
         onClick={onSeeBoard}

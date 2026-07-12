@@ -169,6 +169,13 @@
     "searchBar": "Buscar por nombre o calle…",
     "nothingFound": "No se encontró nada."
   },
+  "share": {
+    "button": "Róbame la corona 👑",
+    "buttonBoards": "Defiéndela · comparte",
+    "title": "Ombra",
+    "text": "Reino en {{terrace}} 👑 Róbamela si puedes:",
+    "copied": "Enlace copiado"
+  },
   "profile": {
     "shadeHunter": "cazador de sombra",
     "shadeHunterSince": "cazador de sombra desde {{since}}",
@@ -196,7 +203,8 @@
     "testSent": "Enviada. Mira tus notificaciones.",
     "testNoDevice": "No llegamos a ningún dispositivo. En iPhone, añade Ombra a tu pantalla de inicio primero.",
     "testFailed": "No se pudo enviar. Inténtalo de nuevo.",
-    "alertsBlocked": "Las notificaciones están bloqueadas en los ajustes de tu navegador."
+    "alertsBlocked": "Las notificaciones están bloqueadas en los ajustes de tu navegador.",
+    "notifOn": "Los avisos están activados. Toca para enviarte una prueba."
   },
   "map": {
     "shadeNearYou": "sombra cerca de ti",
