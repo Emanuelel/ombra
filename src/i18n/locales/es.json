@@ -209,37 +209,5 @@
     "map": "Mapa",
     "boards": "Clasificación",
     "you": "Tú"
-  },
-  "push": {
-    "crownStolen": {
-      "title": "👑 ¡Te robaron la corona!",
-      "body": "@{{handle}} te robó la corona en {{terrace}}"
-    },
-    "test": {
-      "title": "☀ Prueba de Ombra",
-      "body": "Las notificaciones están activas. La caza te espera."
-    },
-    "fomo": {
-      "weekdayA": {
-        "title": "☀ Las terrazas se llenan",
-        "body": "Hay gente sumando puntos cerca de ti. No te quedes al sol."
-      },
-      "weekdayB": {
-        "title": "👑 Las coronas están en juego",
-        "body": "Alguien anda tras tus sitios. Haz check-in y defiéndelos."
-      },
-      "weekdayC": {
-        "title": "☀ ¿Una terraza hoy?",
-        "body": "La sombra está inmejorable. Un café y unos cuantos puntos."
-      },
-      "weekendA": {
-        "title": "🍹 Empieza la caza del finde",
-        "body": "Terrazas a tope y puntos volando. Sal a por ellos."
-      },
-      "weekendB": {
-        "title": "☀ Finde de terrazas",
-        "body": "El mejor día para robar coronas. Tu barrio no se defiende solo."
-      }
-    }
   }
 }

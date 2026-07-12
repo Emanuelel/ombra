@@ -209,37 +209,5 @@
     "map": "Map",
     "boards": "Boards",
     "you": "You"
-  },
-  "push": {
-    "crownStolen": {
-      "title": "👑 Crown stolen!",
-      "body": "@{{handle}} took your crown at {{terrace}}"
-    },
-    "test": {
-      "title": "☀ Ombra test",
-      "body": "Notifications are on. The hunt awaits."
-    },
-    "fomo": {
-      "weekdayA": {
-        "title": "☀ The terraces are filling up",
-        "body": "People are pocketing points near you. Don't get left in the sun."
-      },
-      "weekdayB": {
-        "title": "👑 Crowns are up for grabs",
-        "body": "Someone is eyeing your spots. Check in and hold your ground."
-      },
-      "weekdayC": {
-        "title": "☀ Fancy a terrace today?",
-        "body": "The shade is prime right now. Grab a coffee, grab some points."
-      },
-      "weekendA": {
-        "title": "🍹 The weekend hunt begins",
-        "body": "Terraces are packed and points are flying. Get out there."
-      },
-      "weekendB": {
-        "title": "☀ Weekend on the terraces",
-        "body": "The best day to steal crowns. Your barri won't defend itself."
-      }
-    }
   }
 }
