@@ -27,12 +27,14 @@
   .meta { color:var(--muted); font-size:14px; margin-top:2px; }
   .note { background:var(--card); border:2px solid var(--ink); border-radius:14px; padding:14px 16px; margin:22px 0; font-size:14.5px; }
   .back { display:inline-block; margin-top:36px; font-family:'IBM Plex Mono',monospace; font-size:13px; }
+  .back-top { display:inline-block; font-family:'Archivo Black',sans-serif; font-size:28px; line-height:1; color:var(--ink); text-decoration:none; margin:0 0 4px; }
   .foot { margin-top:44px; padding-top:18px; border-top:1px solid rgba(26,20,8,.15); font-size:13px; color:var(--muted); }
 </style>
 </head>
 <body>
 <div class="band"></div>
 <div class="wrap">
+  <a href="/" class="back-top" aria-label="Back to Ombra" onclick="if(history.length>1){event.preventDefault();history.back();}">&larr;</a>
   <div class="eyebrow">Barcelona · shade-hunting</div>
   <div class="brand">
     <svg viewBox="0 0 24 18" width="40" height="30" aria-hidden="true"><polygon points="2,16 2,5 7,9.5 12,3 17,9.5 22,5 22,16" fill="#FFC800" stroke="#1A1408" stroke-width="1.4"/></svg>
@@ -95,7 +97,7 @@
   <p>Selene App Studio — <a href="mailto:selene.app.studio@outlook.com?subject=Ombra%20privacy">selene.app.studio@outlook.com</a></p>
 
   <div class="note">See also our <a href="/terms">Terms of Service</a>.</div>
-  <a class="back" href="/">← Back to Ombra</a>
+  <a class="back" href="/" onclick="if(history.length>1){event.preventDefault();history.back();}">← Back to Ombra</a>
 
   <div class="foot">© 2026 Selene App Studio · Ombra</div>
 </div>
