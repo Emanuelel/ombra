@@ -47,7 +47,8 @@
     "tagline": "El juego de cazar sombra en las terrazas de Barcelona.",
     "sub": "Encuentra la terraza con más sombra. Haz check-in. Conserva la corona hasta que un amigo venga a robártela.",
     "start": "A cazar sombra →",
-    "footer": "el sol no es tu amigo ☀"
+    "footer": "el sol no es tu amigo ☀",
+    "switchTo": "Cambiar a {{lang}}"
   },
   "howItWorks": {
     "label": "Cómo funciona",
@@ -188,7 +189,14 @@
     "contactSub": "¿Preguntas o comentarios? Escríbenos un email.",
     "contactSubject": "Comentarios sobre Ombra",
     "privacy": "Privacidad",
-    "terms": "Términos"
+    "terms": "Términos",
+    "notifications": "Notificaciones",
+    "enableAlertsSub": "Recibe un aviso cuando te roben la corona, y un empujón diario para cazar.",
+    "sendTest": "Enviar una notificación de prueba",
+    "testSent": "Enviada. Mira tus notificaciones.",
+    "testNoDevice": "No llegamos a ningún dispositivo. En iPhone, añade Ombra a tu pantalla de inicio primero.",
+    "testFailed": "No se pudo enviar. Inténtalo de nuevo.",
+    "alertsBlocked": "Las notificaciones están bloqueadas en los ajustes de tu navegador."
   },
   "map": {
     "shadeNearYou": "sombra cerca de ti",
@@ -201,5 +209,37 @@
     "map": "Mapa",
     "boards": "Clasificación",
     "you": "Tú"
+  },
+  "push": {
+    "crownStolen": {
+      "title": "👑 ¡Te robaron la corona!",
+      "body": "@{{handle}} te robó la corona en {{terrace}}"
+    },
+    "test": {
+      "title": "☀ Prueba de Ombra",
+      "body": "Las notificaciones están activas. La caza te espera."
+    },
+    "fomo": {
+      "weekdayA": {
+        "title": "☀ Las terrazas se llenan",
+        "body": "Hay gente sumando puntos cerca de ti. No te quedes al sol."
+      },
+      "weekdayB": {
+        "title": "👑 Las coronas están en juego",
+        "body": "Alguien anda tras tus sitios. Haz check-in y defiéndelos."
+      },
+      "weekdayC": {
+        "title": "☀ ¿Una terraza hoy?",
+        "body": "La sombra está inmejorable. Un café y unos cuantos puntos."
+      },
+      "weekendA": {
+        "title": "🍹 Empieza la caza del finde",
+        "body": "Terrazas a tope y puntos volando. Sal a por ellos."
+      },
+      "weekendB": {
+        "title": "☀ Finde de terrazas",
+        "body": "El mejor día para robar coronas. Tu barrio no se defiende solo."
+      }
+    }
   }
 }
