@@ -154,6 +154,10 @@ export async function subscribeToPush(token: string, lang?: string): Promise<boo
       return false
     }
     if (!('serviceWorker' in navigator) || !('PushManager' in window)) return false
+    // Never trigger the OS permission prompt from here: pushManager.subscribe() prompts when
+    // permission is 'default', so we only ever subscribe once the user has explicitly granted.
+    // Callers request permission first; this is the belt-and-suspenders guarantee.
+    if ('Notification' in window && Notification.permission !== 'granted') return false
     // Don't hang if no service worker is active (e.g. in the Vite dev preview).
     const reg = await Promise.race([
       navigator.serviceWorker.ready,
@@ -172,6 +176,13 @@ export async function subscribeToPush(token: string, lang?: string): Promise<boo
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify({ subscription: sub.toJSON(), lang }),
     })
+    if (r.ok) {
+      try {
+        localStorage.setItem('ombra_notif_on', '1')
+      } catch {
+        /* ignore */
+      }
+    }
     return r.ok
   } catch {
     return false

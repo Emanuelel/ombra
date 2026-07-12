@@ -169,6 +169,13 @@
     "searchBar": "Search by name or street…",
     "nothingFound": "Nothing found."
   },
+  "share": {
+    "button": "Steal my crown 👑",
+    "buttonBoards": "Defend it · share",
+    "title": "Ombra",
+    "text": "I'm king of {{terrace}} 👑 Steal it if you can:",
+    "copied": "Link copied"
+  },
   "profile": {
     "shadeHunter": "shade hunter",
     "shadeHunterSince": "shade hunter since {{since}}",
@@ -196,7 +203,8 @@
     "testSent": "Sent. Check your notifications.",
     "testNoDevice": "Couldn't reach a device. On iPhone, add Ombra to your home screen first.",
     "testFailed": "Couldn't send. Try again.",
-    "alertsBlocked": "Notifications are blocked in your browser settings."
+    "alertsBlocked": "Notifications are blocked in your browser settings.",
+    "notifOn": "Alerts are on. Tap to send yourself a test."
   },
   "map": {
     "shadeNearYou": "shade near you",

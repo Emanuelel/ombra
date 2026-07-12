@@ -60,6 +60,9 @@ export default function Profile({
   const [showInstall, setShowInstall] = useState(false)
   const [notifMsg, setNotifMsg] = useState<string | null>(null) // an i18n key
   const [notifBusy, setNotifBusy] = useState(false)
+  // Whether notifications are already granted on this device. Recomputed each render;
+  // setNotifMsg after sendTest() re-renders, so this reflects a fresh grant immediately.
+  const notifOn = typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted'
   useEffect(() => {
     getUser(handle).then(setU)
   }, [handle])
@@ -297,7 +300,9 @@ export default function Profile({
             <Crown size={16} fill={C.sun} stroke={C.ink} />
             <span style={{ flex: 1, lineHeight: 1.15, minWidth: 0 }}>
               <span style={{ display: 'block', fontWeight: 800, fontSize: 14 }}>{t('profile.sendTest')}</span>
-              <span style={mono(11, { color: C.muted2 })}>{t('profile.enableAlertsSub')}</span>
+              <span style={mono(11, { color: C.muted2 })}>
+                {notifOn ? t('profile.notifOn') : t('profile.enableAlertsSub')}
+              </span>
             </span>
           </button>
           {notifMsg && <div style={mono(11, { color: C.muted, marginTop: 6 })}>{t(notifMsg)}</div>}

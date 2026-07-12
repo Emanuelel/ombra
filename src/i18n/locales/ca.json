@@ -169,6 +169,13 @@
     "searchBar": "Cerca per nom o carrer…",
     "nothingFound": "No s’ha trobat res."
   },
+  "share": {
+    "button": "Roba’m la corona 👑",
+    "buttonBoards": "Defensa-la · comparteix",
+    "title": "Ombra",
+    "text": "Regno a {{terrace}} 👑 Roba-me-la si pots:",
+    "copied": "Enllaç copiat"
+  },
   "profile": {
     "shadeHunter": "caçador d’ombra",
     "shadeHunterSince": "caçador d’ombra des de {{since}}",
@@ -196,7 +203,8 @@
     "testSent": "Enviada. Mira les teves notificacions.",
     "testNoDevice": "No hem arribat a cap dispositiu. A l’iPhone, afegeix Ombra a la pantalla d’inici primer.",
     "testFailed": "No s’ha pogut enviar. Torna-ho a provar.",
-    "alertsBlocked": "Les notificacions estan bloquejades als ajustos del navegador."
+    "alertsBlocked": "Les notificacions estan bloquejades als ajustos del navegador.",
+    "notifOn": "Els avisos estan activats. Toca per enviar-te una prova."
   },
   "map": {
     "shadeNearYou": "ombra a prop teu",
