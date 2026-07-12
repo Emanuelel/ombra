@@ -144,8 +144,9 @@ function urlBase64ToUint8Array(base64: string): Uint8Array {
   return arr
 }
 
-/** Subscribe this device to web push and register it server-side. Best-effort. */
-export async function subscribeToPush(token: string): Promise<boolean> {
+/** Subscribe this device to web push and register it server-side. Best-effort.
+ * `lang` (the user's current UI language) is stored so server-sent push is localized. */
+export async function subscribeToPush(token: string, lang?: string): Promise<boolean> {
   try {
     if (!VAPID_PUBLIC) {
       if ((import.meta as any).env?.DEV)
@@ -169,11 +170,39 @@ export async function subscribeToPush(token: string): Promise<boolean> {
     const r = await fetch(`${API}/api/push-subscribe`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body: JSON.stringify({ subscription: sub.toJSON() }),
+      body: JSON.stringify({ subscription: sub.toJSON(), lang }),
     })
     return r.ok
   } catch {
     return false
+  }
+}
+
+/** Persist the user's chosen UI language server-side (for localized push). Best-effort. */
+export async function persistLang(token: string, lang: string): Promise<void> {
+  try {
+    await fetch(`${API}/api/profile`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ lang }),
+    })
+  } catch {
+    /* best effort */
+  }
+}
+
+/** Send a test push to the signed-in user's own devices. `count` is how many were targeted. */
+export async function sendTestPush(token: string): Promise<{ ok: boolean; count: number }> {
+  try {
+    const r = await fetch(`${API}/api/notify-test`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    if (!r.ok) return { ok: false, count: 0 }
+    const j = await r.json()
+    return { ok: true, count: j.count ?? 0 }
+  } catch {
+    return { ok: false, count: 0 }
   }
 }
 

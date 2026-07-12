@@ -4,6 +4,7 @@ import { btnBlock, C, display, mono } from '../ui/tokens'
 import CrownBadge from '../ui/CrownBadge'
 import { isIOS, isStandalone } from '../lib/platform'
 import { getLeaderboard, subscribeToPush } from '../lib/api'
+import { getLang } from '../i18n/lang'
 
 const CONFETTI = [
   { left: '8%', w: 10, h: 16, bg: C.tomato, round: false, dur: 1.7, delay: 0 },
@@ -104,7 +105,7 @@ export default function Celebrate({
   function enableAlerts() {
     if ('Notification' in window) {
       Notification.requestPermission().then((perm) => {
-        if (perm === 'granted' && token) void subscribeToPush(token)
+        if (perm === 'granted' && token) void subscribeToPush(token, getLang())
         markAsked()
       }, markAsked)
     } else markAsked()

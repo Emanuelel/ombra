@@ -1,9 +1,12 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
+import { eq } from 'drizzle-orm'
 import { db, schema } from '../src/db/client.js'
 import { getSessionUserId } from '../src/lib/auth-server.js'
 import { cors } from '../src/lib/http.js'
 
-/** POST /api/push-subscribe { subscription } — store this device's push subscription. */
+const LANGS = ['es', 'ca', 'en']
+
+/** POST /api/push-subscribe { subscription, lang? } — store this device's push subscription. */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (cors(req, res)) return
   if (req.method !== 'POST') return res.status(405).json({ error: 'method_not_allowed' })
@@ -26,6 +29,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       target: schema.pushSubscriptions.endpoint,
       set: { userId, p256dh, auth },
     })
+
+  // Remember the language this device subscribed in, so server-sent push is localized.
+  const lang = req.body?.lang
+  if (typeof lang === 'string' && LANGS.includes(lang)) {
+    await db.update(schema.profiles).set({ lang }).where(eq(schema.profiles.userId, userId))
+  }
 
   return res.status(200).json({ ok: true })
 }
