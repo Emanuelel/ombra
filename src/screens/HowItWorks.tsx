@@ -6,12 +6,14 @@ import { useTranslation } from 'react-i18next'
 import { MapContainer, TileLayer, Marker } from 'react-leaflet'
 import L from 'leaflet'
 import { C, display, mono } from '../ui/tokens'
+import { pinColors } from '../lib/shadeTable'
 import Crown from '../ui/Crown'
 import CrownBadge from '../ui/CrownBadge'
 import GoogleG from '../ui/GoogleG'
 
-// The exact app pin (same markup as MapView's pctIcon), non-interactive for the demo.
-function pin(pct: number, bg: string, fg: string): L.DivIcon {
+// The exact app pin (same markup + colours as MapView's pctIcon), non-interactive for the demo.
+function pin(pct: number): L.DivIcon {
+  const { bg, fg } = pinColors(pct)
   return L.divIcon({
     className: '',
     html: `<div style="width:28px;height:28px;border-radius:50%;background:${bg};border:2px solid ${C.ink};box-shadow:2px 2px 0 ${C.ink};display:flex;align-items:center;justify-content:center;font-family:'Archivo',sans-serif;font-weight:800;font-size:10px;color:${fg};">${pct}</div>`,
@@ -21,20 +23,20 @@ function pin(pct: number, bg: string, fg: string): L.DivIcon {
 }
 
 const DEMO_CENTER: [number, number] = [41.4008, 2.165]
-const DEMO_PINS: { at: [number, number]; pct: number; bg: string; fg: string }[] = [
-  { at: [41.4014, 2.164], pct: 80, bg: C.sun, fg: C.ink },
-  { at: [41.4002, 2.1663], pct: 60, bg: '#FBF3E0', fg: C.ink },
-  { at: [41.4017, 2.1666], pct: 0, bg: C.tomato, fg: C.cream },
-  { at: [41.3998, 2.1637], pct: 100, bg: C.sun, fg: C.ink },
-  { at: [41.4011, 2.1672], pct: 0, bg: C.tomato, fg: C.cream },
-  { at: [41.4, 2.1655], pct: 100, bg: C.sun, fg: C.ink },
-  { at: [41.4019, 2.1643], pct: 100, bg: C.sun, fg: C.ink },
-  { at: [41.4005, 2.1668], pct: 40, bg: '#FBF3E0', fg: C.ink },
-  { at: [41.3995, 2.1659], pct: 0, bg: C.tomato, fg: C.cream },
-  { at: [41.4022, 2.1656], pct: 70, bg: C.sun, fg: C.ink },
-  { at: [41.3992, 2.1648], pct: 60, bg: '#FBF3E0', fg: C.ink },
-  { at: [41.401, 2.1636], pct: 100, bg: C.sun, fg: C.ink },
-  { at: [41.3999, 2.1646], pct: 90, bg: C.sun, fg: C.ink }, // the bar the finger taps (near "you")
+const DEMO_PINS: { at: [number, number]; pct: number }[] = [
+  { at: [41.4014, 2.164], pct: 80 },
+  { at: [41.4002, 2.1663], pct: 60 },
+  { at: [41.4017, 2.1666], pct: 0 },
+  { at: [41.3998, 2.1637], pct: 100 },
+  { at: [41.4011, 2.1672], pct: 0 },
+  { at: [41.4, 2.1655], pct: 100 },
+  { at: [41.4019, 2.1643], pct: 100 },
+  { at: [41.4005, 2.1668], pct: 40 },
+  { at: [41.3995, 2.1659], pct: 0 },
+  { at: [41.4022, 2.1656], pct: 70 },
+  { at: [41.3992, 2.1648], pct: 60 },
+  { at: [41.401, 2.1636], pct: 100 },
+  { at: [41.3999, 2.1646], pct: 90 }, // the bar the finger taps (near "you")
 ]
 
 // Confetti for the crown beat — the same ombraConfetti keyframe the win screen uses.
@@ -214,7 +216,7 @@ export default function HowItWorks({ onBack, onNext }: { onBack: () => void; onN
             maxZoom={20}
           />
           {DEMO_PINS.map((p, i) => (
-            <Marker key={i} position={p.at} icon={pin(p.pct, p.bg, p.fg)} interactive={false} />
+            <Marker key={i} position={p.at} icon={pin(p.pct)} interactive={false} />
           ))}
         </MapContainer>
 
@@ -232,8 +234,8 @@ export default function HowItWorks({ onBack, onNext }: { onBack: () => void; onN
                 width: 30,
                 height: 30,
                 borderRadius: '50%',
-                background: C.sun,
-                color: C.ink,
+                background: pinColors(85).bg,
+                color: pinColors(85).fg,
                 border: `2.5px solid ${C.ink}`,
                 boxShadow: '0 3px 4px rgba(0,0,0,.2)',
                 display: 'flex',

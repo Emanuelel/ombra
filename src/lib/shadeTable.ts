@@ -85,7 +85,8 @@ export function shadedUntil(id: string, date: Date): string | null {
 }
 
 export function pinColors(percent: number): { bg: string; fg: string } {
-  if (percent >= 65) return { bg: '#FFC800', fg: '#1A1408' }
-  if (percent >= 40) return { bg: '#FBF3E0', fg: '#1A1408' }
-  return { bg: '#F4432B', fg: '#FBF1DB' }
+  // Intuitive traffic-light scale (matches the Legend): more shade = greener.
+  if (percent >= 65) return { bg: '#16a34a', fg: '#FBF1DB' } // green - shaded
+  if (percent >= 40) return { bg: '#FFC800', fg: '#1A1408' } // yellow - partial
+  return { bg: '#F4432B', fg: '#FBF1DB' } // red - full sun
 }
