@@ -13,6 +13,10 @@ self.addEventListener('push', function (event) {
       icon: '/icon-192.png',
       badge: '/badge-96.png',
       tag: data.tag || 'ombra',
+      // Re-alert (sound/vibration/heads-up) when a notification reuses a tag. Without this,
+      // Android silently REPLACES the existing notification with no alert, so repeated pushes
+      // that share a tag (e.g. the test push) appear to "do nothing". iOS re-alerts regardless.
+      renotify: true,
       data: { url: data.url || '/' },
     }),
   )
