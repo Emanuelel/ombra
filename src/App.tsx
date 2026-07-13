@@ -47,6 +47,10 @@ type Screen =
 
 const TAB_SCREENS: Screen[] = ['map', 'boards', 'profile']
 
+// One level of back history. Detail screens (terrace/user) can chain arbitrarily deep,
+// so each entry snapshots enough to re-render the screen we came from.
+type NavSnapshot = { screen: Screen; selectedId: string | null; viewUser: string | null }
+
 function nowMinutes(): number {
   const n = new Date()
   return n.getHours() * 60 + n.getMinutes()
@@ -83,8 +87,10 @@ export default function App() {
   const [stolen, setStolen] = useState(false)
   const [checkInError, setCheckInError] = useState<string | null>(null)
   const [viewUser, setViewUser] = useState<string | null>(null)
-  const [userReturn, setUserReturn] = useState<Screen>('boards')
-  const [terraceReturn, setTerraceReturn] = useState<Screen>('map')
+  // Back history for the detail screens. `goBack` pops one level; tabs are roots and clear it.
+  // This replaces per-screen "return to" pointers, which could point at each other (terrace⇄user)
+  // and trap Back in an infinite loop.
+  const [backStack, setBackStack] = useState<NavSnapshot[]>([])
   const timer = useRef<ReturnType<typeof setTimeout>>()
   // Remember the map camera so opening/closing a terrace (which unmounts the map)
   // returns you to where you were panning, not back to your location.
@@ -228,16 +234,41 @@ export default function App() {
     }, 60)
   }
 
-  function openTerrace(id: string, from: Screen = 'map') {
+  // Push the current view onto the back stack before navigating to a detail screen.
+  function pushCurrent() {
+    setBackStack((prev) => [...prev, { screen, selectedId, viewUser }])
+  }
+
+  // Pop one level of history. Restores the full snapshot (screen + its params) so terrace/user
+  // chains unwind one step at a time instead of bouncing between the last two.
+  function goBack() {
+    const snap = backStack[backStack.length - 1]
+    if (!snap) {
+      setScreen('map')
+      return
+    }
+    setBackStack((prev) => prev.slice(0, -1))
+    setScreen(snap.screen)
+    setSelectedId(snap.selectedId)
+    setViewUser(snap.viewUser)
+  }
+
+  // Switch to a root tab. Tabs are the bottom of the stack, so entering one clears history.
+  function goTab(tab: 'map' | 'boards' | 'profile') {
+    setBackStack([])
+    setScreen(tab)
+  }
+
+  function openTerrace(id: string) {
+    pushCurrent()
     setSelectedId(id)
     setCheckInError(null)
-    setTerraceReturn(from)
     setScreen('terrace')
   }
 
-  function openUser(handle: string, from: Screen) {
+  function openUser(handle: string) {
+    pushCurrent()
     setViewUser(handle)
-    setUserReturn(from)
     setScreen('user')
   }
 
@@ -292,6 +323,7 @@ export default function App() {
     setToken(null)
     setSelectedId(null)
     setAvatar(null)
+    setBackStack([])
     setScreen('welcome')
   }
 
@@ -467,9 +499,9 @@ export default function App() {
           until={selectedUntil}
           token={token}
           error={checkInError}
-          onBack={() => setScreen(terraceReturn)}
+          onBack={goBack}
           onCheckIn={startCheckIn}
-          onUser={(h) => openUser(h, 'terrace')}
+          onUser={(h) => openUser(h)}
         />
       </Shell>
     )
@@ -485,8 +517,8 @@ export default function App() {
           terraceId={selected?.id ?? ''}
           handle={handle}
           token={token}
-          onSeeBoard={() => setScreen('boards')}
-          onBackToMap={() => setScreen('map')}
+          onSeeBoard={() => goTab('boards')}
+          onBackToMap={() => goTab('map')}
         />
       </Shell>
     )
@@ -496,8 +528,8 @@ export default function App() {
       <Shell>
         <PublicProfile
           handle={viewUser}
-          onBack={() => setScreen(userReturn)}
-          onOpenTerrace={(id) => openTerrace(id, 'user')}
+          onBack={goBack}
+          onOpenTerrace={(id) => openTerrace(id)}
         />
       </Shell>
     )
@@ -525,7 +557,7 @@ export default function App() {
               info={shade.info}
               minutes={minutes}
               setMinutes={(m) => setMinutes(m)}
-              onSelect={(id) => openTerrace(id)}
+              onSelect={openTerrace}
               onView={onView}
               initialCamera={mapCamera.current}
               onCamera={(c) => {
@@ -539,8 +571,8 @@ export default function App() {
               avatar={avatar}
               token={token}
               initialTerrace={deepTerrace}
-              onUser={(h) => openUser(h, 'boards')}
-              onOpenTerrace={(id) => openTerrace(id, 'boards')}
+              onUser={(h) => openUser(h)}
+              onOpenTerrace={(id) => openTerrace(id)}
             />
           )}
           {screen === 'profile' && (
@@ -549,16 +581,16 @@ export default function App() {
               avatar={avatar}
               token={token}
               onAvatarChange={setAvatar}
-              onOpenTerrace={(id) => openTerrace(id, 'profile')}
+              onOpenTerrace={(id) => openTerrace(id)}
               onLogout={logout}
             />
           )}
         </div>
         <TabBar
           active={activeTab}
-          onMap={() => setScreen('map')}
-          onBoards={() => setScreen('boards')}
-          onProfile={() => setScreen('profile')}
+          onMap={() => goTab('map')}
+          onBoards={() => goTab('boards')}
+          onProfile={() => goTab('profile')}
         />
       </div>
     </Shell>
