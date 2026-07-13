@@ -251,7 +251,18 @@ export async function persistLang(token: string, lang: string): Promise<void> {
 }
 
 /** Send a test push to the signed-in user's own devices. `count` is how many were targeted. */
-export async function sendTestPush(token: string): Promise<{ ok: boolean; count: number }> {
+/** One device's push-service delivery result (TEMP diagnostics, mirrors server PushSendResult). */
+export interface PushSendResult {
+  host: string
+  statusCode: number | null
+  ok: boolean
+  pruned: boolean
+  error?: string
+}
+
+export async function sendTestPush(
+  token: string,
+): Promise<{ ok: boolean; count: number; results?: PushSendResult[] }> {
   try {
     const r = await fetch(`${API}/api/notify-test`, {
       method: 'POST',
@@ -259,7 +270,7 @@ export async function sendTestPush(token: string): Promise<{ ok: boolean; count:
     })
     if (!r.ok) return { ok: false, count: 0 }
     const j = await r.json()
-    return { ok: true, count: j.count ?? 0 }
+    return { ok: true, count: j.count ?? 0, results: j.results }
   } catch {
     return { ok: false, count: 0 }
   }
