@@ -95,6 +95,13 @@ button {
   0% { transform: scale(0.6); opacity: 0.8; }
   100% { transform: scale(2.6); opacity: 0; }
 }
+/* Crown-disc pop-in for the onboarding "win the crown" beat (no rotation, so the
+   hard offset shadow stays put). */
+@keyframes ombraPopIn {
+  0% { transform: scale(0); }
+  55% { transform: scale(1.14); }
+  100% { transform: scale(1); }
+}
 
 /* ---- Map (Leaflet) ---- */
 .leaflet-container {

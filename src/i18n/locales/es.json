@@ -52,19 +52,15 @@
     "switchTo": "Cambiar a {{lang}}"
   },
   "howItWorks": {
-    "label": "Cómo funciona",
-    "steps": [
-      "Mira la sombra cerca de ti",
-      "Toca un bar",
-      "Haz check-in a menos de 25 m",
-      "Roba la corona"
-    ],
-    "beats": [
-      "Mira la sombra cerca de ti",
-      "Toca un bar",
-      "Haz check-in y gana la corona",
-      "Conserva tu corona"
-    ],
+    "b1Title": "Encuentra la sombra cerca de ti",
+    "b1Sub": "Un mapa en vivo puntúa cada terraza según la sombra que tiene ahora mismo.",
+    "b2Title": "Toca un bar con sombra",
+    "b2Sub": "Elige tu sitio y mira quién tiene ahora su corona.",
+    "b3Title": "Haz check-in y gana la corona",
+    "b3Sub": "¿A menos de 25 m? Haz check-in y roba el trono al instante.",
+    "b4Title": "Consérvala o piérdela",
+    "b4Sub": "Aparece cada semana para defender tu corona. Tus amigos pueden quitártela.",
+    "legal": "Al continuar aceptas los <terms>Términos</terms> y la <privacy>Política de Privacidad</privacy> de Ombra",
     "continueGoogle": "Continuar con Google"
   },
   "handle": {

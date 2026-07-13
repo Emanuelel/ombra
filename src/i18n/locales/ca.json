@@ -52,19 +52,15 @@
     "switchTo": "Canvia a {{lang}}"
   },
   "howItWorks": {
-    "label": "Com funciona",
-    "steps": [
-      "Mira l’ombra a prop teu",
-      "Toca un bar",
-      "Fes check-in a menys de 25 m",
-      "Roba la corona"
-    ],
-    "beats": [
-      "Mira l’ombra a prop teu",
-      "Toca un bar",
-      "Fes check-in i guanya la corona",
-      "Conserva la teva corona"
-    ],
+    "b1Title": "Troba l’ombra a prop teu",
+    "b1Sub": "Un mapa en directe puntua cada terrassa segons l’ombra que té ara mateix.",
+    "b2Title": "Toca un bar amb ombra",
+    "b2Sub": "Tria el teu lloc i mira qui té ara la seva corona.",
+    "b3Title": "Fes check-in i guanya la corona",
+    "b3Sub": "A menys de 25 m? Fes check-in i roba el tron a l’instant.",
+    "b4Title": "Conserva-la o perd-la",
+    "b4Sub": "Apareix cada setmana per defensar la teva corona. Els amics te la poden prendre.",
+    "legal": "En continuar acceptes els <terms>Termes</terms> i la <privacy>Política de Privadesa</privacy> d’Ombra",
     "continueGoogle": "Continua amb Google"
   },
   "handle": {
