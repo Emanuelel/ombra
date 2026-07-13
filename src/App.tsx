@@ -12,6 +12,7 @@ import Checking from './screens/Checking'
 import Celebrate from './screens/Celebrate'
 import Boards, { type BoardsView } from './screens/Boards'
 import Profile from './screens/Profile'
+import Settings from './screens/Settings'
 import PublicProfile from './screens/PublicProfile'
 import { infoAt, bonusFor, shadedUntil } from './lib/shadeTable'
 import {
@@ -43,6 +44,7 @@ type Screen =
   | 'celebrate'
   | 'boards'
   | 'profile'
+  | 'settings'
   | 'user'
 
 const TAB_SCREENS: Screen[] = ['map', 'boards', 'profile']
@@ -271,6 +273,12 @@ export default function App() {
     pushCurrent()
     setViewUser(handle)
     setScreen('user')
+  }
+
+  // Gear on the Profile pushes Settings; back returns to Profile via the back stack.
+  function openSettings() {
+    pushCurrent()
+    setScreen('settings')
   }
 
   // Consume a persisted "steal my crown" deep link: resolve its terrace so Boards can open on
@@ -525,6 +533,13 @@ export default function App() {
       </Shell>
     )
 
+  if (screen === 'settings')
+    return (
+      <Shell>
+        <Settings onBack={goBack} onLogout={logout} />
+      </Shell>
+    )
+
   if (screen === 'user' && viewUser)
     return (
       <Shell>
@@ -544,9 +559,9 @@ export default function App() {
         style={{
           position: 'absolute',
           inset: 0,
-          // The map tab wears a brand-red status band behind the OS status bar (per spec);
-          // other tabs keep the cream ground. The content area below stays cream either way.
-          background: activeTab === 'map' ? '#F84A2C' : '#FBF1DB',
+          // The map and profile tabs wear a brand-red status band behind the OS status bar
+          // (per spec); boards keeps the cream ground. The content area below stays cream either way.
+          background: activeTab === 'map' || activeTab === 'profile' ? '#F84A2C' : '#FBF1DB',
           display: 'flex',
           flexDirection: 'column',
           paddingTop: 'max(10px, env(safe-area-inset-top))',
@@ -585,7 +600,7 @@ export default function App() {
               token={token}
               onAvatarChange={setAvatar}
               onOpenTerrace={(id) => openTerrace(id)}
-              onLogout={logout}
+              onOpenSettings={openSettings}
             />
           )}
         </div>

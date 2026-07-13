@@ -5,7 +5,8 @@
     "hoursAgo": "{{count}}h ago",
     "daysAgo": "{{count}}d ago",
     "aFew": "a few",
-    "barcelona": "Barcelona"
+    "barcelona": "Barcelona",
+    "back": "Back"
   },
   "app": {
     "connectingGoogle": "Connecting to Google…"
@@ -52,8 +53,18 @@
   },
   "howItWorks": {
     "label": "How it works",
-    "steps": ["See the shade near you", "Tap a bar", "Check in within 25m", "Steal the crown"],
-    "beats": ["See the shade near you", "Tap a bar", "Check in & win the crown", "Hold your crown"],
+    "steps": [
+      "See the shade near you",
+      "Tap a bar",
+      "Check in within 25m",
+      "Steal the crown"
+    ],
+    "beats": [
+      "See the shade near you",
+      "Tap a bar",
+      "Check in & win the crown",
+      "Hold your crown"
+    ],
     "continueGoogle": "Continue with Google"
   },
   "handle": {
@@ -197,14 +208,10 @@
     "contactSubject": "Ombra feedback",
     "privacy": "Privacy",
     "terms": "Terms",
-    "notifications": "Notifications",
-    "enableAlertsSub": "Get pinged when your crown is stolen, plus a daily nudge to hunt.",
-    "sendTest": "Send a test notification",
-    "testSent": "Sent. Check your notifications.",
-    "testNoDevice": "Couldn't reach a device. On iPhone, add Ombra to your home screen first.",
-    "testFailed": "Couldn't send. Try again.",
-    "alertsBlocked": "Notifications are blocked in your browser settings.",
-    "notifOn": "Alerts are on. Tap to send yourself a test."
+    "openSettings": "Settings",
+    "yourTerraces": "Your terraces",
+    "firstCrownTitle": "Win your first crown",
+    "firstCrownSub": "Check in at a shady terrace to claim it."
   },
   "map": {
     "shadeNearYou": "shade near you",
@@ -217,5 +224,8 @@
     "map": "Map",
     "boards": "Boards",
     "you": "You"
+  },
+  "settings": {
+    "title": "Settings"
   }
 }
