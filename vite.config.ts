@@ -10,7 +10,7 @@ export default defineConfig({
       // Prompt users to reload for a new version instead of silently auto-updating,
       // so a fresh deploy is picked up on the same visit (see src/ui/UpdatePrompt.tsx).
       registerType: 'prompt',
-      includeAssets: ['favicon.svg', 'apple-touch-icon.png', 'icon-192.png', 'icon-512.png', 'badge-96.png'],
+      includeAssets: ['favicon.svg', 'apple-touch-icon.png', 'icon-192.png', 'icon-512.png', 'icon-512-maskable.png', 'badge-96.png'],
       workbox: {
         // The committed OSM building data + geometry libs push the bundle past
         // workbox's default 2 MiB precache cap; allow the app to be cached offline.
@@ -33,7 +33,10 @@ export default defineConfig({
         icons: [
           { src: 'icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
           { src: 'icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
-          { src: 'icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+          // Dedicated maskable icon: crown padded into the adaptive-icon safe zone so
+          // Android's launcher zoom/crop doesn't blow it up. Full-bleed `any` icons above
+          // must NOT be reused as maskable or they look zoomed on the home screen.
+          { src: 'icon-512-maskable.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
           { src: 'favicon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any' },
         ],
       },
