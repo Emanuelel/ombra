@@ -28,8 +28,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const [p] = await db.select({ lang: profiles.lang }).from(profiles).where(eq(profiles.userId, userId))
   const copy = pushCopy(p?.lang ?? null, 'push.test')
-  const results = await sendPushToUser(userId, { ...copy, url: '/', tag: 'ombra-test' })
+  await sendPushToUser(userId, { ...copy, url: '/', tag: 'ombra-test' })
 
-  // `results` (per-device push-service status) is temporary diagnostics for the Android issue.
-  return res.status(200).json({ ok: true, count: subs.length, results })
+  return res.status(200).json({ ok: true, count: subs.length })
 }

@@ -20,52 +20,27 @@ export interface PushPayload {
   tag?: string
 }
 
-/** Outcome of pushing to one device, for diagnostics. */
-export interface PushSendResult {
-  host: string // push service host, e.g. fcm.googleapis.com or web.push.apple.com
-  statusCode: number | null // HTTP status from the push service (201/204 = accepted)
-  ok: boolean
-  pruned: boolean // subscription was deleted (404/410 = gone)
-  error?: string
-}
-
-function hostOf(endpoint: string): string {
-  try {
-    return new URL(endpoint).host
-  } catch {
-    return 'unknown'
-  }
-}
-
-/** Best-effort web push to every device a user has subscribed. Prunes dead subs.
- * Returns a per-device result so callers can surface delivery failures (the push
- * service's HTTP status) instead of failing silently. */
-export async function sendPushToUser(userId: string, payload: PushPayload): Promise<PushSendResult[]> {
-  if (!ensure()) return []
+/** Best-effort web push to every device a user has subscribed. Prunes dead subs. */
+export async function sendPushToUser(userId: string, payload: PushPayload): Promise<void> {
+  if (!ensure()) return
   const subs = await db
     .select()
     .from(schema.pushSubscriptions)
     .where(eq(schema.pushSubscriptions.userId, userId))
-  return Promise.all(
-    subs.map(async (s): Promise<PushSendResult> => {
-      const host = hostOf(s.endpoint)
+  await Promise.all(
+    subs.map(async (s) => {
       try {
-        const r = await webpush.sendNotification(
+        await webpush.sendNotification(
           { endpoint: s.endpoint, keys: { p256dh: s.p256dh, auth: s.auth } },
           JSON.stringify(payload),
         )
-        return { host, statusCode: r.statusCode, ok: true, pruned: false }
       } catch (err) {
-        const code = (err as { statusCode?: number }).statusCode ?? null
-        const message = (err as { body?: string; message?: string }).body || (err as Error).message || 'error'
-        let pruned = false
+        const code = (err as { statusCode?: number }).statusCode
         if (code === 404 || code === 410) {
           await db
             .delete(schema.pushSubscriptions)
             .where(eq(schema.pushSubscriptions.endpoint, s.endpoint))
-          pruned = true
         }
-        return { host, statusCode: code, ok: false, pruned, error: String(message).slice(0, 200) }
       }
     }),
   )
