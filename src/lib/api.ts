@@ -144,6 +144,22 @@ function urlBase64ToUint8Array(base64: string): Uint8Array {
   return arr
 }
 
+/** Wait for a service worker with an active worker, without hanging forever.
+ * Fast path: an already-active registration (the common case once the SW has installed
+ * on a prior visit). Otherwise wait on `navigator.serviceWorker.ready`, bounded by
+ * `timeoutMs`. The old 3s bound was too tight for a fresh (non-installed) tab on a slow
+ * connection, where the SW is still installing on first load: it timed out and we silently
+ * skipped the subscribe, so that device never got a push row. */
+async function waitForActiveSW(timeoutMs = 10000): Promise<ServiceWorkerRegistration | null> {
+  if (!('serviceWorker' in navigator)) return null
+  const existing = await navigator.serviceWorker.getRegistration()
+  if (existing?.active) return existing
+  return Promise.race([
+    navigator.serviceWorker.ready,
+    new Promise<null>((res) => setTimeout(() => res(null), timeoutMs)),
+  ])
+}
+
 /** Subscribe this device to web push and register it server-side. Best-effort.
  * `lang` (the user's current UI language) is stored so server-sent push is localized. */
 export async function subscribeToPush(token: string, lang?: string): Promise<boolean> {
@@ -158,11 +174,7 @@ export async function subscribeToPush(token: string, lang?: string): Promise<boo
     // permission is 'default', so we only ever subscribe once the user has explicitly granted.
     // Callers request permission first; this is the belt-and-suspenders guarantee.
     if ('Notification' in window && Notification.permission !== 'granted') return false
-    // Don't hang if no service worker is active (e.g. in the Vite dev preview).
-    const reg = await Promise.race([
-      navigator.serviceWorker.ready,
-      new Promise<null>((res) => setTimeout(() => res(null), 3000)),
-    ])
+    const reg = await waitForActiveSW()
     if (!reg) return false
     let sub = await reg.pushManager.getSubscription()
     if (!sub) {
@@ -187,6 +199,42 @@ export async function subscribeToPush(token: string, lang?: string): Promise<boo
   } catch {
     return false
   }
+}
+
+/** Snapshot of this device's push-notification state, for on-device debugging.
+ * TEMP: wired into the Profile debug readout while diagnosing Android delivery. */
+export interface PushDiag {
+  supported: boolean
+  permission: string // 'granted' | 'denied' | 'default' | 'unsupported'
+  vapidSet: boolean
+  swScriptURL: string | null
+  hasSubscription: boolean
+  endpointHost: string | null
+}
+
+export async function getPushDiag(): Promise<PushDiag> {
+  const supported = 'serviceWorker' in navigator && 'PushManager' in window
+  const permission = 'Notification' in window ? Notification.permission : 'unsupported'
+  const vapidSet = !!VAPID_PUBLIC
+  let swScriptURL: string | null = null
+  let hasSubscription = false
+  let endpointHost: string | null = null
+  try {
+    const reg = supported ? await navigator.serviceWorker.getRegistration() : null
+    swScriptURL = reg?.active?.scriptURL ?? null
+    const sub = reg ? await reg.pushManager.getSubscription() : null
+    hasSubscription = !!sub
+    if (sub) {
+      try {
+        endpointHost = new URL(sub.endpoint).host
+      } catch {
+        endpointHost = 'unknown'
+      }
+    }
+  } catch {
+    /* ignore - best-effort snapshot */
+  }
+  return { supported, permission, vapidSet, swScriptURL, hasSubscription, endpointHost }
 }
 
 /** Persist the user's chosen UI language server-side (for localized push). Best-effort. */
