@@ -120,6 +120,8 @@
     "ctaReady": "Check-in · roba la corona",
     "ctaLocating": "Buscant la teva ubicació…",
     "ctaDenied": "Activa la ubicació per fer check-in",
+    "ctaBlocked": "Ubicació bloquejada. Toca per arreglar-ho",
+    "blockedHelp": "Ombra no pot veure la teva ubicació. Activa-la a la configuració del telèfon o del navegador per a aquest lloc i torna a obrir aquesta terrassa.",
     "ctaPoor": "GPS feble. Surt a l’aire lliure",
     "ctaFar": "Massa lluny. Acosta’t a 25 m",
     "ctaFarDist": "Massa lluny. Acosta’t a 25 m · a {{dist}} m"

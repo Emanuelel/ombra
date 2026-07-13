@@ -120,6 +120,8 @@
     "ctaReady": "Check in · steal the crown",
     "ctaLocating": "Finding your location…",
     "ctaDenied": "Turn on location to check in",
+    "ctaBlocked": "Location is blocked. Tap to fix",
+    "blockedHelp": "Ombra can't see your location. Turn it on in your phone or browser settings for this site, then reopen this terrace.",
     "ctaPoor": "Weak GPS. Step into the open",
     "ctaFar": "Too far. Get within 25m",
     "ctaFarDist": "Too far. Get within 25m · {{dist}}m away"
