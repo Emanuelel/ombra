@@ -4,7 +4,7 @@ import type { TFunction } from 'i18next'
 import { C, display, mono } from '../ui/tokens'
 import Crown from '../ui/Crown'
 import Avatar from '../ui/Avatar'
-import { getPushDiag, getUser, sendTestPush, subscribeToPush, updateAvatar, type PushDiag, type PushSendResult, type UserProfile } from '../lib/api'
+import { getUser, sendTestPush, subscribeToPush, updateAvatar, type UserProfile } from '../lib/api'
 import { fileToDataUrl } from '../lib/image'
 import { shouldOfferInstall } from '../lib/platform'
 import { getLang, LANGS, setLang } from '../i18n/lang'
@@ -63,12 +63,8 @@ export default function Profile({
   // Whether notifications are already granted on this device. Recomputed each render;
   // setNotifMsg after sendTest() re-renders, so this reflects a fresh grant immediately.
   const notifOn = typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted'
-  // TEMP: on-device push diagnostics, remove after Android push is fixed.
-  const [diag, setDiag] = useState<PushDiag | null>(null)
-  const [sendResults, setSendResults] = useState<PushSendResult[] | null>(null)
   useEffect(() => {
     getUser(handle).then(setU)
-    getPushDiag().then(setDiag)
   }, [handle])
 
   // Turn on alerts (subscribe this device) and send a test push in one tap. This also
@@ -93,9 +89,7 @@ export default function Profile({
         return
       }
       await subscribeToPush(token, getLang())
-      getPushDiag().then(setDiag) // TEMP: refresh the debug readout after subscribing
-      const { ok, count, results } = await sendTestPush(token)
-      setSendResults(results ?? null) // TEMP: per-device push-service delivery status
+      const { ok, count } = await sendTestPush(token)
       setNotifMsg(!ok ? 'profile.testFailed' : count === 0 ? 'profile.testNoDevice' : 'profile.testSent')
     } finally {
       setNotifBusy(false)
@@ -312,34 +306,6 @@ export default function Profile({
             </span>
           </button>
           {notifMsg && <div style={mono(11, { color: C.muted, marginTop: 6 })}>{t(notifMsg)}</div>}
-          {/* i18n-ignore: TEMP push-notification debug readout (English-only), remove after Android push is fixed */}
-          <div
-            style={{
-              marginTop: 8,
-              background: C.cream,
-              border: `1px dashed ${C.muted}`,
-              borderRadius: 10,
-              padding: '8px 10px',
-              ...mono(10.5, { color: C.ink, lineHeight: 1.6 }),
-            }}
-          >
-            <div style={{ fontWeight: 800 }}>{'push debug'}</div>
-            <div>{`permission: ${diag?.permission ?? '…'}`}</div>
-            <div>{`vapid key set: ${diag ? (diag.vapidSet ? 'yes' : 'NO') : '…'}`}</div>
-            <div>{`push supported: ${diag ? (diag.supported ? 'yes' : 'NO') : '…'}`}</div>
-            <div>{`service worker: ${diag ? (diag.swScriptURL ? diag.swScriptURL.split('/').pop() : 'none') : '…'}`}</div>
-            <div>{`subscribed on this device: ${diag ? (diag.hasSubscription ? 'yes' : 'NO') : '…'}`}</div>
-            <div>{`endpoint host: ${diag?.endpointHost ?? (diag ? 'none' : '…')}`}</div>
-            <div style={{ fontWeight: 800, marginTop: 4 }}>{'last send (tap the button above)'}</div>
-            {!sendResults && <div>{'— no test sent yet —'}</div>}
-            {sendResults?.length === 0 && <div>{'no devices subscribed for this account'}</div>}
-            {sendResults?.map((r, i) => (
-              <div key={i}>
-                {`${r.host}: ${r.ok ? `OK (${r.statusCode})` : `FAIL ${r.statusCode ?? '?'}${r.pruned ? ' (pruned)' : ''}`}`}
-                {r.error ? ` — ${r.error}` : ''}
-              </div>
-            ))}
-          </div>
         </>
       )}
 

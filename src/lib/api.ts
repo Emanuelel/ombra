@@ -201,42 +201,6 @@ export async function subscribeToPush(token: string, lang?: string): Promise<boo
   }
 }
 
-/** Snapshot of this device's push-notification state, for on-device debugging.
- * TEMP: wired into the Profile debug readout while diagnosing Android delivery. */
-export interface PushDiag {
-  supported: boolean
-  permission: string // 'granted' | 'denied' | 'default' | 'unsupported'
-  vapidSet: boolean
-  swScriptURL: string | null
-  hasSubscription: boolean
-  endpointHost: string | null
-}
-
-export async function getPushDiag(): Promise<PushDiag> {
-  const supported = 'serviceWorker' in navigator && 'PushManager' in window
-  const permission = 'Notification' in window ? Notification.permission : 'unsupported'
-  const vapidSet = !!VAPID_PUBLIC
-  let swScriptURL: string | null = null
-  let hasSubscription = false
-  let endpointHost: string | null = null
-  try {
-    const reg = supported ? await navigator.serviceWorker.getRegistration() : null
-    swScriptURL = reg?.active?.scriptURL ?? null
-    const sub = reg ? await reg.pushManager.getSubscription() : null
-    hasSubscription = !!sub
-    if (sub) {
-      try {
-        endpointHost = new URL(sub.endpoint).host
-      } catch {
-        endpointHost = 'unknown'
-      }
-    }
-  } catch {
-    /* ignore - best-effort snapshot */
-  }
-  return { supported, permission, vapidSet, swScriptURL, hasSubscription, endpointHost }
-}
-
 /** Persist the user's chosen UI language server-side (for localized push). Best-effort. */
 export async function persistLang(token: string, lang: string): Promise<void> {
   try {
@@ -251,18 +215,7 @@ export async function persistLang(token: string, lang: string): Promise<void> {
 }
 
 /** Send a test push to the signed-in user's own devices. `count` is how many were targeted. */
-/** One device's push-service delivery result (TEMP diagnostics, mirrors server PushSendResult). */
-export interface PushSendResult {
-  host: string
-  statusCode: number | null
-  ok: boolean
-  pruned: boolean
-  error?: string
-}
-
-export async function sendTestPush(
-  token: string,
-): Promise<{ ok: boolean; count: number; results?: PushSendResult[] }> {
+export async function sendTestPush(token: string): Promise<{ ok: boolean; count: number }> {
   try {
     const r = await fetch(`${API}/api/notify-test`, {
       method: 'POST',
@@ -270,7 +223,7 @@ export async function sendTestPush(
     })
     if (!r.ok) return { ok: false, count: 0 }
     const j = await r.json()
-    return { ok: true, count: j.count ?? 0, results: j.results }
+    return { ok: true, count: j.count ?? 0 }
   } catch {
     return { ok: false, count: 0 }
   }
