@@ -5,6 +5,7 @@ import Crown from '../ui/Crown'
 import Avatar from '../ui/Avatar'
 import { BASE_POINTS, PROXIMITY_M, ACCURACY_SLACK_M, MAX_ACCURACY_M } from '../lib/scoring'
 import { distM } from '../lib/sun'
+import { getGeoPermission, requestPosition } from '../lib/geo'
 import { getFavorites, getLeaderboard, toggleFavorite, type LbRow } from '../lib/api'
 import type { Terrace as TerraceT } from '../types'
 
@@ -34,8 +35,11 @@ export default function Terrace({
   const [isFav, setIsFav] = useState(false)
   // Proactive proximity gate: watch the user's location while this screen is open so the
   // check-in CTA reflects whether they can actually check in - no tap-then-fail surprise.
-  const [gate, setGate] = useState<'locating' | 'denied' | 'poor' | 'far' | 'ok'>('locating')
+  // 'denied' = undecided/delayed, a tap can still trigger the native prompt.
+  // 'blocked' = hard-denied at the OS level, no re-prompt possible, send to settings.
+  const [gate, setGate] = useState<'locating' | 'denied' | 'blocked' | 'poor' | 'far' | 'ok'>('locating')
   const [dist, setDist] = useState<number | null>(null)
+  const [showBlockedHelp, setShowBlockedHelp] = useState(false)
   useEffect(() => {
     let alive = true
     setBoard(null)
@@ -46,31 +50,50 @@ export default function Terrace({
     }
   }, [terrace.id, token])
 
+  // Turn a fix into a gate. Shared by the passive watch and the tap-to-request handler.
+  function gateFromFix(pos: GeolocationPosition) {
+    const acc = pos.coords.accuracy
+    const d = distM(pos.coords.longitude, pos.coords.latitude, terrace.lon, terrace.lat)
+    setDist(d)
+    // Same rule the server enforces (api/check-in.ts): forgive up to the device's
+    // reported accuracy (capped) around the 25m gate; reject wildly imprecise fixes.
+    if (acc > MAX_ACCURACY_M) return setGate('poor')
+    setGate(d <= PROXIMITY_M + Math.min(acc, ACCURACY_SLACK_M) ? 'ok' : 'far')
+  }
+
   useEffect(() => {
     if (!('geolocation' in navigator)) {
-      setGate('denied')
+      setGate('blocked')
       return
     }
     let alive = true
     const id = navigator.geolocation.watchPosition(
-      (pos) => {
+      (pos) => alive && gateFromFix(pos),
+      // On failure, decide whether a tap could still re-prompt ('denied') or the OS has
+      // hard-blocked us and only settings can fix it ('blocked'). Default to 'denied' so a
+      // transient error stays retryable rather than dead-ending the user.
+      () => {
         if (!alive) return
-        const acc = pos.coords.accuracy
-        const d = distM(pos.coords.longitude, pos.coords.latitude, terrace.lon, terrace.lat)
-        setDist(d)
-        // Same rule the server enforces (api/check-in.ts): forgive up to the device's
-        // reported accuracy (capped) around the 25m gate; reject wildly imprecise fixes.
-        if (acc > MAX_ACCURACY_M) return setGate('poor')
-        setGate(d <= PROXIMITY_M + Math.min(acc, ACCURACY_SLACK_M) ? 'ok' : 'far')
+        getGeoPermission().then((p) => alive && setGate(p === 'denied' ? 'blocked' : 'denied'))
       },
-      () => alive && setGate('denied'),
       { enableHighAccuracy: true, maximumAge: 5000, timeout: 20000 },
     )
     return () => {
       alive = false
       navigator.geolocation.clearWatch(id)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [terrace.id, terrace.lat, terrace.lon])
+
+  // Tap handler for the denied CTA: fire the native prompt (works while the permission is
+  // still undecided) from this user gesture, then reflect the outcome in the gate.
+  async function requestLocation() {
+    setGate('locating')
+    const pos = await requestPosition({ enableHighAccuracy: true, timeout: 12000 })
+    if (pos) return gateFromFix(pos)
+    const p = await getGeoPermission()
+    setGate(p === 'denied' ? 'blocked' : 'denied')
+  }
 
   async function toggleFav() {
     if (!token) return
@@ -82,6 +105,9 @@ export default function Terrace({
   const shaded = percent >= 50
 
   const ready = gate === 'ok'
+  // Tappable states: check in ('ok'), fire the location prompt ('denied'), or show the
+  // settings help ('blocked'). 'locating'/'poor'/'far' stay non-tappable.
+  const canTap = gate === 'ok' || gate === 'denied' || gate === 'blocked'
   const ctaLabel =
     gate === 'ok'
       ? t('terrace.ctaReady')
@@ -89,11 +115,13 @@ export default function Terrace({
         ? t('terrace.ctaLocating')
         : gate === 'denied'
           ? t('terrace.ctaDenied')
-          : gate === 'poor'
-            ? t('terrace.ctaPoor')
-            : dist
-              ? t('terrace.ctaFarDist', { dist: Math.round(dist) })
-              : t('terrace.ctaFar')
+          : gate === 'blocked'
+            ? t('terrace.ctaBlocked')
+            : gate === 'poor'
+              ? t('terrace.ctaPoor')
+              : dist
+                ? t('terrace.ctaFarDist', { dist: Math.round(dist) })
+                : t('terrace.ctaFar')
   const meta = [
     terrace.barri || t('common.barcelona'),
     terrace.tables ? t('terrace.tablesOutside', { count: terrace.tables }) : null,
@@ -339,20 +367,41 @@ export default function Terrace({
               {error}
             </div>
           )}
+          {showBlockedHelp && gate === 'blocked' && (
+            <div
+              style={{
+                marginBottom: 10,
+                background: C.sun,
+                color: C.ink,
+                border: `2px solid ${C.ink}`,
+                borderRadius: 12,
+                padding: '10px 14px',
+                fontWeight: 600,
+                fontSize: 13,
+                lineHeight: 1.4,
+              }}
+            >
+              {t('terrace.blockedHelp')}
+            </div>
+          )}
           <button
-            onClick={onCheckIn}
-            disabled={!ready}
+            onClick={() => {
+              if (gate === 'ok') onCheckIn()
+              else if (gate === 'blocked') setShowBlockedHelp(true)
+              else if (gate === 'denied') requestLocation()
+            }}
+            disabled={!canTap}
             style={{
               width: '100%',
-              background: ready ? C.tomato : '#e4d8c1',
-              color: ready ? C.cream : C.muted,
-              border: `2.5px solid ${ready ? C.ink : C.muted3}`,
+              background: canTap ? C.tomato : '#e4d8c1',
+              color: canTap ? C.cream : C.muted,
+              border: `2.5px solid ${canTap ? C.ink : C.muted3}`,
               borderRadius: 16,
               padding: 18,
               ...display(ready ? 18 : 14, { textTransform: 'uppercase' }),
               lineHeight: 1.15,
-              boxShadow: ready ? `5px 5px 0 ${C.ink}` : 'none',
-              cursor: ready ? 'pointer' : 'not-allowed',
+              boxShadow: canTap ? `5px 5px 0 ${C.ink}` : 'none',
+              cursor: canTap ? 'pointer' : 'not-allowed',
             }}
           >
             {ctaLabel}

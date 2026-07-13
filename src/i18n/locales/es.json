@@ -120,6 +120,8 @@
     "ctaReady": "Check-in · roba la corona",
     "ctaLocating": "Buscando tu ubicación…",
     "ctaDenied": "Activa la ubicación para hacer check-in",
+    "ctaBlocked": "Ubicación bloqueada. Toca para arreglarlo",
+    "blockedHelp": "Ombra no puede ver tu ubicación. Actívala en los ajustes de tu teléfono o navegador para este sitio y vuelve a abrir esta terraza.",
     "ctaPoor": "GPS débil. Sal a campo abierto",
     "ctaFar": "Demasiado lejos. Acércate a 25 m",
     "ctaFarDist": "Demasiado lejos. Acércate a 25 m · a {{dist}} m"
