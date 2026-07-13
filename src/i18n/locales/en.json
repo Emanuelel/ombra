@@ -52,19 +52,15 @@
     "switchTo": "Switch to {{lang}}"
   },
   "howItWorks": {
-    "label": "How it works",
-    "steps": [
-      "See the shade near you",
-      "Tap a bar",
-      "Check in within 25m",
-      "Steal the crown"
-    ],
-    "beats": [
-      "See the shade near you",
-      "Tap a bar",
-      "Check in & win the crown",
-      "Hold your crown"
-    ],
+    "b1Title": "See the shade near you",
+    "b1Sub": "A live map rates every terrace by how shaded it is right now.",
+    "b2Title": "Tap a shady bar",
+    "b2Sub": "Pick your spot and see who currently holds its crown.",
+    "b3Title": "Check in, win the crown",
+    "b3Sub": "Within 25m? Check in and steal the throne on the spot.",
+    "b4Title": "Hold it, or lose it",
+    "b4Sub": "Show up each week to defend your crown. Friends can take it.",
+    "legal": "By continuing you agree to Ombra's <terms>Terms</terms> and <privacy>Privacy Policy</privacy>",
     "continueGoogle": "Continue with Google"
   },
   "handle": {

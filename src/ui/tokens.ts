@@ -10,6 +10,7 @@ export const C = {
   logout: '#D8452E', // logout / destructive outline
   blue: '#2979F2', // handles, location dot, links, photo-add badge
   shadeBlue: 'rgba(44,51,85,.30)',
+  shadeDeep: '#2C3355', // solid shade blue (onboarding sun/shade illustration)
   mapBase: '#FBF4DD',
   mapStreet: '#F4E6B0',
   mapBuilding: '#D9C89E',
@@ -19,6 +20,8 @@ export const C = {
   muted3b: '#a99e88', // attribution / fine-print mono
   green: '#1E8A48',
   greenText: '#1E8A48',
+  subtext: '#5f5647', // onboarding subcopy
+  dotOff: '#D8CFB8', // inactive progress dot
 } as const
 
 /** Archivo Black display type. */
