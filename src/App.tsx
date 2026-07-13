@@ -10,7 +10,7 @@ import MapScreen from './screens/MapScreen'
 import Terrace from './screens/Terrace'
 import Checking from './screens/Checking'
 import Celebrate from './screens/Celebrate'
-import Boards from './screens/Boards'
+import Boards, { type BoardsView } from './screens/Boards'
 import Profile from './screens/Profile'
 import PublicProfile from './screens/PublicProfile'
 import { infoAt, bonusFor, shadedUntil } from './lib/shadeTable'
@@ -77,9 +77,10 @@ export default function App() {
   const [connectingGoogle, setConnectingGoogle] = useState(false)
   const [busy, setBusy] = useState(false)
   const [restoring, setRestoring] = useState(true)
-  // A "steal my crown" deep link (?t=<terraceId>), resolved to the terrace it points at.
-  // When set, onboarding lands the user on that terrace's leaderboard instead of the map.
-  const [deepTerrace, setDeepTerrace] = useState<{ id: string; name: string } | null>(null)
+  // Which board the Boards tab is showing. Owned here (not inside Boards) so the selection
+  // survives leaving the tab, e.g. opening a profile and hitting Back. `null` until first shown.
+  // A "steal my crown" deep link seeds it to that terrace's board (see consumeDeepLink).
+  const [boardsView, setBoardsView] = useState<BoardsView | null>(null)
   const [minutes, setMinutes] = useState(nowMinutes)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [winPoints, setWinPoints] = useState(84)
@@ -283,7 +284,7 @@ export default function App() {
     localStorage.removeItem('ombra_ref')
     const terrace = terraces.find((x) => x.id === id)
     if (!terrace) return false
-    setDeepTerrace({ id: terrace.id, name: terrace.name })
+    setBoardsView({ tab: 'terrace', barri: null, terrace: { id: terrace.id, name: terrace.name } })
     track('invite_landing', { terrace: id, ref })
     return true
   }
@@ -324,6 +325,7 @@ export default function App() {
     setSelectedId(null)
     setAvatar(null)
     setBackStack([])
+    setBoardsView(null)
     setScreen('welcome')
   }
 
@@ -570,7 +572,8 @@ export default function App() {
               handle={handle}
               avatar={avatar}
               token={token}
-              initialTerrace={deepTerrace}
+              view={boardsView}
+              setView={setBoardsView}
               onUser={(h) => openUser(h)}
               onOpenTerrace={(id) => openTerrace(id)}
             />
