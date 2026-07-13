@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type CSSProperties } from 'react'
+import { useEffect, useMemo, useState, type CSSProperties, type Dispatch, type SetStateAction } from 'react'
 import { useTranslation } from 'react-i18next'
 import { C, display, mono } from '../ui/tokens'
 import Crown from '../ui/Crown'
@@ -18,6 +18,11 @@ import type { Terrace } from '../types'
 const terraces = terracesData as Terrace[]
 type Tab = 'barri' | 'terrace' | 'city' | 'friends'
 type Picker = 'barri' | 'terrace' | null
+
+// Which board the user is looking at. Lifted into App so it survives Boards unmounting
+// (e.g. when you open a profile and hit Back) instead of snapping back to the default.
+export type BoardsView = { tab: Tab; barri: string | null; terrace: { id: string; name: string } | null }
+const DEFAULT_VIEW: BoardsView = { tab: 'city', barri: null, terrace: null }
 
 const tabStyle = (active: boolean): CSSProperties => ({
   flex: '0 0 auto',
@@ -57,22 +62,24 @@ export default function Boards({
   handle,
   avatar,
   token,
-  initialTerrace,
+  view,
+  setView,
   onUser,
   onOpenTerrace,
 }: {
   handle: string
   avatar: string | null
   token: string | null
-  initialTerrace?: { id: string; name: string } | null
+  view: BoardsView | null
+  setView: Dispatch<SetStateAction<BoardsView | null>>
   onUser: (handle: string) => void
   onOpenTerrace: (id: string) => void
 }) {
   const { t } = useTranslation()
-  // A crown deep link opens straight on that terrace's board (see App consumeDeepLink).
-  const [tab, setTab] = useState<Tab>(initialTerrace ? 'terrace' : 'city')
-  const [barri, setBarri] = useState<string | null>(null)
-  const [terrace, setTerrace] = useState<{ id: string; name: string } | null>(initialTerrace ?? null)
+  // Selection is owned by App (see `view`/`setView`); `null` means "not chosen yet" and lets
+  // the default-barri effect below run once. `patch` updates just the fields that changed.
+  const { tab, barri, terrace } = view ?? DEFAULT_VIEW
+  const patch = (p: Partial<BoardsView>) => setView((prev) => ({ ...(prev ?? DEFAULT_VIEW), ...p }))
   const [picker, setPicker] = useState<Picker>(null)
   const [rows, setRows] = useState<LbRow[] | null>(null)
   const [favs, setFavs] = useState<Favorite[]>([])
@@ -82,13 +89,8 @@ export default function Boards({
   }, [token])
 
   function openFav(f: Favorite) {
-    if (f.kind === 'barri') {
-      setBarri(f.ref)
-      setTab('barri')
-    } else {
-      setTerrace({ id: f.ref, name: f.label })
-      setTab('terrace')
-    }
+    if (f.kind === 'barri') patch({ barri: f.ref, tab: 'barri' })
+    else patch({ terrace: { id: f.ref, name: f.label }, tab: 'terrace' })
   }
 
   const currentFav: Favorite | null =
@@ -116,18 +118,16 @@ export default function Boards({
     return [...set].sort()
   }, [])
 
+  // First time Boards is shown, default to the user's top barri. Skipped once any view exists
+  // (a deep link, a manual pick, or a restored selection), and the `prev ??` guard drops the
+  // result if the user picked a board while the fetch was in flight.
   useEffect(() => {
-    if (!handle) return
-    // A crown deep link takes precedence: don't let the default barri auto-select clobber it.
-    if (initialTerrace) return
+    if (!handle || view) return
     getUser(handle).then((u) => {
-      if (u?.topBarri) {
-        setBarri(u.topBarri)
-        setTab('barri')
-      }
+      setView((prev) => prev ?? (u?.topBarri ? { tab: 'barri', barri: u.topBarri, terrace: null } : DEFAULT_VIEW))
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [handle])
+  }, [handle, view])
 
   useEffect(() => {
     if (tab === 'friends') return
@@ -166,21 +166,21 @@ export default function Boards({
 
       <div className="ombra-scroll" style={{ display: 'flex', gap: 8, overflowX: 'auto', margin: '20px -18px 0', padding: '0 18px 4px' }}>
         <button
-          onClick={() => (barri && tab !== 'barri' ? setTab('barri') : setPicker('barri'))}
+          onClick={() => (barri && tab !== 'barri' ? patch({ tab: 'barri' }) : setPicker('barri'))}
           style={tabStyle(tab === 'barri')}
         >
           {tab === 'barri' && barri ? t('boards.barriPick', { barri }) : t('boards.myBarri')}
         </button>
         <button
-          onClick={() => (terrace && tab !== 'terrace' ? setTab('terrace') : setPicker('terrace'))}
+          onClick={() => (terrace && tab !== 'terrace' ? patch({ tab: 'terrace' }) : setPicker('terrace'))}
           style={tabStyle(tab === 'terrace')}
         >
           {tab === 'terrace' && terrace ? t('boards.barPick', { name: terrace.name }) : t('boards.aBar')}
         </button>
-        <button onClick={() => setTab('city')} style={tabStyle(tab === 'city')}>
+        <button onClick={() => patch({ tab: 'city' })} style={tabStyle(tab === 'city')}>
           {t('boards.allBcn')}
         </button>
-        <button onClick={() => setTab('friends')} style={tabStyle(tab === 'friends')}>
+        <button onClick={() => patch({ tab: 'friends' })} style={tabStyle(tab === 'friends')}>
           {t('boards.friends')}
         </button>
         {favs.map((f) => {
@@ -305,8 +305,7 @@ export default function Boards({
           placeholder={t('boards.searchBarri')}
           items={barris.map((b) => ({ key: b, primary: b }))}
           onPick={(k) => {
-            setBarri(k)
-            setTab('barri')
+            patch({ barri: k, tab: 'barri' })
             setPicker(null)
           }}
           onClose={() => setPicker(null)}
@@ -322,8 +321,7 @@ export default function Boards({
             secondary: `${tr.barri ?? t('common.barcelona')}${tr.address ? ` · ${tr.address}` : ''}`,
           }))}
           onPick={(id, primary) => {
-            setTerrace({ id, name: primary })
-            setTab('terrace')
+            patch({ terrace: { id, name: primary }, tab: 'terrace' })
             setPicker(null)
           }}
           onClose={() => setPicker(null)}
