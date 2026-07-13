@@ -4,26 +4,19 @@ import type { TFunction } from 'i18next'
 import { C, display, mono } from '../ui/tokens'
 import Crown from '../ui/Crown'
 import Avatar from '../ui/Avatar'
-import { getUser, sendTestPush, subscribeToPush, updateAvatar, type UserProfile } from '../lib/api'
+import { getUser, updateAvatar, type UserProfile } from '../lib/api'
 import { fileToDataUrl } from '../lib/image'
-import { shouldOfferInstall } from '../lib/platform'
-import { getLang, LANGS, setLang } from '../i18n/lang'
-import Install from './Install'
+import { getLang } from '../i18n/lang'
 
-function MailIcon() {
+// Solid 8-point cog (approved reference). Rendered ~22px inside the outlined gear button.
+function GearIcon() {
   return (
-    <svg
-      width={20}
-      height={20}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke={C.ink}
-      strokeWidth={2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <rect x="3" y="5" width="18" height="14" rx="2" />
-      <path d="m3 7 9 6 9-6" />
+    <svg viewBox="0 0 48 48" width={22} height={22} fill={C.ink}>
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M20.4 2.4A2 2 0 0 1 22.4 1h3.2a2 2 0 0 1 2 1.4l1.5 5.2c1 .3 1.9.7 2.8 1.2l4.8-2.6a2 2 0 0 1 2.4.3l2.3 2.3a2 2 0 0 1 .3 2.4l-2.6 4.8c.5.9.9 1.8 1.2 2.8l5.2 1.5a2 2 0 0 1 1.4 2v3.2a2 2 0 0 1-1.4 2l-5.2 1.5c-.3 1-.7 1.9-1.2 2.8l2.6 4.8a2 2 0 0 1-.3 2.4l-2.3 2.3a2 2 0 0 1-2.4.3l-4.8-2.6c-.9.5-1.8.9-2.8 1.2l-1.5 5.2a2 2 0 0 1-2 1.4h-3.2a2 2 0 0 1-2-1.4l-1.5-5.2c-1-.3-1.9-.7-2.8-1.2l-4.8 2.6a2 2 0 0 1-2.4-.3l-2.3-2.3a2 2 0 0 1-.3-2.4l2.6-4.8c-.5-.9-.9-1.8-1.2-2.8l-5.2-1.5A2 2 0 0 1 1 25.6v-3.2a2 2 0 0 1 1.4-2l5.2-1.5c.3-1 .7-1.9 1.2-2.8L6.2 11.3a2 2 0 0 1 .3-2.4l2.3-2.3a2 2 0 0 1 2.4-.3l4.8 2.6c.9-.5 1.8-.9 2.8-1.2l1.5-5.2ZM24 33a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z"
+      />
     </svg>
   )
 }
@@ -38,63 +31,32 @@ function ago(iso: string, t: TFunction): string {
   return t('common.daysAgo', { count: Math.floor(h / 24) })
 }
 
+/**
+ * Profile = the trophy case: identity + achievement only. Everything cold
+ * (language, support, legal, logout) lives behind the gear, in Settings.
+ */
 export default function Profile({
   handle,
   avatar,
   token,
   onAvatarChange,
   onOpenTerrace,
-  onLogout,
+  onOpenSettings,
 }: {
   handle: string
   avatar: string | null
   token: string | null
   onAvatarChange: (v: string | null) => void
   onOpenTerrace: (id: string) => void
-  onLogout: () => void
+  onOpenSettings: () => void
 }) {
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
   const [u, setU] = useState<UserProfile | null>(null)
   const [saving, setSaving] = useState(false)
   const [err, setErr] = useState<string | null>(null)
-  const [showInstall, setShowInstall] = useState(false)
-  const [notifMsg, setNotifMsg] = useState<string | null>(null) // an i18n key
-  const [notifBusy, setNotifBusy] = useState(false)
-  // Whether notifications are already granted on this device. Recomputed each render;
-  // setNotifMsg after sendTest() re-renders, so this reflects a fresh grant immediately.
-  const notifOn = typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted'
   useEffect(() => {
     getUser(handle).then(setU)
   }, [handle])
-
-  // Turn on alerts (subscribe this device) and send a test push in one tap. This also
-  // raises FOMO reach, since Profile is reachable by everyone (unlike the Celebrate moment).
-  async function sendTest() {
-    if (!token || notifBusy) return
-    setNotifBusy(true)
-    setNotifMsg(null)
-    try {
-      if (!('Notification' in window)) {
-        setNotifMsg('profile.alertsBlocked')
-        return
-      }
-      if (Notification.permission === 'default') {
-        const perm = await Notification.requestPermission()
-        if (perm !== 'granted') {
-          setNotifMsg('profile.alertsBlocked')
-          return
-        }
-      } else if (Notification.permission === 'denied') {
-        setNotifMsg('profile.alertsBlocked')
-        return
-      }
-      await subscribeToPush(token, getLang())
-      const { ok, count } = await sendTestPush(token)
-      setNotifMsg(!ok ? 'profile.testFailed' : count === 0 ? 'profile.testNoDevice' : 'profile.testSent')
-    } finally {
-      setNotifBusy(false)
-    }
-  }
 
   async function onPickAvatar(e: ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0]
@@ -112,6 +74,8 @@ export default function Profile({
     }
   }
 
+  const crowns = u?.crowns ?? 0
+
   return (
     <div
       style={{
@@ -122,6 +86,7 @@ export default function Profile({
         minHeight: '100%',
       }}
     >
+      {/* Header: avatar · identity · gear → Settings */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
         <label style={{ position: 'relative', cursor: token ? 'pointer' : 'default', flexShrink: 0, lineHeight: 0 }}>
           <Avatar name={handle} src={avatar ?? u?.avatarUrl ?? null} size={64} ring={C.ink} />
@@ -149,7 +114,7 @@ export default function Profile({
           )}
           {token && <input type="file" accept="image/*" onChange={onPickAvatar} style={{ display: 'none' }} />}
         </label>
-        <div>
+        <div style={{ flex: 1, minWidth: 0 }}>
           <div style={display(24)}>@{handle}</div>
           <div style={mono(11, { color: C.muted })}>
             {u ? t('profile.shadeHunterSince', { since: sinceLabel(u.joinedAt, getLang()) }) : t('profile.shadeHunter')}
@@ -157,45 +122,85 @@ export default function Profile({
           </div>
           {err && <div style={mono(10, { color: C.tomato, marginTop: 4 })}>{err}</div>}
         </div>
+        <button
+          onClick={onOpenSettings}
+          aria-label={t('profile.openSettings')}
+          style={{
+            flexShrink: 0,
+            width: 44,
+            height: 44,
+            margin: -3,
+            padding: 0,
+            background: 'none',
+            border: 'none',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+          }}
+        >
+          <span
+            style={{
+              width: 38,
+              height: 38,
+              borderRadius: '50%',
+              border: `2px solid ${C.ink}`,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <GearIcon />
+          </span>
+        </button>
       </div>
 
+      {/* Crowns hero — the headline number, or a first-run nudge for new hunters. */}
       <div
         style={{
           marginTop: 18,
           background: C.ink,
           color: C.cream,
           borderRadius: 18,
-          padding: 18,
+          padding: '18px 20px',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
+          gap: 12,
         }}
       >
-        <div>
-          <div style={display(46, { color: C.sun, lineHeight: 0.85 })}>{u?.crowns ?? 0}</div>
-          <div style={mono(11, { color: C.muted3 })}>{t('profile.crownsHeldNow')}</div>
-        </div>
+        {crowns > 0 ? (
+          <div>
+            <div style={display(46, { color: C.sun, lineHeight: 0.85 })}>{crowns}</div>
+            <div style={mono(11, { color: C.muted3 })}>{t('profile.crownsHeldNow')}</div>
+          </div>
+        ) : (
+          <div style={{ maxWidth: 210 }}>
+            <div style={display(19, { color: C.sun, lineHeight: 1.05 })}>{t('profile.firstCrownTitle')}</div>
+            <div style={mono(11, { color: C.muted3, marginTop: 6, lineHeight: 1.4 })}>{t('profile.firstCrownSub')}</div>
+          </div>
+        )}
         <Crown size={50} fill={C.sun} />
       </div>
 
-      <div style={{ marginTop: 12, display: 'flex', gap: 10 }}>
-        <div style={{ flex: 1, background: C.sun, border: `2.5px solid ${C.ink}`, borderRadius: 14, padding: 13 }}>
-          <div style={display(26)}>{u?.points7d ?? 0}</div>
-          <div style={{ fontSize: 11 }}>{t('profile.ptsThisWeek')}</div>
+      {/* Stat pair */}
+      <div style={{ marginTop: 12, display: 'flex', gap: 12 }}>
+        <div style={{ flex: 1, background: C.sun, border: `2.5px solid ${C.ink}`, borderRadius: 14, padding: 14 }}>
+          <div style={display(28, { lineHeight: 0.85 })}>{u?.points7d ?? 0}</div>
+          <div style={{ fontSize: 11, marginTop: 5 }}>{t('profile.ptsThisWeek')}</div>
         </div>
-        <div style={{ flex: 1, background: C.cream, border: `2.5px solid ${C.ink}`, borderRadius: 14, padding: 13 }}>
-          <div style={display(26)}>{u?.checkinsAll ?? 0}</div>
-          <div style={{ fontSize: 11 }}>{t('profile.checkins')}</div>
+        <div style={{ flex: 1, background: C.creamCard, border: `2.5px solid ${C.ink}`, borderRadius: 14, padding: 14 }}>
+          <div style={display(28, { lineHeight: 0.85 })}>{u?.checkinsAll ?? 0}</div>
+          <div style={{ fontSize: 11, marginTop: 5 }}>{t('profile.checkins')}</div>
         </div>
       </div>
 
-      <div style={mono(11, { letterSpacing: '.1em', textTransform: 'uppercase', color: C.muted2, marginTop: 16 })}>
-        {t('profile.recentCheckins')}
+      {/* Your terraces — the places you've been hunting. */}
+      <div style={mono(11, { letterSpacing: '.14em', textTransform: 'uppercase', color: C.muted2, marginTop: 20 })}>
+        {t('profile.yourTerraces')}
       </div>
-      <div style={{ marginTop: 9, display: 'flex', flexDirection: 'column', gap: 8 }}>
-        {u && u.recent.length === 0 && (
-          <div style={mono(12, { color: C.muted })}>{t('profile.startStreak')}</div>
-        )}
+      <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {u && u.recent.length === 0 && <div style={mono(12, { color: C.muted })}>{t('profile.startStreak')}</div>}
         {u?.recent.map((r, i) => (
           <button
             key={i}
@@ -206,7 +211,7 @@ export default function Profile({
               gap: 10,
               textAlign: 'left',
               width: '100%',
-              background: C.cream,
+              background: C.creamCard,
               border: `2px solid ${C.ink}`,
               borderRadius: 12,
               padding: '10px 13px',
@@ -224,150 +229,6 @@ export default function Profile({
             <span style={{ color: C.muted, fontSize: 16, flexShrink: 0 }}>›</span>
           </button>
         ))}
-      </div>
-
-      {shouldOfferInstall() && (
-        <button
-          onClick={() => setShowInstall(true)}
-          style={{
-            marginTop: 22,
-            width: '100%',
-            background: C.sun,
-            border: `2.5px solid ${C.ink}`,
-            borderRadius: 14,
-            padding: 14,
-            ...display(15, { textTransform: 'uppercase' }),
-            boxShadow: `4px 4px 0 ${C.ink}`,
-            cursor: 'pointer',
-          }}
-        >
-          {t('profile.addToHome')}
-        </button>
-      )}
-
-      <div style={mono(11, { letterSpacing: '.1em', textTransform: 'uppercase', color: C.muted2, marginTop: 22 })}>
-        {t('profile.language')}
-      </div>
-      <div style={{ marginTop: 9, display: 'flex', gap: 8 }}>
-        {LANGS.map((l) => {
-          const active = i18n.resolvedLanguage === l.code
-          return (
-            <button
-              key={l.code}
-              onClick={() => setLang(l.code)}
-              aria-pressed={active}
-              style={{
-                flex: 1,
-                background: active ? C.ink : C.cream,
-                color: active ? C.sun : C.ink,
-                border: `2px solid ${C.ink}`,
-                borderRadius: 12,
-                padding: '11px 8px',
-                fontWeight: 800,
-                fontSize: 13,
-                cursor: 'pointer',
-              }}
-            >
-              {l.label}
-            </button>
-          )
-        })}
-      </div>
-
-      {token && (
-        <>
-          <div style={mono(11, { letterSpacing: '.1em', textTransform: 'uppercase', color: C.muted2, marginTop: 22 })}>
-            {t('profile.notifications')}
-          </div>
-          <button
-            onClick={sendTest}
-            disabled={notifBusy}
-            style={{
-              marginTop: 9,
-              width: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 10,
-              background: C.cream,
-              border: `2px solid ${C.ink}`,
-              borderRadius: 12,
-              padding: '10px 13px',
-              cursor: notifBusy ? 'default' : 'pointer',
-              opacity: notifBusy ? 0.6 : 1,
-              textAlign: 'left',
-            }}
-          >
-            <Crown size={16} fill={C.sun} stroke={C.ink} />
-            <span style={{ flex: 1, lineHeight: 1.15, minWidth: 0 }}>
-              <span style={{ display: 'block', fontWeight: 800, fontSize: 14 }}>{t('profile.sendTest')}</span>
-              <span style={mono(11, { color: C.muted2 })}>
-                {notifOn ? t('profile.notifOn') : t('profile.enableAlertsSub')}
-              </span>
-            </span>
-          </button>
-          {notifMsg && <div style={mono(11, { color: C.muted, marginTop: 6 })}>{t(notifMsg)}</div>}
-        </>
-      )}
-
-      <div style={mono(11, { letterSpacing: '.1em', textTransform: 'uppercase', color: C.muted2, marginTop: 22 })}>
-        {t('profile.support')}
-      </div>
-      <a
-        href={`mailto:selene.app.studio@outlook.com?subject=${encodeURIComponent(t('profile.contactSubject'))}`}
-        style={{
-          marginTop: 9,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 10,
-          width: '100%',
-          background: C.cream,
-          border: `2px solid ${C.ink}`,
-          borderRadius: 12,
-          padding: '10px 13px',
-          textDecoration: 'none',
-          color: C.ink,
-        }}
-      >
-        <MailIcon />
-        <span style={{ flex: 1, lineHeight: 1.15, minWidth: 0 }}>
-          <span style={{ display: 'block', fontWeight: 800, fontSize: 14 }}>{t('profile.contactUs')}</span>
-          <span style={mono(11, { color: C.muted2 })}>{t('profile.contactSub')}</span>
-        </span>
-        <span style={{ color: C.muted, fontSize: 16, flexShrink: 0 }}>›</span>
-      </a>
-
-      <div style={{ marginTop: 20, display: 'flex', justifyContent: 'center', gap: 16, ...mono(12) }}>
-        <a href="/privacy" style={{ color: C.muted, textDecoration: 'underline' }}>{t('profile.privacy')}</a>
-        <a href="/terms" style={{ color: C.muted, textDecoration: 'underline' }}>{t('profile.terms')}</a>
-      </div>
-
-      {showInstall && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 3000 }}>
-          <Install onDone={() => setShowInstall(false)} />
-        </div>
-      )}
-
-      <button
-        onClick={onLogout}
-        style={{
-          marginTop: 'auto',
-          width: '100%',
-          background: C.cream,
-          border: `2px solid ${C.ink}`,
-          borderRadius: 14,
-          padding: 14,
-          ...display(15, { textTransform: 'uppercase' }),
-          cursor: 'pointer',
-        }}
-      >
-        {t('profile.logout')}
-      </button>
-
-      {/* i18n-ignore: data attribution / credit line, kept verbatim across languages */}
-      <div style={mono(9.5, { color: C.muted, textAlign: 'center', marginTop: 14, paddingTop: 0, lineHeight: 1.5 })}>
-        Terrace & places data © OpenStreetMap contributors, Overture Maps.
-        <br />
-        Licensed terraces: Ajuntament de Barcelona open data.
       </div>
     </div>
   )

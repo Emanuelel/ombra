@@ -5,7 +5,8 @@
     "hoursAgo": "hace {{count}} h",
     "daysAgo": "hace {{count}} d",
     "aFew": "unos",
-    "barcelona": "Barcelona"
+    "barcelona": "Barcelona",
+    "back": "Atrás"
   },
   "app": {
     "connectingGoogle": "Conectando con Google…"
@@ -52,8 +53,18 @@
   },
   "howItWorks": {
     "label": "Cómo funciona",
-    "steps": ["Mira la sombra cerca de ti", "Toca un bar", "Haz check-in a menos de 25 m", "Roba la corona"],
-    "beats": ["Mira la sombra cerca de ti", "Toca un bar", "Haz check-in y gana la corona", "Conserva tu corona"],
+    "steps": [
+      "Mira la sombra cerca de ti",
+      "Toca un bar",
+      "Haz check-in a menos de 25 m",
+      "Roba la corona"
+    ],
+    "beats": [
+      "Mira la sombra cerca de ti",
+      "Toca un bar",
+      "Haz check-in y gana la corona",
+      "Conserva tu corona"
+    ],
     "continueGoogle": "Continuar con Google"
   },
   "handle": {
@@ -197,14 +208,10 @@
     "contactSubject": "Comentarios sobre Ombra",
     "privacy": "Privacidad",
     "terms": "Términos",
-    "notifications": "Notificaciones",
-    "enableAlertsSub": "Recibe un aviso cuando te roben la corona, y un empujón diario para cazar.",
-    "sendTest": "Enviar una notificación de prueba",
-    "testSent": "Enviada. Mira tus notificaciones.",
-    "testNoDevice": "No llegamos a ningún dispositivo. En iPhone, añade Ombra a tu pantalla de inicio primero.",
-    "testFailed": "No se pudo enviar. Inténtalo de nuevo.",
-    "alertsBlocked": "Las notificaciones están bloqueadas en los ajustes de tu navegador.",
-    "notifOn": "Los avisos están activados. Toca para enviarte una prueba."
+    "openSettings": "Ajustes",
+    "yourTerraces": "Tus terrazas",
+    "firstCrownTitle": "Consigue tu primera corona",
+    "firstCrownSub": "Regístrate en una terraza con sombra para reclamarla."
   },
   "map": {
     "shadeNearYou": "sombra cerca de ti",
@@ -217,5 +224,8 @@
     "map": "Mapa",
     "boards": "Clasificación",
     "you": "Tú"
+  },
+  "settings": {
+    "title": "Ajustes"
   }
 }

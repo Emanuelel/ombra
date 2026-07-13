@@ -7,6 +7,7 @@ export const C = {
   sun: '#FFC800',
   tomato: '#F4432B', // action red: CTAs, pins, crown medallion, caret
   brand: '#F84A2C', // background red: Land screen, status bands
+  logout: '#D8452E', // logout / destructive outline
   blue: '#2979F2', // handles, location dot, links, photo-add badge
   shadeBlue: 'rgba(44,51,85,.30)',
   mapBase: '#FBF4DD',
@@ -15,6 +16,7 @@ export const C = {
   muted: '#a1794a',
   muted2: '#8a7f6d',
   muted3: '#b7ad98',
+  muted3b: '#a99e88', // attribution / fine-print mono
   green: '#1E8A48',
   greenText: '#1E8A48',
 } as const

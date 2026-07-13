@@ -5,7 +5,8 @@
     "hoursAgo": "fa {{count}} h",
     "daysAgo": "fa {{count}} d",
     "aFew": "uns",
-    "barcelona": "Barcelona"
+    "barcelona": "Barcelona",
+    "back": "Enrere"
   },
   "app": {
     "connectingGoogle": "Connectant amb Google…"
@@ -52,8 +53,18 @@
   },
   "howItWorks": {
     "label": "Com funciona",
-    "steps": ["Mira l’ombra a prop teu", "Toca un bar", "Fes check-in a menys de 25 m", "Roba la corona"],
-    "beats": ["Mira l’ombra a prop teu", "Toca un bar", "Fes check-in i guanya la corona", "Conserva la teva corona"],
+    "steps": [
+      "Mira l’ombra a prop teu",
+      "Toca un bar",
+      "Fes check-in a menys de 25 m",
+      "Roba la corona"
+    ],
+    "beats": [
+      "Mira l’ombra a prop teu",
+      "Toca un bar",
+      "Fes check-in i guanya la corona",
+      "Conserva la teva corona"
+    ],
     "continueGoogle": "Continua amb Google"
   },
   "handle": {
@@ -197,14 +208,10 @@
     "contactSubject": "Comentaris sobre Ombra",
     "privacy": "Privacitat",
     "terms": "Termes",
-    "notifications": "Notificacions",
-    "enableAlertsSub": "Rep un avís quan et robin la corona, i una empenta diària per caçar.",
-    "sendTest": "Envia una notificació de prova",
-    "testSent": "Enviada. Mira les teves notificacions.",
-    "testNoDevice": "No hem arribat a cap dispositiu. A l’iPhone, afegeix Ombra a la pantalla d’inici primer.",
-    "testFailed": "No s’ha pogut enviar. Torna-ho a provar.",
-    "alertsBlocked": "Les notificacions estan bloquejades als ajustos del navegador.",
-    "notifOn": "Els avisos estan activats. Toca per enviar-te una prova."
+    "openSettings": "Configuració",
+    "yourTerraces": "Les teves terrasses",
+    "firstCrownTitle": "Aconsegueix la teva primera corona",
+    "firstCrownSub": "Registra't en una terrassa amb ombra per reclamar-la."
   },
   "map": {
     "shadeNearYou": "ombra a prop teu",
@@ -217,5 +224,8 @@
     "map": "Mapa",
     "boards": "Classificació",
     "you": "Tu"
+  },
+  "settings": {
+    "title": "Configuració"
   }
 }
