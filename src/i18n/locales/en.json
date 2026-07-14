@@ -94,7 +94,17 @@
     "noStore": "no app store · no download · it just shows up",
     "addToHome": "Add to home screen",
     "done": "Done · I added it",
-    "maybeLater": "maybe later"
+    "maybeLater": "maybe later",
+    "iosSafariKicker": "iPhone · Safari",
+    "getAlertsTitle": "Get crown-steal alerts",
+    "getAlertsBody": "We’ll ping you the second a friend steals your crown — but on iPhone, alerts only work once Ombra is on your home screen.",
+    "step1": "Tap <hl>Share</hl> just below",
+    "step2": "Then <hl>“Add to Home Screen”</hl>",
+    "wrongBrowserTitle": "Open in Safari to install",
+    "wrongBrowserBody": "On iPhone, adding to your home screen — and getting crown alerts — only works in <hl>Safari</hl>. You’re in another browser right now.",
+    "copyLink": "Copy link · ombra.wtf",
+    "copied": "Link copied ✓",
+    "copyHint": "paste it in Safari, then add to home screen"
   },
   "checking": {
     "lockingIn": "Locking you in…",

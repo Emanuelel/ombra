@@ -14,3 +14,6 @@ dist-ssr
 src/data/buildings-all.json
 src/data/poi-fsq.json
 src/data/poi-overture.json
+
+# local screenshot harness output
+harness-shots/

@@ -31,6 +31,19 @@ export function isAndroid(): boolean {
   return /android/i.test(navigator.userAgent)
 }
 
+/**
+ * Real Safari — the only iOS browser that can "Add to Home Screen".
+ * Chrome (CriOS), Firefox (FxiOS), Edge (EdgiOS) and in-app WebViews (Instagram,
+ * Facebook, etc.) cannot. Genuine Safari carries a `Version/x` token; most in-app
+ * WebViews omit it, which is the most reliable signal we have.
+ */
+export function isSafari(): boolean {
+  const ua = navigator.userAgent
+  if (!/AppleWebKit/.test(ua)) return false
+  if (/CriOS|FxiOS|EdgiOS|OPiOS|DuckDuckGo|YaBrowser/i.test(ua)) return false
+  return /Version\/[\d.]+.*Safari/.test(ua)
+}
+
 /** Android/Chrome has captured a native install prompt we can fire. */
 export function canPromptInstall(): boolean {
   return !!deferredPrompt
@@ -44,10 +57,10 @@ export async function promptInstall(): Promise<boolean> {
   return outcome === 'accepted'
 }
 
-export type InstallMode = 'ios' | 'android-prompt' | 'android-manual'
+export type InstallMode = 'ios-safari' | 'ios-other' | 'android-prompt' | 'android-manual'
 
 export function installMode(): InstallMode {
-  if (isIOS()) return 'ios'
+  if (isIOS()) return isSafari() ? 'ios-safari' : 'ios-other'
   return canPromptInstall() ? 'android-prompt' : 'android-manual'
 }
 
