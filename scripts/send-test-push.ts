@@ -3,8 +3,8 @@
  * own `sendPushToUser` + `pushCopy`, so it exercises the exact production delivery path.
  *
  * Needs VAPID_* keys in the environment (Production has them), so run with the prod env:
- *   npx tsx --env-file=.env.production.local scripts/send-test-push.ts e.lanni87@gmail.com
- *   npx tsx --env-file=.env.production.local scripts/send-test-push.ts @kirito92
+ *   npx tsx --env-file=.env.production.local scripts/send-test-push.ts you@example.com
+ *   npx tsx --env-file=.env.production.local scripts/send-test-push.ts @yourhandle
  */
 import { eq } from 'drizzle-orm'
 import { db, schema } from '../src/db/client.js'

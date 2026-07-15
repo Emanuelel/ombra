@@ -16,11 +16,24 @@
  * Run: npx tsx --env-file=.env.local scripts/seed-community.ts
  *  (or) DATABASE_URL="…" npm run seed-community
  */
+import { readdirSync } from 'node:fs'
+import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { and, desc, eq, gt, inArray, sql } from 'drizzle-orm'
 import { db, schema } from '../src/db/client.js'
 import { scoreCheckIn, CROWN_WINDOW_DAYS } from '../src/lib/scoring.js'
 
 const { users, profiles, checkIns, currentCrowns } = schema
+
+// Handles with a generated avatar in public/seed-avatars/<handle>.png (served statically);
+// the rest fall back to Avatar.tsx's colored-initial placeholder, which is intended.
+const __dirname = dirname(fileURLToPath(import.meta.url))
+const avatarHandles = new Set(
+  readdirSync(join(__dirname, '../public/seed-avatars'))
+    .filter((f) => f.endsWith('.png'))
+    .map((f) => f.slice(0, -4)),
+)
+const avatarUrlFor = (handle: string) => (avatarHandles.has(handle) ? `/seed-avatars/${handle}.png` : null)
 
 // A few central, terrace-dense barris. Activity is concentrated here so these areas
 // feel alive rather than spreading a thin layer across all of Barcelona.
@@ -139,11 +152,17 @@ async function main() {
     await db.insert(users).values({ id, name: handle }).onConflictDoNothing()
     await db
       .insert(profiles)
-      .values({ userId: id, displayName: handle, homeBarri: homeBarris.get(id) ?? null, pointsTotal: totals.get(id) ?? 0 })
+      .values({
+        userId: id,
+        displayName: handle,
+        avatarUrl: avatarUrlFor(handle),
+        homeBarri: homeBarris.get(id) ?? null,
+        pointsTotal: totals.get(id) ?? 0,
+      })
       .onConflictDoNothing()
     await db
       .update(profiles)
-      .set({ homeBarri: homeBarris.get(id) ?? null, pointsTotal: totals.get(id) ?? 0 })
+      .set({ avatarUrl: avatarUrlFor(handle), homeBarri: homeBarris.get(id) ?? null, pointsTotal: totals.get(id) ?? 0 })
       .where(eq(profiles.userId, id))
   }
 
