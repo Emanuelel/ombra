@@ -1,29 +1,42 @@
 /**
- * Cold-start seeding: ~60 credible fake hunters + a week of realistic check-ins,
- * concentrated in a few central Barcelona barris, so the leaderboards, crowns and
- * profiles look genuinely used on day one. Real users stack on top.
+ * Demo/fixture data for local development: ~60 sample users + a few weeks of check-ins,
+ * so the leaderboards, crowns and profiles aren't empty on a fresh dev database. Handy
+ * starting point when adapting this repo to a new city, too. Regular signups stack on top.
  *
- * Design notes:
- *  - Handles model how real people pick them (first.surname, first_city, first+year,
- *    diminutives), across Catalan / Spanish / expat pools. All match /^[a-z0-9_.]{2,20}$/.
+ * Notes:
+ *  - Handles cover a mix of styles (name.surname, gamer tags, in-jokes) across Catalan /
+ *    Spanish / expat pools. All match /^[a-z0-9_.]{2,20}$/.
  *  - Activity is power-law: a few regulars dominate (they become the crown holders),
  *    a long tail checks in once or twice.
  *  - Each user has a home barri; ~70% of their check-ins cluster there.
- *  - Points come from the REAL scorer (scoreCheckIn) with daytime timestamps, so they
- *    track the sun exactly like genuine check-ins (no fake flat sun altitude).
- *  - Everything is prefixed `seed:` -> isolated from real users, wipe-and-rebuild safe.
+ *  - Points come from the same scorer (scoreCheckIn) as regular check-ins, with daytime
+ *    timestamps, so they track the sun the same way.
+ *  - Everything is prefixed `seed:` -> isolated from regular users, wipe-and-rebuild safe.
  *
  * Run: npx tsx --env-file=.env.local scripts/seed-community.ts
  *  (or) DATABASE_URL="…" npm run seed-community
  */
+import { readdirSync } from 'node:fs'
+import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { and, desc, eq, gt, inArray, sql } from 'drizzle-orm'
 import { db, schema } from '../src/db/client.js'
 import { scoreCheckIn, CROWN_WINDOW_DAYS } from '../src/lib/scoring.js'
 
 const { users, profiles, checkIns, currentCrowns } = schema
 
-// A few central, terrace-dense barris. Activity is concentrated here so these areas
-// feel alive rather than spreading a thin layer across all of Barcelona.
+// Handles with a generated avatar in public/seed-avatars/<handle>.png (served statically);
+// the rest fall back to Avatar.tsx's colored-initial placeholder, which is intended.
+const __dirname = dirname(fileURLToPath(import.meta.url))
+const avatarHandles = new Set(
+  readdirSync(join(__dirname, '../public/seed-avatars'))
+    .filter((f) => f.endsWith('.png'))
+    .map((f) => f.slice(0, -4)),
+)
+const avatarUrlFor = (handle: string) => (avatarHandles.has(handle) ? `/seed-avatars/${handle}.png` : null)
+
+// A few central, terrace-dense barris. Sample activity concentrates here rather than
+// spreading thin across the whole city.
 const CENTRAL_BARRIS = [
   "la Dreta de l'Eixample",
   "l'Antiga Esquerra de l'Eixample",
@@ -35,11 +48,11 @@ const CENTRAL_BARRIS = [
   'el Raval',
 ]
 
-// 60 handles modelled on how people ACTUALLY pick them: mostly internet-native
-// (anime + numbers, gamer tags, random words, in-jokes), with only a minority being
-// real name / name.surname. Order doesn't matter; tiers/barris are assigned below.
+// 60 sample handles covering a mix of styles (anime/gamer tags, random words, in-jokes,
+// a handful of name.surname) so the list isn't visibly generated from one template.
+// Order doesn't matter; tiers/barris are assigned below.
 const HANDLES = [
-  // Real names — kept deliberately rare; only a few full name.surname
+  // name.surname style — kept rare, most handles below are more casual
   'jordi.serra', 'pau.vidal', 'gemma.sole', 'laia_bcn', 'nuria.p', 'montse_r',
   'marc88', 'quimet', 'arnau_92', 'txell.bcn', 'aleix', 'biel', 'carla.m', 'sergi_p',
   // Anime / gaming handles, usually with numbers
@@ -91,7 +104,7 @@ async function main() {
   console.log(`Resetting all seed:* users and rebuilding ${ids.length} hunters…`)
   await db.delete(users).where(sql`${users.id} like 'seed:%'`)
 
-  console.log('Seeding profiles + realistic daytime check-ins over the last ~3 weeks…')
+  console.log('Seeding profiles + daytime check-ins over the last ~3 weeks…')
   const totals = new Map<string, number>() // userId -> points sum
   const homeBarris = new Map<string, string>()
   const allRows: (typeof checkIns.$inferInsert)[] = []
@@ -139,11 +152,17 @@ async function main() {
     await db.insert(users).values({ id, name: handle }).onConflictDoNothing()
     await db
       .insert(profiles)
-      .values({ userId: id, displayName: handle, homeBarri: homeBarris.get(id) ?? null, pointsTotal: totals.get(id) ?? 0 })
+      .values({
+        userId: id,
+        displayName: handle,
+        avatarUrl: avatarUrlFor(handle),
+        homeBarri: homeBarris.get(id) ?? null,
+        pointsTotal: totals.get(id) ?? 0,
+      })
       .onConflictDoNothing()
     await db
       .update(profiles)
-      .set({ homeBarri: homeBarris.get(id) ?? null, pointsTotal: totals.get(id) ?? 0 })
+      .set({ avatarUrl: avatarUrlFor(handle), homeBarri: homeBarris.get(id) ?? null, pointsTotal: totals.get(id) ?? 0 })
       .where(eq(profiles.userId, id))
   }
 

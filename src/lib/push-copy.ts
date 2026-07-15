@@ -49,7 +49,7 @@ const COPY: Record<string, Entry> = {
     ca: { title: '☀ Cap de setmana de terrasses', body: 'El millor dia per robar corones. El teu barri no es defensa sol.' },
     en: { title: '☀ Weekend on the terraces', body: "The best day to steal crowns. Your barri won't defend itself." },
   },
-  // Evening 'vermut o'clock' nudges (sent ~19:00 Barcelona, see api/cron/evening-vermut).
+  // Evening 'vermut o'clock' nudges (sent ~19:00 Barcelona, see api/cron/daily-fomo.ts's ?slot=vermut).
   'push.vermut.weekdayA': {
     es: { title: '🍹 Hora del vermut', body: 'Las terrazas se despiertan. ¿Cuál vas a conquistar esta tarde?' },
     ca: { title: '🍹 Hora del vermut', body: 'Les terrasses es desperten. Quina conquistaràs aquesta tarda?' },

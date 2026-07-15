@@ -1,7 +1,7 @@
 // Client-side API calls. In production the app is same-origin with /api; the local
 // dev preview points VITE_API_BASE at the deployed functions (see .env.development).
-const API = ((import.meta as any).env?.VITE_API_BASE as string | undefined) ?? ''
-const VAPID_PUBLIC = ((import.meta as any).env?.VITE_VAPID_PUBLIC_KEY as string | undefined) ?? ''
+const API = import.meta.env.VITE_API_BASE ?? ''
+const VAPID_PUBLIC = import.meta.env.VITE_VAPID_PUBLIC_KEY ?? ''
 
 export interface AuthUser {
   userId: string
@@ -165,7 +165,7 @@ async function waitForActiveSW(timeoutMs = 10000): Promise<ServiceWorkerRegistra
 export async function subscribeToPush(token: string, lang?: string): Promise<boolean> {
   try {
     if (!VAPID_PUBLIC) {
-      if ((import.meta as any).env?.DEV)
+      if (import.meta.env.DEV)
         console.warn('[ombra] VITE_VAPID_PUBLIC_KEY is not set - push notifications are disabled. Set it in your env / Vercel to enable alerts.')
       return false
     }
