@@ -183,7 +183,7 @@ export async function subscribeToPush(token: string, lang?: string): Promise<boo
         applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC) as unknown as BufferSource,
       })
     }
-    const r = await fetch(`${API}/api/push-subscribe`, {
+    const r = await fetch(`${API}/api/push?action=subscribe`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify({ subscription: sub.toJSON(), lang }),
@@ -217,7 +217,7 @@ export async function persistLang(token: string, lang: string): Promise<void> {
 /** Send a test push to the signed-in user's own devices. `count` is how many were targeted. */
 export async function sendTestPush(token: string): Promise<{ ok: boolean; count: number }> {
   try {
-    const r = await fetch(`${API}/api/notify-test`, {
+    const r = await fetch(`${API}/api/push?action=test`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}` },
     })
