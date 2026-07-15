@@ -3,7 +3,7 @@
   "framework": "vite",
   "crons": [
     { "path": "/api/cron/daily-fomo", "schedule": "0 11 * * *" },
-    { "path": "/api/cron/evening-vermut", "schedule": "0 17 * * *" }
+    { "path": "/api/cron/daily-fomo?slot=vermut", "schedule": "0 17 * * *" }
   ],
   "rewrites": [
     { "source": "/privacy", "destination": "/privacy.html" },
