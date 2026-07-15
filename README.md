@@ -128,7 +128,7 @@ cp .env.example .env         # fill in DATABASE_URL, GOOGLE_CLIENT_ID/SECRET, VA
 npx web-push generate-vapid-keys   # → VAPID_PUBLIC_KEY / VAPID_PRIVATE_KEY
 npm run db:push               # create tables in Neon from src/db/schema.ts
 npm run seed                  # load terraces + badges
-npm run seed-community         # optional: ~60 fake users + check-ins so boards aren't empty
+npm run seed-community         # optional: sample users + check-ins so boards aren't empty on a fresh DB
 ```
 
 ## Environment variables
