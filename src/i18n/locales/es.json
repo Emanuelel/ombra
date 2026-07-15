@@ -94,7 +94,17 @@
     "noStore": "sin tienda de apps · sin descarga · aparece y ya",
     "addToHome": "Añadir a inicio",
     "done": "Listo · ya la añadí",
-    "maybeLater": "quizás más tarde"
+    "maybeLater": "quizás más tarde",
+    "iosSafariKicker": "iPhone · Safari",
+    "getAlertsTitle": "Recibe avisos de robo de corona",
+    "getAlertsBody": "Te avisamos en cuanto un amigo te robe la corona — pero en iPhone los avisos solo funcionan cuando Ombra está en tu pantalla de inicio.",
+    "step1": "Toca <hl>Compartir</hl> aquí abajo",
+    "step2": "Y luego <hl>«Añadir a pantalla de inicio»</hl>",
+    "wrongBrowserTitle": "Ábrelo en Safari para instalar",
+    "wrongBrowserBody": "En iPhone, añadirlo a la pantalla de inicio —y recibir avisos— solo funciona en <hl>Safari</hl>. Ahora estás en otro navegador.",
+    "copyLink": "Copia el enlace · ombra.wtf",
+    "copied": "Enlace copiado ✓",
+    "copyHint": "pégalo en Safari y añádelo al inicio"
   },
   "checking": {
     "lockingIn": "Fijando tu posición…",

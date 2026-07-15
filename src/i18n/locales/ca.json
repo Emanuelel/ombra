@@ -94,7 +94,17 @@
     "noStore": "sense botiga d’apps · sense descàrrega · apareix i ja",
     "addToHome": "Afegeix a l’inici",
     "done": "Fet · ja l’he afegit",
-    "maybeLater": "potser més tard"
+    "maybeLater": "potser més tard",
+    "iosSafariKicker": "iPhone · Safari",
+    "getAlertsTitle": "Rep avisos de robatori de corona",
+    "getAlertsBody": "T’avisem tan bon punt un amic et robi la corona — però a l’iPhone els avisos només funcionen quan Ombra és a la pantalla d’inici.",
+    "step1": "Toca <hl>Comparteix</hl> aquí sota",
+    "step2": "I després <hl>«Afegeix a la pantalla d’inici»</hl>",
+    "wrongBrowserTitle": "Obre-ho a Safari per instal·lar",
+    "wrongBrowserBody": "A l’iPhone, afegir-ho a la pantalla d’inici —i rebre avisos— només funciona a <hl>Safari</hl>. Ara ets en un altre navegador.",
+    "copyLink": "Copia l’enllaç · ombra.wtf",
+    "copied": "Enllaç copiat ✓",
+    "copyHint": "enganxa’l a Safari i afegeix-ho a l’inici"
   },
   "checking": {
     "lockingIn": "Fixant la teva posició…",
