@@ -49,6 +49,32 @@ const COPY: Record<string, Entry> = {
     ca: { title: '☀ Cap de setmana de terrasses', body: 'El millor dia per robar corones. El teu barri no es defensa sol.' },
     en: { title: '☀ Weekend on the terraces', body: "The best day to steal crowns. Your barri won't defend itself." },
   },
+  // Evening 'vermut o'clock' nudges (sent ~19:00 Barcelona, see api/cron/evening-vermut).
+  'push.vermut.weekdayA': {
+    es: { title: '🍹 Hora del vermut', body: 'Las terrazas se despiertan. ¿Cuál vas a conquistar esta tarde?' },
+    ca: { title: '🍹 Hora del vermut', body: 'Les terrasses es desperten. Quina conquistaràs aquesta tarda?' },
+    en: { title: "🍹 Vermut o'clock", body: 'The terraces are waking up for the evening. Which one are you claiming tonight?' },
+  },
+  'push.vermut.weekdayB': {
+    es: { title: '🌇 Cae el sol, sube la sombra', body: 'Hora dorada en las terrazas. Un vermut y unos puntos antes de cenar.' },
+    ca: { title: '🌇 Cau el sol, puja l’ombra', body: 'Hora daurada a les terrasses. Un vermut i uns punts abans de sopar.' },
+    en: { title: "🌇 Sun's dropping, shade's rising", body: 'Golden hour on the terraces. A vermut and a few points before dinner.' },
+  },
+  'push.vermut.weekdayC': {
+    es: { title: '👑 ¿Tu corona sigue en pie?', body: 'La tarde es de quien sale. Pásate por tus terrazas y defiéndelas.' },
+    ca: { title: '👑 La teva corona aguanta?', body: 'La tarda és de qui surt. Passa per les teves terrasses i defensa-les.' },
+    en: { title: '👑 Is your crown still standing?', body: 'The evening belongs to whoever shows up. Swing by your terraces and hold them.' },
+  },
+  'push.vermut.weekendA': {
+    es: { title: '🍹 Vermut de finde', body: 'Las mejores terrazas se llenan ya. Sal a cazar sombra y coronas.' },
+    ca: { title: '🍹 Vermut de cap de setmana', body: 'Les millors terrasses ja s’omplen. Surt a caçar ombra i corones.' },
+    en: { title: '🍹 Weekend vermut', body: 'The best terraces are filling up already. Go hunt shade and crowns.' },
+  },
+  'push.vermut.weekendB': {
+    es: { title: '🌆 La noche es joven', body: 'Terrazas a tope y coronas por robar. Tu sitio te espera.' },
+    ca: { title: '🌆 La nit és jove', body: 'Terrasses plenes i corones per robar. El teu lloc t’espera.' },
+    en: { title: '🌆 The night is young', body: 'Packed terraces and crowns to steal. Your spot is waiting.' },
+  },
 }
 
 /**

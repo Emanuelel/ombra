@@ -1,10 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import { eq } from 'drizzle-orm'
-import { db, schema } from '../../src/db/client.js'
-import { sendPushToUser } from '../../src/lib/push-server.js'
-import { pushCopy } from '../../src/lib/push-copy.js'
-
-const { profiles, pushSubscriptions } = schema
+import { broadcastPush } from '../../src/lib/push-server.js'
 
 /**
  * Pick today's FOMO variant. Fri/Sat/Sun get weekend copy; Mon-Thu rotate across three
@@ -18,9 +13,9 @@ function variantKey(day: number): string {
 }
 
 /**
- * GET /api/cron/daily-fomo — daily broadcast nudge. Invoked by Vercel Cron (see vercel.json).
- * Vercel automatically sends `Authorization: Bearer <CRON_SECRET>` when the env var is set;
- * we reject anything else so the endpoint can't be triggered publicly.
+ * GET /api/cron/daily-fomo — morning broadcast nudge (~13:00 Barcelona). Invoked by Vercel
+ * Cron (see vercel.json). Vercel automatically sends `Authorization: Bearer <CRON_SECRET>`
+ * when the env var is set; we reject anything else so the endpoint can't be triggered publicly.
  */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const secret = process.env.CRON_SECRET
@@ -29,23 +24,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   const key = variantKey(new Date().getUTCDay())
+  const recipients = await broadcastPush(key, 'ombra-daily')
 
-  // One row per user that has at least one push subscription, with their language.
-  const recipients = await db
-    .selectDistinct({ userId: pushSubscriptions.userId, lang: profiles.lang })
-    .from(pushSubscriptions)
-    .leftJoin(profiles, eq(profiles.userId, pushSubscriptions.userId))
-
-  // Bounded concurrency so a large audience doesn't overrun the function timeout.
-  const CHUNK = 20
-  for (let i = 0; i < recipients.length; i += CHUNK) {
-    await Promise.all(
-      recipients.slice(i, i + CHUNK).map((r) => {
-        const copy = pushCopy(r.lang ?? null, key)
-        return sendPushToUser(r.userId, { ...copy, url: '/', tag: 'ombra-daily' })
-      }),
-    )
-  }
-
-  return res.status(200).json({ ok: true, recipients: recipients.length, variant: key })
+  return res.status(200).json({ ok: true, recipients, variant: key })
 }
