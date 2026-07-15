@@ -1,7 +1,10 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "vite",
-  "crons": [{ "path": "/api/cron/daily-fomo", "schedule": "0 11 * * *" }],
+  "crons": [
+    { "path": "/api/cron/daily-fomo", "schedule": "0 11 * * *" },
+    { "path": "/api/cron/evening-vermut", "schedule": "0 17 * * *" }
+  ],
   "rewrites": [
     { "source": "/privacy", "destination": "/privacy.html" },
     { "source": "/terms", "destination": "/terms.html" },

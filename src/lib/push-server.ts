@@ -1,6 +1,7 @@
 import webpush from 'web-push'
 import { eq } from 'drizzle-orm'
 import { db, schema } from '../db/client.js'
+import { pushCopy } from './push-copy.js'
 
 let configured = false
 function ensure(): boolean {
@@ -44,4 +45,30 @@ export async function sendPushToUser(userId: string, payload: PushPayload): Prom
       }
     }),
   )
+}
+
+/**
+ * Broadcast one localized push to every user with at least one subscription. Used by the
+ * daily cron jobs (see api/cron/*). Copy is resolved per-user from their `profiles.lang`.
+ * Returns the recipient (distinct user) count. `tag` should be unique per campaign so a
+ * morning and an evening push don't replace each other on the device.
+ */
+export async function broadcastPush(key: string, tag: string): Promise<number> {
+  // One row per user that has a push subscription, with their language.
+  const recipients = await db
+    .selectDistinct({ userId: schema.pushSubscriptions.userId, lang: schema.profiles.lang })
+    .from(schema.pushSubscriptions)
+    .leftJoin(schema.profiles, eq(schema.profiles.userId, schema.pushSubscriptions.userId))
+
+  // Bounded concurrency so a large audience doesn't overrun the function timeout.
+  const CHUNK = 20
+  for (let i = 0; i < recipients.length; i += CHUNK) {
+    await Promise.all(
+      recipients.slice(i, i + CHUNK).map((r) => {
+        const copy = pushCopy(r.lang ?? null, key)
+        return sendPushToUser(r.userId, { ...copy, url: '/', tag })
+      }),
+    )
+  }
+  return recipients.length
 }
