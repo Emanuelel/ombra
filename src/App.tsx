@@ -197,6 +197,12 @@ export default function App() {
     if (hashErr) setGoogleError(t([`errors.google.${hashErr}`, 'errors.google.default']))
     if (hashToken) localStorage.setItem('ombra_token', hashToken)
 
+    // Instrument the OAuth return leg. auth_google_start fires on the tap; comparing it to
+    // these tells us where the funnel bleeds: came back with a token (return), came back with
+    // an error, or never came back at all (start minus return minus error = silent drop).
+    if (hashErr) track('auth_google_error', { error: hashErr })
+    if (hashToken) track('auth_google_return')
+
     const tok = hashToken ?? localStorage.getItem('ombra_token')
     if (!tok) {
       setRestoring(false)
@@ -204,6 +210,9 @@ export default function App() {
     }
     fetchSession(tok).then((r) => {
       if (!r) {
+        // Token arrived from Google but the session didn't validate: a distinct failure mode
+        // from "abandoned Google", so track it only when this load carried a fresh token.
+        if (hashToken) track('auth_session_invalid')
         localStorage.removeItem('ombra_token')
         setRestoring(false)
         return
