@@ -68,7 +68,14 @@
     "b4Title": "Consérvala o piérdela",
     "b4Sub": "Aparece cada semana para defender tu corona. Tus amigos pueden quitártela.",
     "legal": "Al continuar aceptas los <terms>Términos</terms> y la <privacy>Política de Privacidad</privacy> de Ombra",
-    "continueGoogle": "Continuar con Google"
+    "continueGoogle": "Continuar con Google",
+    "inAppTitle": "Ábrelo en tu navegador",
+    "inAppBody": "El acceso con Google no funciona dentro de navegadores integrados. Abre Ombra en Chrome o Safari para continuar.",
+    "inAppOpenChrome": "Abrir en Chrome",
+    "inAppCopyLink": "Copiar enlace",
+    "inAppCopied": "Copiado. Pégalo en tu navegador.",
+    "inAppIosHint": "Toca el menú ⋯ arriba a la derecha y elige Abrir en Safari.",
+    "inAppTryAnyway": "Continuar igualmente"
   },
   "handle": {
     "step": "Paso 1 de 2",

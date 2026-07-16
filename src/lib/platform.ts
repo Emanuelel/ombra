@@ -44,6 +44,24 @@ export function isSafari(): boolean {
   return /Version\/[\d.]+.*Safari/.test(ua)
 }
 
+/**
+ * Embedded in-app WebView (Instagram, Facebook, WhatsApp, TikTok, etc.).
+ * Google refuses OAuth in these ("Use secure browsers" policy) and returns
+ * `Error 403: disallowed_useragent`, so sign-in dead-ends here. We detect it to
+ * route users out to a real browser instead of into a blocked Google page.
+ *
+ * Signals, most reliable first: named in-app browser tokens, the Android
+ * WebView `; wv)` marker, and iOS WebKit that is neither Safari nor a known
+ * standalone browser (in-app WebViews omit the `Safari`/`Version/` tokens).
+ */
+export function isInAppBrowser(): boolean {
+  const ua = navigator.userAgent || ''
+  if (/FBAN|FBAV|FB_IAB|Instagram|Line\/|Twitter|LinkedInApp|Snapchat|Pinterest|WhatsApp|GSA\/|TikTok|BytedanceWebview|MicroMessenger/i.test(ua)) return true
+  if (/Android/.test(ua) && /;\s*wv\)/.test(ua)) return true
+  if (isIOS() && !/Safari/.test(ua) && !/CriOS|FxiOS|EdgiOS|OPiOS|DuckDuckGo/i.test(ua)) return true
+  return false
+}
+
 /** Android/Chrome has captured a native install prompt we can fire. */
 export function canPromptInstall(): boolean {
   return !!deferredPrompt
