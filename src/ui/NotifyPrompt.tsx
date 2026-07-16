@@ -58,26 +58,30 @@ export default function NotifyPrompt({ token }: { token: string | null }) {
     track('notify_prompt_shown', { mode })
   }, [mode])
 
+  // Full instrumentation of every exit from the banner, so we can measure it end to end:
+  //   notify_prompt_shown -> then exactly one of:
+  //     notify_dismissed        (tapped the × )
+  //     notify_cta_click        (tapped the primary button; carries mode)
+  //     (nothing = ignored, navigated away — derive as shown - dismissed - cta_click)
+  //   after an alerts CTA click: notify_permission_result { result: granted|denied|default }
+  //   ('default' = the native prompt was dismissed without choosing — NOT a denial).
   function dismiss() {
     track('notify_dismissed', { mode })
     setOpen(false)
   }
 
   function enableAlerts() {
+    track('notify_cta_click', { mode: 'alerts' })
     if (!('Notification' in window)) return setOpen(false)
     Notification.requestPermission().then((perm) => {
-      if (perm === 'granted') {
-        track('notify_enabled')
-        if (token) void subscribeToPush(token, getLang())
-      } else {
-        track('notify_denied')
-      }
+      track('notify_permission_result', { result: perm })
+      if (perm === 'granted' && token) void subscribeToPush(token, getLang())
       setOpen(false)
     }, () => setOpen(false))
   }
 
   function openInstall() {
-    track('notify_install_open')
+    track('notify_cta_click', { mode: 'install' })
     setShowInstall(true)
     setOpen(false)
   }
