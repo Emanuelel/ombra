@@ -68,7 +68,14 @@
     "b4Title": "Hold it, or lose it",
     "b4Sub": "Show up each week to defend your crown. Friends can take it.",
     "legal": "By continuing you agree to Ombra's <terms>Terms</terms> and <privacy>Privacy Policy</privacy>",
-    "continueGoogle": "Continue with Google"
+    "continueGoogle": "Continue with Google",
+    "inAppTitle": "Open in your browser",
+    "inAppBody": "Google sign-in doesn't work inside in-app browsers. Open Ombra in Chrome or Safari to continue.",
+    "inAppOpenChrome": "Open in Chrome",
+    "inAppCopyLink": "Copy link",
+    "inAppCopied": "Copied. Paste it in your browser.",
+    "inAppIosHint": "Tap the ⋯ menu at the top right, then choose Open in Safari.",
+    "inAppTryAnyway": "Continue anyway"
   },
   "handle": {
     "step": "Step 1 of 2",

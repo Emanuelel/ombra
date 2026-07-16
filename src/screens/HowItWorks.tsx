@@ -3,6 +3,8 @@ import { Trans, useTranslation } from 'react-i18next'
 import { C, display } from '../ui/tokens'
 import Crown from '../ui/Crown'
 import GoogleG from '../ui/GoogleG'
+import { isInAppBrowser, isAndroid } from '../lib/platform'
+import { track } from '../lib/analytics'
 
 // R2 "Learn" screen: a 4-beat, swipe-driven poster carousel. The hero is deliberately
 // iconographic (never a realistic map) so nobody mistakes it for the live app and taps it
@@ -79,10 +81,83 @@ function BeatArt({ beat }: { beat: number }) {
   )
 }
 
+// Shown in place of the Google CTA when we're inside an in-app WebView, where
+// Google OAuth dead-ends with `Error 403: disallowed_useragent`. Routes the user
+// out to a real browser: Android can force-launch Chrome via an `intent://` URL;
+// iOS has no such hook, so we copy the link and point at the ⋯ → Open in Safari menu.
+function InAppEscape({ onTryAnyway }: { onTryAnyway: () => void }) {
+  const { t } = useTranslation()
+  const [copied, setCopied] = useState(false)
+  const android = isAndroid()
+
+  function openInChrome() {
+    track('auth_inapp_escape', { action: 'chrome' })
+    // Strip the scheme; Android reconstructs it from `scheme=https` and hands the
+    // URL to Chrome by package name.
+    const target = window.location.href.replace(/^https?:\/\//, '')
+    window.location.href = `intent://${target}#Intent;scheme=https;package=com.android.chrome;end`
+  }
+
+  async function copyLink() {
+    track('auth_inapp_escape', { action: 'copy' })
+    try {
+      await navigator.clipboard.writeText(window.location.href)
+      setCopied(true)
+    } catch {
+      setCopied(true) // clipboard blocked; the ⋯ hint still gets them out
+    }
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12, textAlign: 'left' }}>
+      <div style={{ background: C.creamCard, border: `2px solid ${C.ink}`, borderRadius: 15, padding: '16px 18px' }}>
+        <div style={{ ...display(17, { lineHeight: 1.1 }), marginBottom: 8 }}>{t('howItWorks.inAppTitle')}</div>
+        <div style={{ fontSize: 14, lineHeight: 1.45, color: C.subtext }}>{t('howItWorks.inAppBody')}</div>
+        {!android && (
+          <div style={{ fontSize: 13, lineHeight: 1.45, color: C.muted, marginTop: 10 }}>{t('howItWorks.inAppIosHint')}</div>
+        )}
+      </div>
+
+      <button
+        onClick={android ? openInChrome : copyLink}
+        style={{
+          width: '100%',
+          background: C.ink,
+          color: C.cream,
+          border: 'none',
+          borderRadius: 15,
+          padding: 17,
+          fontFamily: "'Archivo', sans-serif",
+          fontWeight: 900,
+          fontSize: 17,
+          cursor: 'pointer',
+        }}
+      >
+        {android ? t('howItWorks.inAppOpenChrome') : copied ? t('howItWorks.inAppCopied') : t('howItWorks.inAppCopyLink')}
+      </button>
+
+      {/* Safety valve for a false-positive detection: let the user try Google anyway. */}
+      <button
+        onClick={onTryAnyway}
+        style={{ background: 'none', border: 'none', cursor: 'pointer', color: C.muted2, fontSize: 12, textDecoration: 'underline', padding: 2 }}
+      >
+        {t('howItWorks.inAppTryAnyway')}
+      </button>
+    </div>
+  )
+}
+
 export default function HowItWorks({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
   const { t } = useTranslation()
   const [beat, setBeat] = useState(0)
+  const [inApp] = useState(isInAppBrowser)
   const downX = useRef<number | null>(null)
+
+  // Record that a user hit the in-app-browser wall, so the funnel can size the
+  // Instagram/WhatsApp-DM dropoff separately from ordinary sign-in abandonment.
+  useEffect(() => {
+    if (inApp) track('auth_inapp_blocked')
+  }, [inApp])
 
   const goTo = (i: number) => setBeat(Math.max(0, Math.min(BEATS - 1, i)))
   const prev = () => setBeat((b) => Math.max(0, b - 1))
@@ -188,30 +263,34 @@ export default function HowItWorks({ onBack, onNext }: { onBack: () => void; onN
             ))}
           </div>
 
-          <button
-            onClick={onNext}
-            style={{
-              width: '100%',
-              background: C.ink,
-              color: C.cream,
-              border: 'none',
-              borderRadius: 15,
-              padding: 17,
-              fontFamily: "'Archivo', sans-serif",
-              fontWeight: 900,
-              fontSize: 17,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 11,
-            }}
-          >
-            <span style={{ background: '#fff', borderRadius: 4, padding: 2, display: 'flex', lineHeight: 0 }}>
-              <GoogleG size={18} />
-            </span>
-            {t('howItWorks.continueGoogle')}
-          </button>
+          {inApp ? (
+            <InAppEscape onTryAnyway={onNext} />
+          ) : (
+            <button
+              onClick={onNext}
+              style={{
+                width: '100%',
+                background: C.ink,
+                color: C.cream,
+                border: 'none',
+                borderRadius: 15,
+                padding: 17,
+                fontFamily: "'Archivo', sans-serif",
+                fontWeight: 900,
+                fontSize: 17,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 11,
+              }}
+            >
+              <span style={{ background: '#fff', borderRadius: 4, padding: 2, display: 'flex', lineHeight: 0 }}>
+                <GoogleG size={18} />
+              </span>
+              {t('howItWorks.continueGoogle')}
+            </button>
+          )}
 
           <div style={{ fontSize: 11, lineHeight: 1.4, color: C.muted2 }}>
             <Trans
