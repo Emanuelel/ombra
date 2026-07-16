@@ -16,6 +16,13 @@
     "reload": "Recarrega",
     "dismiss": "Descarta"
   },
+  "notify": {
+    "alertsText": "T'avisem en el moment en què algú roba una corona a prop teu.",
+    "alertsCta": "Activar avisos",
+    "installText": "Vols avisos de robatori de corona? A l'iPhone, afegeix Ombra a la pantalla d'inici primer.",
+    "installCta": "Afegir a inici",
+    "dismiss": "Descarta"
+  },
   "errors": {
     "google": {
       "google_setup": "L’inici de sessió amb Google encara no està configurat.",

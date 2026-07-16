@@ -2,6 +2,7 @@ import { useMemo, useRef, useState, useDeferredValue, useEffect, useCallback } f
 import { useTranslation } from 'react-i18next'
 import type { Bounds, Camera } from './components/MapView'
 import TabBar from './ui/TabBar'
+import NotifyPrompt from './ui/NotifyPrompt'
 import Welcome from './screens/Welcome'
 import HowItWorks from './screens/HowItWorks'
 import Handle from './screens/Handle'
@@ -619,6 +620,7 @@ export default function App() {
           onBoards={() => goTab('boards')}
           onProfile={() => goTab('profile')}
         />
+        {activeTab === 'map' && <NotifyPrompt token={token} />}
       </div>
     </Shell>
   )
