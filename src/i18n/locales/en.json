@@ -16,6 +16,13 @@
     "reload": "Reload",
     "dismiss": "Dismiss"
   },
+  "notify": {
+    "alertsText": "Get pinged the second someone steals a crown near you.",
+    "alertsCta": "Turn on alerts",
+    "installText": "Want crown-steal alerts? On iPhone, add Ombra to your home screen first.",
+    "installCta": "Add to home screen",
+    "dismiss": "Dismiss"
+  },
   "errors": {
     "google": {
       "google_setup": "Google sign-in isn’t set up yet.",

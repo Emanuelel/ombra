@@ -16,6 +16,13 @@
     "reload": "Recargar",
     "dismiss": "Descartar"
   },
+  "notify": {
+    "alertsText": "Te avisamos en el momento en que alguien roba una corona cerca de ti.",
+    "alertsCta": "Activar avisos",
+    "installText": "¿Quieres avisos de robo de corona? En iPhone, añade Ombra a tu pantalla de inicio primero.",
+    "installCta": "Añadir a inicio",
+    "dismiss": "Descartar"
+  },
   "errors": {
     "google": {
       "google_setup": "El inicio de sesión con Google aún no está configurado.",
