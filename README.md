@@ -1,4 +1,4 @@
-# Ombra 🌳 — *caça la fresca a Barcelona*
+# Ombra 🌳 — chase the shadow in Barcelona*
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![CI](https://github.com/Emanuelel/ombra/actions/workflows/ci.yml/badge.svg)](https://github.com/Emanuelel/ombra/actions/workflows/ci.yml)
